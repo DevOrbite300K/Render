@@ -1,0 +1,50 @@
+{% extends "admin_base2.html" %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2 class="mb-4">Liste des études</h2>
+
+  <a href="{% url 'creeretude' %}" class="btn btn-primary mb-3">Nouvelle étude</a>
+
+  <!-- champs de recherche -->
+       <form method="get" class="mb-3">
+        <div class="input-group">
+        <input type="text" name="q" class="form-control" placeholder="Rechercher par lieu etc." value="{{ request.GET.q }}">
+        <button class="btn btn-outline-secondary" type="submit">Rechercher</button>
+        </div>
+      </form>
+
+  <table class="table table-bordered table-striped">
+    <thead>
+      <tr>
+        <th>Intitulé</th>
+        <th>Date début</th>
+        <th>Date fin</th>
+        <th>Lieu</th>
+        <th>Commanditaire</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for etude in etudes %}
+      <tr>
+        <td>{{ etude.intitule }}</td>
+        <td>{{ etude.date_debut }}</td>
+        <td>{{ etude.date_fin }}</td>
+        <td>{{ etude.lieu }}</td>
+        <td>{{ etude.commanditaire }}</td>
+        <td>
+          <a href="{% url 'detailetude' etude.pk %}" class="btn btn-info btn-sm">Détail</a>
+          <a href="{% url 'modifieretude' etude.pk %}" class="btn btn-warning btn-sm">Modifier</a>
+          <a href="{% url 'supprimeretude' etude.pk %}" class="btn btn-danger btn-sm">Supprimer</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="6">Aucune étude disponible.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

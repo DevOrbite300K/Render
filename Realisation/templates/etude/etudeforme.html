@@ -1,0 +1,22 @@
+{% extends "admin_base2.html" %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2 class="mb-4">
+    {% if object %}
+      Modifier l'étude
+    {% else %}
+      Ajouter une étude
+    {% endif %}
+  </h2>
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-success">
+      {% if object %} Mettre à jour {% else %} Enregistrer {% endif %}
+    </button>
+    <a href="{% url 'listeetude' %}" class="btn btn-secondary">Annuler</a>
+  </form>
+</div>
+{% endblock %}

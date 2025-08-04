@@ -1,0 +1,162 @@
+{% extends 'client_base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="profile-container">
+    <div class="card border-0 shadow-lg">
+        <div class="card-header bg-dark d-flex align-items-center">
+            <i class="fas fa-user-tie me-3 fs-4" style="color: #8b9dc3;"></i>
+            <h2 class="mb-0">Profil Client</h2>
+        </div>
+        
+        <div class="card-body bg-gray-800">
+            <div class="row">
+                <!-- Photo de profil -->
+                <div class="col-md-4 text-center">
+                    <div class="profile-picture-container mb-4">
+                        {% if client.photo %}
+                            <img src="{{ client.photo.url }}" alt="Photo de profil" class="profile-picture img-thumbnail">
+                        {% else %}
+                            <img src="{% static 'images/faces/face1.jpg' %}" alt="Photo par défaut" class="profile-picture img-thumbnail">
+                        {% endif %}
+                    </div>
+                    <a href="{% url 'modifierprofileclient' %}" class="btn btn-outline-light btn-sm">
+                        <i class="fas fa-edit me-1"></i> Modifier le profil
+                    </a>
+                </div>
+                
+                <!-- Informations du client -->
+                <div class="col-md-8">
+                    <div class="profile-info">
+                        <div class="info-item">
+                            <span class="info-icon"><i class="fas fa-id-card"></i></span>
+                            <div>
+                                <h6 class="info-label">Nom complet</h6>
+                                <p class="info-value">{{ client.utilisateur.get_full_name }}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="info-item">
+                            <span class="info-icon"><i class="fas fa-envelope"></i></span>
+                            <div>
+                                <h6 class="info-label">Email</h6>
+                                <p class="info-value">{{ client.utilisateur.email }}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="info-item">
+                            <span class="info-icon"><i class="fas fa-map-marker-alt"></i></span>
+                            <div>
+                                <h6 class="info-label">Adresse</h6>
+                                <p class="info-value">{{ client.adresse|default:"Non renseignée" }}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="info-item">
+                            <span class="info-icon"><i class="fas fa-phone"></i></span>
+                            <div>
+                                <h6 class="info-label">Téléphone</h6>
+                                <p class="info-value">{{ client.telephone|default:"Non renseigné" }}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="info-item">
+                            <span class="info-icon"><i class="fas fa-birthday-cake"></i></span>
+                            <div>
+                                <h6 class="info-label">Date de naissance</h6>
+                                <p class="info-value">{{ client.datenaissance|date:"d/m/Y"|default:"Non renseignée" }}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="info-item">
+                            <span class="info-icon"><i class="fas fa-user-tag"></i></span>
+                            <div>
+                                <h6 class="info-label">Type de client</h6>
+                                <p class="info-value">{{ client.get_type_client_display }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .profile-container {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+    
+    .bg-gray-800 {
+        background-color: #2a2a2a;
+    }
+    
+    .profile-picture {
+        width: 200px;
+        height: 200px;
+        object-fit: cover;
+        border: 3px solid #8b9dc3;
+        border-radius: 50%;
+    }
+    
+    .profile-picture-container {
+        margin-bottom: 1.5rem;
+    }
+    
+    .profile-info {
+        padding: 1rem;
+    }
+    
+    .info-item {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid #444;
+    }
+    
+    .info-item:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+    
+    .info-icon {
+        font-size: 1.2rem;
+        color: #8b9dc3;
+        margin-right: 1rem;
+        margin-top: 0.2rem;
+    }
+    
+    .info-label {
+        color: #8b9dc3;
+        font-weight: 600;
+        margin-bottom: 0.3rem;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .info-value {
+        color: #e0e0e0;
+        margin-bottom: 0;
+        font-size: 1rem;
+    }
+    
+    .btn-outline-light {
+        border-color: #666;
+        color: #e0e0e0;
+    }
+    
+    .btn-outline-light:hover {
+        background-color: #3a3a3a;
+        border-color: #8b9dc3;
+    }
+    
+    .card {
+        border-radius: 8px;
+        overflow: hidden;
+    }
+</style>
+{% endblock %}

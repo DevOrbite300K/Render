@@ -1,0 +1,300 @@
+{% extends "admin_base2.html" %}
+
+{% block content %}
+<div class="light-theme-container">
+  <div class="payment-edit-header">
+    <div>
+      <h2 class="page-title">
+        <i class="fas fa-edit"></i> Modifier le Paiement
+      </h2>
+      <div class="breadcrumb">
+        <a href="{% url 'paiementliste' %}" class="breadcrumb-link">
+          <i class="fas fa-money-bill-wave"></i> Paiements
+        </a>
+        <span class="breadcrumb-separator">/</span>
+        <a href="{% url 'detailpaiement' object.pk %}" class="breadcrumb-link">
+          {{ object.dossier|truncatechars:20 }}
+        </a>
+        <span class="breadcrumb-separator">/</span>
+        <span class="breadcrumb-current">Modification</span>
+      </div>
+    </div>
+    <div class="payment-amount-preview">
+      <span class="amount-label">Montant actuel :</span>
+      <span class="amount-value">{{ object.montant|floatformat:"0" }} GNF</span>
+    </div>
+  </div>
+
+  <div class="payment-edit-form">
+    <form method="post" class="edit-form">
+      {% csrf_token %}
+      
+      <div class="form-grid">
+        {% for field in form %}
+        <div class="form-group {% if field.errors %}has-error{% endif %}">
+          <label for="{{ field.id_for_label }}">
+            <i class="fas fa-{% if field.name == 'dossier' %}folder{% elif field.name == 'client' %}user{% elif field.name == 'montant' %}money-bill-wave{% elif field.name == 'date_paiement' %}calendar-alt{% elif field.name == 'moyen_paiement' %}credit-card{% elif field.name == 'url_facture' %}file-invoice{% else %}info-circle{% endif %}"></i>
+            {{ field.label }}
+          </label>
+          
+          {{ field }}
+          
+          {% if field.help_text %}
+            <small class="form-help-text">{{ field.help_text }}</small>
+          {% endif %}
+          
+          {% for error in field.errors %}
+            <div class="form-error">
+              <i class="fas fa-exclamation-circle"></i> {{ error }}
+            </div>
+          {% endfor %}
+        </div>
+        {% endfor %}
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-save">
+          <i class="fas fa-save"></i> Enregistrer
+        </button>
+        <a href="{% url 'detailpaiement' object.pk %}" class="btn btn-cancel">
+          <i class="fas fa-times"></i> Annuler
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<style>
+  .light-theme-container {
+    background-color: #f8f9fa;
+    color: #333333;
+    padding: 2rem;
+    min-height: 100vh;
+  }
+
+  .payment-edit-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+
+  .page-title {
+    color: #2c3e50;
+    font-weight: 600;
+    margin: 0 0 1rem 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 0.9rem;
+    color: #7f8c8d;
+  }
+
+  .breadcrumb-link {
+    color: #3498db; /* Bleu */
+    text-decoration: none;
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .breadcrumb-link:hover {
+    color: #2980b9; /* Bleu plus foncé */
+    text-decoration: underline;
+  }
+
+  .breadcrumb-separator {
+    color: #bdc3c7;
+  }
+
+  .breadcrumb-current {
+    color: #e74c3c; /* Rouge */
+    font-weight: 500;
+  }
+
+  .payment-amount-preview {
+    background-color: #ffffff;
+    border-radius: 6px;
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    border: 1px solid #e0e0e0;
+  }
+
+  .amount-label {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+  }
+
+  .amount-value {
+    color: #27ae60; /* Vert */
+    font-weight: 600;
+    font-size: 1.1rem;
+  }
+
+  .payment-edit-form {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e0e0e0;
+  }
+
+  .edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .form-group label {
+    font-weight: 500;
+    color: #2c3e50;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    background-color: #ffffff;
+    border: 1px solid #d5d5d5;
+    color: #333333;
+    padding: 12px 14px;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    width: 100%;
+  }
+
+  .form-group input[type="number"] {
+    font-family: monospace;
+    font-size: 1.1rem;
+  }
+
+  .form-group select {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%237f8c8d'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    outline: none;
+    border-color: #3498db; /* Bleu */
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+  }
+
+  .form-help-text {
+    color: #7f8c8d;
+    font-size: 0.85rem;
+  }
+
+  .form-error {
+    color: #e74c3c; /* Rouge */
+    font-size: 0.85rem;
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .has-error input,
+  .has-error select,
+  .has-error textarea {
+    border-color: #e74c3c; /* Rouge */
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    border-top: 1px solid #e0e0e0;
+    padding-top: 1.5rem;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: none;
+    gap: 10px;
+    font-weight: 500;
+  }
+
+  .btn-save {
+    background-color: #27ae60; /* Vert */
+    color: white;
+  }
+
+  .btn-save:hover {
+    background-color: #219653;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(39, 174, 96, 0.2);
+  }
+
+  .btn-cancel {
+    background-color: #e74c3c; /* Rouge */
+    color: white;
+  }
+
+  .btn-cancel:hover {
+    background-color: #c0392b;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(231, 76, 60, 0.2);
+  }
+
+  @media (max-width: 768px) {
+    .payment-edit-header {
+      flex-direction: column;
+    }
+    
+    .form-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .form-actions {
+      flex-direction: column;
+    }
+    
+    .btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+</style>
+{% endblock %}

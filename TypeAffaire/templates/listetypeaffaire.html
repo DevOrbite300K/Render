@@ -1,0 +1,155 @@
+{% extends 'admin_base2.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card border-0 shadow-lg" style="background: white;">
+        <div class="card-header border-bottom d-flex justify-content-between align-items-center" 
+             style="background: #f8f9fa;">
+            <h2 class="mb-0 text-dark">
+                <i class="fas fa-folder-open mr-2" style="color: #28a745;"></i>Liste des Types d'Affaires
+            </h2>
+            <a href="{% url 'creertypeaffaire' %}" class="btn btn-yellow">
+                <i class="fas fa-plus mr-2"></i>Créer un nouveau type
+            </a>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Libellé</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for type in types %}
+                        <tr class="align-middle">
+                            <td>{{ type.id }}</td>
+                            <td>{{ type.libelle }}</td>
+                            <td>
+                                <div class="d-flex justify-content-center">
+                                    <a href="{% url 'detailtypeaffaire' type.pk %}" 
+                                       class="btn btn-outline-blue btn-sm mr-2">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{% url 'modifiertypeaffaire' type.pk %}" 
+                                       class="btn btn-outline-green btn-sm mr-2">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="{% url 'supprimertypeaffaire' type.pk %}" 
+                                       class="btn btn-outline-red btn-sm">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" class="text-center text-muted py-4">
+                                <i class="fas fa-info-circle mr-2"></i>Aucun type d'affaire trouvé
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    :root {
+        --green: #28a745;
+        --blue: #007bff;
+        --red: #dc3545;
+        --yellow: #ffc107;
+        --black: #212529;
+    }
+    
+    body {
+        background-color: #f8f9fa;
+    }
+    
+    .card {
+        border-radius: 8px;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn {
+        border-radius: 4px;
+        padding: 8px 15px;
+        transition: all 0.3s ease;
+        font-weight: 500;
+    }
+    
+    .btn-yellow {
+        background-color: var(--yellow);
+        color: var(--black);
+        border: 1px solid var(--yellow);
+    }
+    
+    .btn-yellow:hover {
+        background-color: #e0a800;
+        border-color: #d39e00;
+        color: var(--black);
+    }
+    
+    .table {
+        background-color: white;
+        color: var(--black);
+    }
+    
+    .table thead th {
+        background-color: #f8f9fa;
+        color: var(--black);
+        border-bottom: 2px solid #dee2e6;
+        font-weight: 600;
+    }
+    
+    .table tbody tr:hover {
+        background-color: rgba(0, 0, 0, 0.02);
+    }
+    
+    .btn-outline-blue {
+        border: 1px solid var(--blue);
+        color: var(--blue);
+    }
+    
+    .btn-outline-blue:hover {
+        background-color: rgba(0, 123, 255, 0.1);
+    }
+    
+    .btn-outline-green {
+        border: 1px solid var(--green);
+        color: var(--green);
+    }
+    
+    .btn-outline-green:hover {
+        background-color: rgba(40, 167, 69, 0.1);
+    }
+    
+    .btn-outline-red {
+        border: 1px solid var(--red);
+        color: var(--red);
+    }
+    
+    .btn-outline-red:hover {
+        background-color: rgba(220, 53, 69, 0.1);
+    }
+    
+    .text-muted {
+        color: #6c757d !important;
+    }
+    
+    .card-header {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+</style>
+{% endblock %}

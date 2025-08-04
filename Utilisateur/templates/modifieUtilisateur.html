@@ -1,0 +1,562 @@
+{% extends 'admin_base2.html' %}
+
+{% block style %}
+<style>
+    :root {
+        --primary-blue: #2c5fdc;
+        --primary-green: #3abf94;
+        --accent-red: #e74c3c;
+        --accent-yellow: #f39c12;
+        --dark: #2a3547;
+        --light: #f8f9fa;
+        --text-muted: #6c757d;
+        --card-bg: #ffffff;
+        --border-color: #e9ecef;
+        --input-bg: #f8f9fa;
+    }
+
+    .user-edit-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .form-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .form-title {
+        color: var(--dark);
+        font-weight: 700;
+        font-size: 1.8rem;
+        position: relative;
+        padding-bottom: 10px;
+        font-family: 'Poppins', sans-serif;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .form-title:after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 60px;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary-blue), var(--primary-green), var(--accent-yellow));
+        border-radius: 2px;
+    }
+
+    .back-btn {
+        background: linear-gradient(135deg, var(--primary-blue), var(--primary-green));
+        color: white;
+        padding: 0.8rem 1.8rem;
+        border-radius: 50px;
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        font-weight: 600;
+        transition: all 0.3s;
+        text-decoration: none;
+        font-family: 'Poppins', sans-serif;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        box-shadow: 0 4px 15px rgba(44, 95, 220, 0.2);
+    }
+
+    .back-btn:hover {
+        background: linear-gradient(135deg, var(--primary-green), var(--accent-yellow));
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(58, 191, 148, 0.3);
+    }
+
+    .edit-form-card {
+        background: var(--card-bg);
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        border: none;
+        position: relative;
+        padding: 2rem;
+    }
+
+    .edit-form-card:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 8px;
+        height: 100%;
+        background: linear-gradient(to bottom, 
+            var(--primary-blue), 
+            var(--primary-green),
+            var(--accent-yellow),
+            var(--accent-red));
+    }
+
+    .avatar-section {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .avatar-preview {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid var(--border-color);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .avatar-placeholder {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: rgba(44, 95, 220, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-blue);
+        font-size: 2rem;
+        border: 3px solid var(--border-color);
+    }
+
+    .avatar-upload {
+        flex: 1;
+    }
+
+    .custom-file-input {
+        display: none;
+    }
+
+    .custom-file-label {
+        background: linear-gradient(135deg, var(--primary-blue), var(--primary-green));
+        color: white;
+        padding: 0.8rem 1.5rem;
+        border-radius: 50px;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.8rem;
+        font-weight: 600;
+        transition: all 0.3s;
+        cursor: pointer;
+        font-family: 'Poppins', sans-serif;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        box-shadow: 0 4px 15px rgba(44, 95, 220, 0.2);
+    }
+
+    .custom-file-label:hover {
+        background: linear-gradient(135deg, var(--primary-green), var(--accent-yellow));
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(58, 191, 148, 0.3);
+    }
+
+    .form-group {
+        margin-bottom: 1.8rem;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 0.7rem;
+        color: var(--dark);
+        font-weight: 600;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .form-label i {
+        color: var(--primary-blue);
+        width: 20px;
+        text-align: center;
+    }
+
+    .required-asterisk {
+        color: var(--accent-red);
+        margin-left: 4px;
+    }
+
+    .form-control {
+        background-color: white;
+        border: 1px solid var(--border-color);
+        color: var(--dark);
+        padding: 0.85rem 1.2rem;
+        border-radius: 8px;
+        width: 100%;
+        transition: all 0.3s;
+        font-family: 'Poppins', sans-serif;
+        box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    .form-control:focus {
+        background-color: white;
+        border-color: var(--primary-blue);
+        box-shadow: 0 0 0 3px rgba(44, 95, 220, 0.1);
+        outline: none;
+    }
+
+    select.form-control {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%236c757d' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        background-size: 12px;
+        padding-right: 2.5rem;
+    }
+
+    .form-check {
+        position: relative;
+        display: flex;
+        align-items: center;
+        padding-left: 1.5em;
+        margin-bottom: 1.5rem;
+        cursor: pointer;
+    }
+
+    .form-check-input {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .form-check-label {
+        position: relative;
+        cursor: pointer;
+        padding-left: 2em;
+        color: var(--dark);
+        font-family: 'Poppins', sans-serif;
+        font-weight: 500;
+    }
+
+    .form-check-label:before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0.2em;
+        width: 1.2em;
+        height: 1.2em;
+        border: 2px solid var(--border-color);
+        border-radius: 4px;
+        background: white;
+        transition: all 0.2s ease;
+    }
+
+    .form-check-label:after {
+        content: "";
+        position: absolute;
+        left: 0.4em;
+        top: 0.4em;
+        width: 0.5em;
+        height: 0.9em;
+        border: solid white;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+        opacity: 0;
+        transition: all 0.2s ease;
+    }
+
+    .form-check-input:checked ~ .form-check-label:before {
+        background: var(--primary-blue);
+        border-color: var(--primary-blue);
+    }
+
+    .form-check-input:checked ~ .form-check-label:after {
+        opacity: 1;
+    }
+
+    .form-check-input:focus ~ .form-check-label:before {
+        box-shadow: 0 0 0 3px rgba(44, 95, 220, 0.3);
+    }
+
+    .form-text {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        margin-top: 0.4rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .errorlist {
+        color: var(--accent-red);
+        font-size: 0.85rem;
+        margin-top: 0.5rem;
+        padding-left: 0;
+        list-style: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .errorlist i {
+        width: 16px;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        margin-top: 2.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--border-color);
+    }
+
+    .btn {
+        padding: 0.9rem 2rem;
+        border-radius: 50px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.8rem;
+        transition: all 0.3s;
+        border: none;
+        cursor: pointer;
+        font-family: 'Poppins', sans-serif;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary-blue), var(--primary-green));
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(135deg, var(--primary-green), var(--accent-yellow));
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(58, 191, 148, 0.3);
+    }
+
+    .btn-secondary {
+        background: white;
+        color: var(--dark);
+        border: 1px solid var(--border-color);
+    }
+
+    .btn-secondary:hover {
+        background: #f8f9fa;
+        transform: translateY(-3px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .password-toggle {
+        position: relative;
+    }
+
+    .password-toggle-icon {
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+        cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+        .avatar-section {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .form-actions {
+            flex-direction: column;
+        }
+        
+        .btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="user-edit-container">
+    <div class="form-header">
+        <h1 class="form-title">
+            <i class="fas fa-user-edit me-2" style="color: var(--primary-blue);"></i>Modifier l'utilisateur
+        </h1>
+        <a href="{% url 'detailUtilisateur' user.id %}" class="back-btn">
+            <i class="fas fa-arrow-left me-2"></i> Retour au profil
+        </a>
+    </div>
+
+    <div class="edit-form-card">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger mb-4" style="background-color: rgba(231, 76, 60, 0.1); border-color: var(--accent-red); color: var(--accent-red);">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <div class="avatar-section">
+                {% if user.profile.photo %}
+                    <img src="{{ user.profile.photo.url }}" class="avatar-preview" id="avatarPreview">
+                {% else %}
+                    <div class="avatar-placeholder">
+                        <i class="fas fa-user"></i>
+                    </div>
+                {% endif %}
+                <div class="avatar-upload">
+                    <input type="file" name="photo" id="id_photo" class="custom-file-input" accept="image/*">
+                    <label for="id_photo" class="custom-file-label">
+                        <i class="fas fa-camera me-2"></i>Changer la photo
+                    </label>
+                    {% if form.photo.errors %}
+                        <ul class="errorlist">
+                            {% for error in form.photo.errors %}
+                                <li><i class="fas fa-exclamation-circle"></i>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.username.id_for_label }}" class="form-label">
+                    <i class="fas fa-user-circle" style="color: var(--primary-blue);"></i>Nom d'utilisateur
+                    <span class="required-asterisk">*</span>
+                </label>
+                {{ form.username }}
+                {% if form.username.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.username.errors %}
+                            <li><i class="fas fa-exclamation-circle"></i>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.email.id_for_label }}" class="form-label">
+                    <i class="fas fa-envelope" style="color: var(--primary-green);"></i>Email
+                    <span class="required-asterisk">*</span>
+                </label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.email.errors %}
+                            <li><i class="fas fa-exclamation-circle"></i>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.first_name.id_for_label }}" class="form-label">
+                    <i class="fas fa-signature" style="color: var(--accent-yellow);"></i>Prénom
+                </label>
+                {{ form.first_name }}
+                {% if form.first_name.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.first_name.errors %}
+                            <li><i class="fas fa-exclamation-circle"></i>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.last_name.id_for_label }}" class="form-label">
+                    <i class="fas fa-user-tag" style="color: var(--primary-blue);"></i>Nom
+                </label>
+                {{ form.last_name }}
+                {% if form.last_name.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.last_name.errors %}
+                            <li><i class="fas fa-exclamation-circle"></i>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.role.id_for_label }}" class="form-label">
+                    <i class="fas fa-user-shield" style="color: var(--primary-green);"></i>Rôle
+                </label>
+                {{ form.role }}
+                {% if form.role.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.role.errors %}
+                            <li><i class="fas fa-exclamation-circle"></i>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            <div class="form-check">
+                {{ form.is_active }}
+                <label for="{{ form.is_active.id_for_label }}" class="form-check-label">
+                    Compte actif
+                </label>
+            </div>
+
+            <div class="form-check">
+                {{ form.is_staff }}
+                <label for="{{ form.is_staff.id_for_label }}" class="form-check-label">
+                    Accès administration
+                </label>
+            </div>
+
+            <div class="form-check">
+                {{ form.is_superuser }}
+                <label for="{{ form.is_superuser.id_for_label }}" class="form-check-label">
+                    Super administrateur
+                </label>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save me-2"></i> Enregistrer
+                </button>
+                <a href="{% url 'listeUtilisateur'%}" class="btn btn-secondary">
+                    <i class="fas fa-times me-2"></i> Annuler
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Aperçu de la photo sélectionnée
+    document.getElementById('id_photo').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        const preview = document.getElementById('avatarPreview');
+        
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                if (preview) {
+                    preview.src = event.target.result;
+                } else {
+                    const placeholder = document.querySelector('.avatar-placeholder');
+                    placeholder.innerHTML = `<img src="${event.target.result}" class="avatar-preview" id="avatarPreview">`;
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Ajout de la classe is-invalid pour les champs
+    document.querySelectorAll('.form-control').forEach(function(input) {
+        if (input.classList.contains('is-invalid')) {
+            input.classList.add('is-invalid');
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,611 @@
+{% extends 'admin_base2.html' %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="client-detail-header mb-4">
+                <h2 class="client-title">
+                    <i class="fas fa-user-edit me-2"></i>
+                    Modifier le client
+                </h2>
+                <p class="client-subtitle">Mettez à jour les informations du client</p>
+            </div>
+
+            <div class="client-card">
+                <div class="card-accent"></div>
+                
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            <div class="photo-section">
+                                {% if form.instance.photo %}
+                                    <div class="photo-frame">
+                                        <img src="{{ form.instance.photo.url }}" class="client-photo current-photo" alt="Photo actuelle">
+                                    </div>
+                                    <p class="photo-label">Photo actuelle</p>
+                                {% else %}
+                                    <div class="photo-placeholder">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    <p class="photo-label">Aucune photo</p>
+                                {% endif %}
+                                
+                                <div class="photo-upload-section">
+                                    <div class="file-upload-wrapper">
+                                        <label for="{{ form.photo.id_for_label }}" class="file-upload-label">
+                                            <i class="fas fa-camera me-2"></i>
+                                            <span class="file-text">Changer la photo</span>
+                                        </label>
+                                        {{ form.photo }}
+                                    </div>
+                                    {% if form.photo.errors %}
+                                        <div class="error-message">
+                                            {{ form.photo.errors }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-8">
+                            <div class="client-info">
+                                <h3 class="client-name">{{ form.instance.utilisateur.get_full_name }}</h3>
+                                
+                                <div class="form-group">
+                                    <div class="info-item">
+                                        <i class="fas fa-phone info-icon"></i>
+                                        <div class="info-content">
+                                            <label for="{{ form.telephone.id_for_label }}" class="info-label">Téléphone</label>
+                                            {{ form.telephone }}
+                                            {% if form.telephone.errors %}
+                                                <div class="error-message">
+                                                    {{ form.telephone.errors }}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="info-item">
+                                        <i class="fas fa-map-marker-alt info-icon"></i>
+                                        <div class="info-content">
+                                            <label for="{{ form.adresse.id_for_label }}" class="info-label">Adresse</label>
+                                            {{ form.adresse }}
+                                            {% if form.adresse.errors %}
+                                                <div class="error-message">
+                                                    {{ form.adresse.errors }}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="info-item">
+                                        <i class="fas fa-birthday-cake info-icon"></i>
+                                        <div class="info-content">
+                                            <label for="{{ form.datenaissance.id_for_label }}" class="info-label">Date de naissance</label>
+                                            {{ form.datenaissance }}
+                                            {% if form.datenaissance.errors %}
+                                                <div class="error-message">
+                                                    {{ form.datenaissance.errors }}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="info-item">
+                                        <i class="fas fa-envelope info-icon"></i>
+                                        <div class="info-content">
+                                            <span class="info-label">Email (non modifiable)</span>
+                                            <span class="info-value readonly">{{ form.instance.utilisateur.email }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="action-section">
+                        <button type="submit" class="btn-save">
+                            <i class="fas fa-save me-2"></i>
+                            Enregistrer les modifications
+                        </button>
+                        <a href="{% url 'listeclient' %}" class="btn-cancel">
+                            <i class="fas fa-times me-2"></i>
+                            Annuler
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+:root {
+    --primary-blue: #1e88e5;
+    --primary-green: #43a047;
+    --primary-red: #e53935;
+    --primary-black: #212121;
+    --primary-yellow: #ffd600;
+    --light-bg: #f8f9fa;
+    --lighter-bg: #ffffff;
+    --text-dark: #2a3547;
+    --text-muted: #6c757d;
+    --border-color: #e0e0e0;
+}
+
+.client-detail-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.client-title {
+    color: var(--primary-blue);
+    font-weight: 600;
+    margin: 0;
+    font-size: 2.2rem;
+    text-shadow: 1px 1px 3px rgba(30, 136, 229, 0.1);
+    position: relative;
+    display: inline-block;
+}
+
+.client-title:after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50px;
+    height: 3px;
+    background: var(--primary-green);
+    border-radius: 3px;
+}
+
+.client-title i {
+    color: var(--primary-green);
+}
+
+.client-subtitle {
+    color: var(--primary-blue);
+    font-size: 1.1rem;
+    margin-top: 1rem;
+    margin-bottom: 0;
+    opacity: 0.8;
+}
+
+.client-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(30, 136, 229, 0.1);
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 2rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: none;
+}
+
+.client-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(30, 136, 229, 0.2);
+}
+
+.card-accent {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, var(--primary-blue), var(--primary-green));
+}
+
+.photo-section {
+    padding: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--light-bg) 0%, white 100%);
+    min-height: 400px;
+    border-right: 1px solid rgba(30, 136, 229, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.photo-section:before {
+    content: '';
+    position: absolute;
+    bottom: -50px;
+    right: -50px;
+    width: 150px;
+    height: 150px;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="%231e88e5" opacity="0.05"><path d="M30,10 Q50,5 70,20 T90,50 Q95,70 80,90 T50,95 Q30,90 20,70 T10,30 Q15,10 30,10"></path></svg>') no-repeat;
+    background-size: contain;
+}
+
+.photo-frame {
+    position: relative;
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    padding: 4px;
+    background: linear-gradient(135deg, var(--primary-blue), var(--primary-green));
+    box-shadow: 0 8px 25px rgba(30, 136, 229, 0.2);
+    margin-bottom: 1.5rem;
+    z-index: 2;
+}
+
+.client-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 4px solid white;
+}
+
+.photo-placeholder {
+    width: 160px;
+    height: 160px;
+    background: linear-gradient(135deg, var(--primary-blue), var(--primary-green));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 3.5rem;
+    box-shadow: 0 8px 25px rgba(30, 136, 229, 0.2);
+    margin-bottom: 1.5rem;
+    z-index: 2;
+}
+
+.photo-label {
+    color: var(--primary-blue);
+    font-size: 1rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+    opacity: 0.8;
+    z-index: 2;
+}
+
+.photo-upload-section {
+    width: 100%;
+    max-width: 220px;
+    z-index: 2;
+}
+
+.file-upload-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.file-upload-label {
+    display: block;
+    padding: 0.9rem 1.8rem;
+    background: white;
+    color: var(--primary-blue);
+    text-align: center;
+    border-radius: 30px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(30, 136, 229, 0.1);
+    border: 2px solid var(--primary-green);
+    margin-bottom: 1rem;
+}
+
+.file-upload-label:hover {
+    background: var(--primary-blue);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(30, 136, 229, 0.2);
+    color: white;
+    border-color: var(--primary-blue);
+}
+
+.form-control-file {
+    position: absolute;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+.client-info {
+    padding: 2.5rem;
+    background: white;
+}
+
+.client-name {
+    color: var(--primary-blue);
+    font-weight: 700;
+    margin-bottom: 1.8rem;
+    font-size: 1.8rem;
+    position: relative;
+    padding-bottom: 0.8rem;
+}
+
+.client-name:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: var(--primary-green);
+    border-radius: 3px;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.info-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 1.2rem;
+    background: var(--light-bg);
+    border-radius: 10px;
+    border-left: 4px solid var(--primary-green);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(30, 136, 229, 0.1);
+}
+
+.info-item:hover {
+    background: white;
+    transform: translateX(5px);
+    border-left-color: var(--primary-blue);
+    box-shadow: 0 5px 15px rgba(30, 136, 229, 0.1);
+}
+
+.info-icon {
+    color: var(--primary-blue);
+    font-size: 1.2rem;
+    width: 24px;
+    text-align: center;
+    margin-right: 1.2rem;
+    margin-top: 0.3rem;
+}
+
+.info-content {
+    flex: 1;
+}
+
+.info-label {
+    display: block;
+    color: var(--primary-blue);
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+    opacity: 0.8;
+}
+
+.info-value {
+    display: block;
+    color: var(--text-dark);
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.info-value.readonly {
+    opacity: 0.7;
+    font-style: italic;
+    color: var(--primary-blue);
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.9rem 1.2rem;
+    background: white;
+    border: 2px solid rgba(30, 136, 229, 0.2);
+    border-radius: 8px;
+    color: var(--text-dark);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary-green);
+    box-shadow: 0 0 0 3px rgba(67, 160, 71, 0.2);
+    background: white;
+}
+
+.form-control::placeholder {
+    color: rgba(30, 136, 229, 0.4);
+}
+
+.error-message {
+    color: var(--primary-red);
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+    padding: 0.6rem;
+    background: rgba(229, 57, 53, 0.05);
+    border-radius: 6px;
+    border-left: 3px solid var(--primary-red);
+}
+
+.action-section {
+    text-align: center;
+    margin-top: 2rem;
+    padding: 2rem;
+    background: var(--light-bg);
+    border-top: 1px solid rgba(30, 136, 229, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.action-section:before {
+    content: '';
+    position: absolute;
+    top: -50px;
+    left: -50px;
+    width: 150px;
+    height: 150px;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="%231e88e5" opacity="0.05"><path d="M30,10 Q50,5 70,20 T90,50 Q95,70 80,90 T50,95 Q30,90 20,70 T10,30 Q15,10 30,10"></path></svg>') no-repeat;
+    background-size: contain;
+    transform: rotate(180deg);
+}
+
+.btn-save,
+.btn-cancel {
+    display: inline-flex;
+    align-items: center;
+    padding: 1rem 2.2rem;
+    text-decoration: none;
+    border-radius: 30px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    border: none;
+    cursor: pointer;
+    margin: 0 0.8rem;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.btn-save {
+    background: linear-gradient(135deg, var(--primary-blue), var(--primary-green));
+    color: white;
+}
+
+.btn-save:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--primary-green), var(--primary-blue));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+}
+
+.btn-save:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(30, 136, 229, 0.3);
+}
+
+.btn-save:hover:before {
+    opacity: 1;
+}
+
+.btn-cancel {
+    background: white;
+    color: var(--primary-blue);
+    border: 2px solid var(--primary-blue);
+}
+
+.btn-cancel:hover {
+    background: var(--primary-blue);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(30, 136, 229, 0.2);
+    color: white;
+    text-decoration: none;
+}
+
+@media (max-width: 768px) {
+    .client-card {
+        margin: 0 1rem;
+    }
+    
+    .photo-section {
+        padding: 1.5rem;
+        min-height: 300px;
+        border-right: none;
+        border-bottom: 1px solid rgba(30, 136, 229, 0.1);
+    }
+    
+    .photo-frame,
+    .photo-placeholder {
+        width: 130px;
+        height: 130px;
+    }
+    
+    .photo-placeholder {
+        font-size: 2.8rem;
+    }
+    
+    .client-info {
+        padding: 1.5rem;
+    }
+    
+    .client-name {
+        font-size: 1.5rem;
+    }
+    
+    .info-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .info-icon {
+        margin-right: 0;
+        margin-bottom: 0.8rem;
+        margin-top: 0;
+    }
+    
+    .action-section {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .btn-save,
+    .btn-cancel {
+        width: 100%;
+        margin: 0.5rem 0;
+    }
+}
+</style>
+
+<script>
+// Gestion du fichier upload
+document.querySelector('.form-control-file').addEventListener('change', function(e) {
+    const fileName = e.target.files[0]?.name;
+    const fileText = document.querySelector('.file-text');
+    
+    if (fileName) {
+        fileText.textContent = fileName.length > 20 ? fileName.substring(0, 17) + '...' : fileName;
+    } else {
+        fileText.textContent = 'Changer la photo';
+    }
+});
+
+// Animation des inputs
+document.querySelectorAll('.form-control').forEach(input => {
+    input.addEventListener('focus', function() {
+        this.closest('.info-item').style.transform = 'translateX(10px)';
+        this.closest('.info-item').style.borderLeftColor = 'var(--primary-blue)';
+    });
+    
+    input.addEventListener('blur', function() {
+        this.closest('.info-item').style.transform = 'translateX(5px)';
+        this.closest('.info-item').style.borderLeftColor = 'var(--primary-green)';
+    });
+});
+
+// Effet vague sur les boutons
+document.querySelectorAll('.btn-save, .btn-cancel').forEach(btn => {
+    btn.addEventListener('mouseenter', function() {
+        const ripple = document.createElement('span');
+        ripple.className = 'btn-ripple';
+        this.appendChild(ripple);
+        
+        setTimeout(() => {
+            ripple.remove();
+        }, 1000);
+    });
+});
+</script>
+{% endblock %}

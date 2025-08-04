@@ -1,0 +1,39 @@
+{% extends 'client_base.html' %}
+
+
+{% block title %}Mes Paiements{% endblock %}
+
+{% block content %}
+
+<h2>Mes paiements</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Dossier</th>
+      <th>Montant</th>
+      <th>Date</th>
+      <th>Moyen</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for paiement in paiements %}
+    <tr>
+      <td>{{ paiement.dossier.nom }}</td>
+      <td>{{ paiement.montant }} GNF</td>
+      <td>{{ paiement.date_paiement }}</td>
+      <td>{{ paiement.moyen_paiement }}</td>
+      <td><a href="{% url 'imprimerpaiementclient' paiement.id %}" target="_blank">Imprimer</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+
+{% if not paiements % %}
+  <p>Aucun paiement trouvé.</p>
+{% else %}
+  <p>Vous avez {{ paiements|length }} paiement(s).</p>
+{% endif %}
+
+{% endblock %}

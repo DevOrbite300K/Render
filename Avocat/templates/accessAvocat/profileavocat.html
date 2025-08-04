@@ -1,0 +1,169 @@
+{% extends 'avocat_base.html' %}
+
+{% block content %}
+<div class="container-fluid py-5" style="background-color: #f5f7fa; min-height: 100vh;">
+    <div class="row justify-content-center">
+        <div class="col-lg-10 col-xl-10">
+            <!-- Carte principale -->
+            <div class="card shadow-lg border-0" style="background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.08);">
+                <!-- En-tête avec dégradé coloré -->
+                <div class="card-header py-4" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 50%, #43e97b 100%); border-bottom: none;">
+                    <div class="d-flex align-items-center">
+                        <div class="me-3">
+                            {% if avocat.photo %}
+                            <img src="{{ avocat.photo.url }}" alt="Photo de l'avocat" class="rounded-circle" width="70" height="70" style="object-fit: cover; border: 3px solid white; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                            {% else %}
+                            <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 70px; height: 70px; background-color: rgba(255,255,255,0.3); border: 3px solid white;">
+                                <i class="fas fa-user-tie" style="color: white; font-size: 1.8rem;"></i>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <h3 class="mb-0" style="color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                <i class="fas fa-user-tie me-2"></i>
+                                Profil Avocat
+                            </h3>
+                            <small style="color: rgba(255,255,255,0.9);">Dernière connexion : {{ avocat.utilisateur.last_login|date:"d/m/Y à H:i" }}</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Corps de la carte -->
+                <div class="card-body p-5">
+                    <div class="row">
+                        <!-- Colonne Informations -->
+                        <div class="col-md-6">
+                            <div class="mb-4 p-4 rounded" style="background: white; border-left: 4px solid #ff6b6b; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
+                                <h5 class="mb-4" style="color: #2d3436;">
+                                    <i class="fas fa-info-circle me-2" style="color: #ff6b6b;"></i>
+                                    Informations personnelles
+                                </h5>
+                                
+                                <div class="mb-3">
+                                    <p class="mb-1"><strong style="color: #636e72;">Nom complet :</strong></p>
+                                    <p style="color: #2d3436; font-weight: 500;">{{ avocat.utilisateur.first_name }} {{ avocat.utilisateur.last_name }}</p>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <p class="mb-1"><strong style="color: #636e72;">Email :</strong></p>
+                                    <p style="color: #2d3436; font-weight: 500;">{{ avocat.utilisateur.email }}</p>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <p class="mb-1"><strong style="color: #636e72;">Téléphone :</strong></p>
+                                    <p style="color: #2d3436; font-weight: 500;">{{ avocat.telephone }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Colonne Profession -->
+                        <div class="col-md-6">
+                            <div class="mb-4 p-4 rounded" style="background: white; border-left: 4px solid #feca57; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
+                                <h5 class="mb-4" style="color: #2d3436;">
+                                    <i class="fas fa-briefcase me-2" style="color: #feca57;"></i>
+                                    Informations professionnelles
+                                </h5>
+                                
+                                <div class="mb-3">
+                                    <p class="mb-1"><strong style="color: #636e72;">Spécialité :</strong></p>
+                                    <p style="color: #2d3436; font-weight: 500;">
+                                        {{ avocat.specialite }}
+                                        <span class="badge ms-2" style="background: rgba(254, 202, 87, 0.2); color: #e17055;">
+                                            {{ avocat.get_experience_display }}
+                                        </span>
+                                    </p>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <p class="mb-1"><strong style="color: #636e72;">Barreau :</strong></p>
+                                    <p style="color: #2d3436; font-weight: 500;">{{ avocat.barreau }}</p>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <p class="mb-1"><strong style="color: #636e72;">Membre depuis :</strong></p>
+                                    <p style="color: #2d3436; font-weight: 500;">{{ avocat.utilisateur.date_joined|date:"d/m/Y" }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Boutons d'action -->
+                    <div class="d-flex justify-content-end mt-5 pt-4 border-top" style="border-color: #dfe6e9 !important;">
+                        <a href="{% url 'modifierprofileavocat' %}" class="btn me-3" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; border: none; padding: 10px 25px; font-weight: 600;">
+                            <i class="fas fa-edit me-2"></i> Modifier mon profil
+                        </a>
+                        <a href="{% url 'mesdossiers' %}" class="btn" style="background-color: white; color: #636e72; border: 2px solid #dfe6e9; padding: 10px 25px; font-weight: 600;">
+                            <i class="fas fa-arrow-left me-2"></i> Retour au tableau de bord
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        background-color: #f5f7fa;
+        color: #2d3436;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1) !important;
+    }
+    
+    .badge {
+        font-weight: 600;
+        padding: 0.4em 0.8em;
+        border-radius: 50px;
+    }
+    
+    .btn {
+        transition: all 0.3s ease;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+    
+    .btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+    }
+    
+    /* Amélioration de la lisibilité */
+    h3, h5 {
+        font-weight: 700;
+        letter-spacing: 0.3px;
+    }
+    
+    h3 {
+        font-size: 1.8rem;
+    }
+    
+    h5 {
+        font-size: 1.3rem;
+    }
+    
+    p {
+        margin-bottom: 0.5rem;
+        line-height: 1.7;
+    }
+    
+    strong {
+        font-weight: 600;
+    }
+    
+    .card-header {
+        border-radius: 15px 15px 0 0 !important;
+    }
+    
+    .rounded {
+        border-radius: 12px !important;
+    }
+</style>
+{% endblock %}

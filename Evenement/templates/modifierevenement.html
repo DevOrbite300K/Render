@@ -1,0 +1,273 @@
+{% extends "admin_base2.html" %}
+
+{% block content %}
+<div class="light-theme-container">
+  <div class="form-header">
+    <h2 class="page-title">
+      <i class="fas fa-edit text-primary"></i> Modifier l'Évènement
+    </h2>
+    <div class="breadcrumb">
+      <a href="{% url 'evenementliste' %}" class="breadcrumb-link">
+        <i class="fas fa-calendar-alt"></i> Évènements
+      </a>
+      <span class="breadcrumb-separator">/</span>
+      <a href="{% url 'detailevenement' evenement.pk %}" class="breadcrumb-link">
+        {{ evenement.titre|truncatechars:20 }}
+      </a>
+      <span class="breadcrumb-separator">/</span>
+      <span class="breadcrumb-current">Modification</span>
+    </div>
+  </div>
+
+  <div class="edit-form-container">
+    <form method="post" class="event-form">
+      {% csrf_token %}
+      
+      <div class="form-grid">
+        {% for field in form %}
+        <div class="form-group {% if field.errors %}has-error{% endif %}">
+          <label for="{{ field.id_for_label }}">
+            <i class="fas fa-{% if field.name == 'titre' %}heading{% elif field.name == 'description' %}align-left{% elif field.name == 'date_evenement' %}calendar-day{% elif field.name == 'type_evenement' %}tag{% elif field.name == 'dossier' %}folder{% elif field.name == 'utilisateur' %}user{% else %}circle{% endif %} text-primary"></i>
+            {{ field.label }}
+          </label>
+          
+          {{ field }}
+          
+          {% if field.help_text %}
+            <small class="form-help-text">{{ field.help_text }}</small>
+          {% endif %}
+          
+          {% for error in field.errors %}
+            <div class="form-error">
+              <i class="fas fa-exclamation-circle"></i> {{ error }}
+            </div>
+          {% endfor %}
+        </div>
+        {% endfor %}
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">
+          <i class="fas fa-save"></i> Enregistrer les modifications
+        </button>
+        <a href="{% url 'detailevenement' evenement.pk %}" class="btn btn-outline-secondary">
+          <i class="fas fa-times"></i> Annuler
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<style>
+  :root {
+    --primary-blue: #007bff;
+    --primary-green: #28a745;
+    --primary-red: #dc3545;
+    --primary-yellow: #ffc107;
+    --primary-orange: #fd7e14;
+    --primary-black: #343a40;
+  }
+  
+  .light-theme-container {
+    background-color: #f8f9fa;
+    color: #495057;
+    padding: 2rem;
+    min-height: 100vh;
+  }
+
+  .form-header {
+    margin-bottom: 2rem;
+  }
+
+  .page-title {
+    color: var(--primary-black);
+    font-weight: 500;
+    margin: 0 0 1rem 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .text-primary {
+    color: var(--primary-blue);
+  }
+
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 0.9rem;
+    color: #6c757d;
+    margin-bottom: 1.5rem;
+  }
+
+  .breadcrumb-link {
+    color: #6c757d;
+    text-decoration: none;
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .breadcrumb-link:hover {
+    color: var(--primary-blue);
+  }
+
+  .breadcrumb-separator {
+    color: #adb5bd;
+  }
+
+  .breadcrumb-current {
+    color: var(--primary-black);
+    font-weight: 500;
+  }
+
+  .edit-form-container {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    max-width: 900px;
+    margin: 0 auto;
+    border: 1px solid #e9ecef;
+  }
+
+  .event-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .form-group label {
+    font-weight: 500;
+    color: var(--primary-black);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .form-group input,
+  .form-group textarea,
+  .form-group select {
+    background-color: #ffffff;
+    border: 1px solid #ced4da;
+    color: var(--primary-black);
+    padding: 12px 14px;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    width: 100%;
+  }
+
+  .form-group textarea {
+    min-height: 120px;
+    resize: vertical;
+  }
+
+  .form-group input:focus,
+  .form-group textarea:focus,
+  .form-group select:focus {
+    outline: none;
+    border-color: var(--primary-orange);
+    box-shadow: 0 0 0 0.2rem rgba(253, 126, 20, 0.25);
+  }
+
+  .form-help-text {
+    color: #6c757d;
+    font-size: 0.85rem;
+  }
+
+  .form-error {
+    color: var(--primary-red);
+    font-size: 0.85rem;
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .has-error input,
+  .has-error textarea,
+  .has-error select {
+    border-color: var(--primary-red);
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    border-top: 1px solid #e9ecef;
+    padding-top: 1.5rem;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: none;
+    gap: 10px;
+    font-weight: 500;
+  }
+
+  .btn-primary {
+    background-color: var(--primary-blue);
+    color: white;
+  }
+
+  .btn-primary:hover {
+    background-color: #0069d9;
+    box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
+  }
+
+  .btn-outline-secondary {
+    background-color: transparent;
+    color: #6c757d;
+    border: 1px solid #6c757d;
+  }
+
+  .btn-outline-secondary:hover {
+    background-color: #6c757d;
+    color: white;
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 768px) {
+    .form-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .form-actions {
+      flex-direction: column;
+    }
+    
+    .btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+</style>
+{% endblock %}

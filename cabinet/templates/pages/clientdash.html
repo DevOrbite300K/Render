@@ -1,0 +1,369 @@
+{% extends 'client_base.html' %}
+
+{% block content %}
+
+<div class="dashboard-container">
+  <h2 class="dashboard-title mb-4 animate__animated animate__fadeInDown">📊 Tableau de bord {{client.utilisateur.role}} </h2>
+
+  <!-- Cartes de statistiques -->
+  <div class="row g-4 mb-5 stats-cards">
+    <div class="col-md-3">
+      <div class="card stats-card bg-dark-gradient-1 text-white h-100 shadow-lg animate__animated animate__fadeInLeft animate__delay-1s">
+        <div class="card-body">
+          <div class="stats-icon pulse">
+            <i class="fas fa-folder-open"></i>
+          </div>
+          <h5 class="card-title">Dossiers</h5>
+          <div class="stats-numbers">
+            <span class="stat-value counter" data-target="{{ stats.dossiers_total }}">0</span>
+            <span class="stat-label">Total</span>
+          </div>
+          <div class="stats-numbers">
+            <span class="stat-value counter" data-target="{{ stats.dossiers_actifs }}">0</span>
+            <span class="stat-label">Actifs</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-3">
+      <div class="card stats-card bg-dark-gradient-2 text-white h-100 shadow-lg animate__animated animate__fadeInLeft">
+        <div class="card-body">
+          <div class="stats-icon pulse">
+            <i class="fas fa-file-invoice-dollar"></i>
+          </div>
+          <h5 class="card-title">Paiements</h5>
+          <div class="stats-numbers">
+            <span class="stat-value counter" data-target="{{ stats.total_paiements }}">0</span>
+            <span class="stat-label">Transactions</span>
+          </div>
+          <div class="stats-numbers">
+            <span class="stat-value counter" data-target="{{ stats.montant_total }}">0</span>
+            <span class="stat-label">GNF</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-3">
+      <div class="card stats-card bg-dark-gradient-3 text-white h-100 shadow-lg animate__animated animate__fadeInRight">
+        <div class="card-body">
+          <div class="stats-icon pulse">
+            <i class="fas fa-file-alt"></i>
+          </div>
+          <h5 class="card-title">Documents</h5>
+          <div class="stats-numbers">
+            <span class="stat-value counter" data-target="{{ stats.total_documents }}">0</span>
+            <span class="stat-label">Total</span>
+          </div>
+          <div class="stats-numbers">
+            <span class="stat-value counter" data-target="{{ stats.documents_30j }}">0</span>
+            <span class="stat-label">Récents</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-3">
+      <div class="card stats-card bg-dark-gradient-4 text-white h-100 shadow-lg animate__animated animate__fadeInRight animate__delay-1s">
+        <div class="card-body">
+          <div class="stats-icon pulse">
+            <i class="fas fa-envelope"></i>
+          </div>
+          <h5 class="card-title">Messages</h5>
+          <div class="stats-numbers">
+            <span class="stat-value counter" data-target="{{ stats.total_messages }}">0</span>
+            <span class="stat-label">Total</span>
+          </div>
+          <div class="stats-numbers">
+            <span class="stat-value counter" data-target="{{ stats.messages_non_lus }}">0</span>
+            <span class="stat-label">Non lus</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Graphiques -->
+  <div class="row mb-5 charts-row">
+    <div class="col-md-6">
+      <div class="card chart-card bg-dark-elevated h-100 animate__animated animate__fadeInUp">
+        <div class="card-header">
+          <h5 class="chart-title">📉 Paiements sur 12 mois</h5>
+        </div>
+        <div class="card-body chart-container">
+          <canvas id="paiementsChart"></canvas>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-6">
+      <div class="card chart-card bg-dark-elevated h-100 animate__animated animate__fadeInUp animate__delay-1s">
+        <div class="card-header">
+          <h5 class="chart-title">📁 Répartition des documents</h5>
+        </div>
+        <div class="card-body chart-container">
+          <canvas id="documentsChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dernières activités -->
+  <div class="row activity-row">
+    <div class="col-md-6">
+      <div class="card activity-card bg-dark-elevated h-100 animate__animated animate__fadeInUp">
+        <div class="card-header">
+          <h5 class="activity-title">🧾 Derniers paiements</h5>
+        </div>
+        <div class="card-body p-0">
+          <div class="list-group activity-list">
+            {% for paiement in derniers_paiements %}
+              <div class="list-group-item activity-item d-flex justify-content-between align-items-center slide-in">
+                <div class="activity-date">
+                  <i class="far fa-calendar-alt me-2"></i>
+                  {{ paiement.date_paiement|date:"d M Y" }}
+                </div>
+                <span class="activity-amount">{{ paiement.montant }} GNF</span>
+              </div>
+            {% empty %}
+              <div class="list-group-item activity-item text-muted slide-in">
+                Aucun paiement enregistré
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card activity-card bg-dark-elevated h-100 animate__animated animate__fadeInUp animate__delay-1s">
+        <div class="card-header">
+          <h5 class="activity-title">📬 Derniers messages</h5>
+        </div>
+        <div class="card-body p-0">
+          <div class="list-group activity-list">
+            {% for msg in derniers_messages %}
+              <div class="list-group-item activity-item slide-in">
+                <div class="message-header d-flex justify-content-between">
+                  <strong class="message-sender">{{ msg.utilisateur.username }}</strong>
+                  <span class="message-date">
+                    <i class="far fa-clock me-1"></i>
+                    {{ msg.date_creation|date:"d M Y" }}
+                  </span>
+                </div>
+                <div class="message-preview mt-2">
+                  {{ msg.texte|truncatewords:10 }}
+                </div>
+              </div>
+            {% empty %}
+              <div class="list-group-item activity-item text-muted slide-in">
+                Aucun message
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CSS Animations -->
+<style>
+  @import url('https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css');
+  
+  :root {
+    --dark-primary: #1a1a2e;
+    --dark-secondary: #16213e;
+    --dark-elevated: #0f3460;
+    --accent-color: #e94560;
+    --text-primary: #ffffff;
+    --text-secondary: #b8b8b8;
+    --animation-duration: 0.5s;
+  }
+
+  body {
+    background-color: var(--dark-primary);
+    color: var(--text-primary);
+    overflow-x: hidden;
+  }
+
+  .dashboard-container {
+    padding: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+    opacity: 0;
+    animation: fadeIn 0.8s ease-out forwards;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .dashboard-title {
+    color: var(--text-primary);
+    font-weight: 600;
+    text-align: center;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+  }
+
+  .dashboard-title::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 3px;
+    background: var(--accent-color);
+    border-radius: 3px;
+  }
+
+  /* Animations des cartes de stats */
+  .stats-cards .card {
+    border: none;
+    border-radius: 10px;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transform: perspective(1000px) rotateY(15deg);
+    opacity: 0;
+    animation: cardEntrance 0.6s ease-out forwards;
+  }
+
+  @keyframes cardEntrance {
+    from { 
+      transform: perspective(1000px) rotateY(15deg) translateY(50px);
+      opacity: 0;
+    }
+    to { 
+      transform: perspective(1000px) rotateY(0) translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .stats-cards .card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4) !important;
+    z-index: 10;
+  }
+
+  .stats-cards .card:nth-child(1) { animation-delay: 0.1s; }
+  .stats-cards .card:nth-child(2) { animation-delay: 0.2s; }
+  .stats-cards .card:nth-child(3) { animation-delay: 0.3s; }
+  .stats-cards .card:nth-child(4) { animation-delay: 0.4s; }
+
+  /* Effet pulse sur les icônes */
+  .pulse {
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+  }
+
+  /* Animation des chiffres */
+  .counter {
+    display: inline-block;
+  }
+
+  /* Graphiques animés */
+  .chart-card {
+    border: none;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    transform: translateY(30px);
+    opacity: 0;
+    animation: slideUp 0.8s ease-out forwards;
+  }
+
+  .chart-card:nth-child(2) {
+    animation-delay: 0.3s;
+  }
+
+  @keyframes slideUp {
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  /* Animation des éléments de liste */
+  .slide-in {
+    transform: translateX(-20px);
+    opacity: 0;
+    animation: slideIn 0.5s ease-out forwards;
+  }
+
+  @keyframes slideIn {
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  /* Délais pour les éléments de liste */
+  .activity-list .slide-in:nth-child(1) { animation-delay: 0.1s; }
+  .activity-list .slide-in:nth-child(2) { animation-delay: 0.2s; }
+  .activity-list .slide-in:nth-child(3) { animation-delay: 0.3s; }
+  .activity-list .slide-in:nth-child(4) { animation-delay: 0.4s; }
+  .activity-list .slide-in:nth-child(5) { animation-delay: 0.5s; }
+
+  /* Reste du CSS précédent reste inchangé */
+  /* ... */
+</style>
+
+<!-- Scripts pour les animations -->
+<script>
+  // Animation des compteurs
+  document.addEventListener('DOMContentLoaded', () => {
+    const counters = document.querySelectorAll('.counter');
+    const speed = 200;
+    
+    counters.forEach(counter => {
+      const target = +counter.getAttribute('data-target');
+      const count = +counter.innerText;
+      const increment = target / speed;
+      
+      if(count < target) {
+        counter.innerText = Math.ceil(count + increment);
+        setTimeout(updateCounter, 1);
+      } else {
+        counter.innerText = target;
+      }
+      
+      function updateCounter() {
+        const count = +counter.innerText;
+        const increment = target / speed;
+        
+        if(count < target) {
+          counter.innerText = Math.ceil(count + increment);
+          setTimeout(updateCounter, 1);
+        } else {
+          counter.innerText = target;
+        }
+      }
+    });
+
+    // Animation au scroll
+    const animateOnScroll = () => {
+      const elements = document.querySelectorAll('.slide-in:not(.animated)');
+      
+      elements.forEach(element => {
+        const elementPosition = element.getBoundingClientRect().top;
+        const windowHeight = window.innerHeight;
+        
+        if(elementPosition < windowHeight - 100) {
+          element.classList.add('animated');
+        }
+      });
+    };
+    
+    window.addEventListener('scroll', animateOnScroll);
+    animateOnScroll(); // Initial check
+  });
+</script>
+
+{% endblock %}

@@ -1,0 +1,116 @@
+{% extends 'admin_base2.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card border-0" style="background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+        <div class="card-header border-bottom" style="background: #1a1a2e; border-color: #ddd;">
+            <h2 class="mb-0 text-white">
+                <i class="fas fa-user-tie mr-2" style="color: #FFD700;"></i>Détail du Dossier Client
+            </h2>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="detail-section mb-4" style="border-left: 4px solid #1a1a2e;">
+                        <h5 class="mb-3" style="color: #1a1a2e;"><i class="fas fa-folder-open mr-2" style="color: #FF0000;"></i>Information du Dossier</h5>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between" style="border-color: #eee;">
+                                <span class="font-weight-bold" style="color: #1a1a2e;">ID :</span>
+                                <span class="text-dark">#{{ dossierclient.id }}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between" style="border-color: #eee;">
+                                <span class="font-weight-bold" style="color: #1a1a2e;">Dossier :</span>
+                                <a href="{% url 'detaildossierclient' dossierclient.dossier.pk %}" class="text-primary">
+                                    {{ dossierclient.dossier }}
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="detail-section mb-4" style="border-left: 4px solid #1a1a2e;">
+                        <h5 class="mb-3" style="color: #1a1a2e;"><i class="fas fa-user mr-2" style="color: #00FF00;"></i>Information du Client</h5>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between" style="border-color: #eee;">
+                                <span class="font-weight-bold" style="color: #1a1a2e;">Client :</span>
+                                <a href="{% url 'detaildossierclient' dossierclient.client.pk %}" class="text-primary">
+                                    {{ dossierclient.client }}
+                                </a>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between" style="border-color: #eee;">
+                                <span class="font-weight-bold" style="color: #1a1a2e;">Rôle :</span>
+                                <span class="badge" style="background: rgba(255, 215, 0, 0.2); color: #1a1a2e;">
+                                    {{ dossierclient.get_rôle_client_display }}
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer border-top" style="background: #f8f9fa; border-color: #ddd;">
+            <div class="d-flex justify-content-between">
+                <a href="{% url 'dossierclientliste' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left mr-2"></i>Retour à la liste
+                </a>
+                <div>
+                    <a href="{% url 'modifierdossierclient' dossierclient.pk %}" class="btn btn-warning mr-2" style="background-color: #FFD700; border-color: #FFD700;">
+                        <i class="fas fa-edit mr-2"></i>Modifier
+                    </a>
+                    <a href="{% url 'supprimerdossierclient' dossierclient.pk %}" class="btn btn-danger" style="background-color: #FF0000; border-color: #FF0000;">
+                        <i class="fas fa-trash-alt mr-2"></i>Supprimer
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        background-color: #f5f5f5;
+    }
+    
+    .card {
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    
+    .detail-section {
+        background: #ffffff;
+        border-radius: 4px;
+        padding: 1.25rem;
+    }
+    
+    .text-primary {
+        color: #1a1a2e !important;
+    }
+    
+    .btn-outline-secondary {
+        border-color: #1a1a2e;
+        color: #1a1a2e;
+    }
+    
+    .btn-outline-secondary:hover {
+        background-color: #1a1a2e;
+        color: white;
+    }
+    
+    .btn-warning:hover {
+        background-color: #e6c200;
+        border-color: #e6c200;
+    }
+    
+    .btn-danger:hover {
+        background-color: #cc0000;
+        border-color: #cc0000;
+    }
+    
+    .badge {
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-weight: 500;
+    }
+</style>
+{% endblock %}

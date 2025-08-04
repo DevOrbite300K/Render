@@ -1,0 +1,423 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>👨‍💼 Espace Client – Cabinet Juridique</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap Dark Theme + Font Awesome pour icônes -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bs-body-bg: #121212;
+            --bs-body-color: #e0e0e0;
+            --bs-dark-rgb: 30, 30, 30;
+            --bs-light-rgb: 40, 40, 40;
+        }
+
+        body {
+            background-color: var(--bs-body-bg);
+            color: var(--bs-body-color);
+            font-family: 'Georgia', serif;
+        }
+
+        .navbar {
+            border-bottom: 1px solid #333;
+        }
+
+        .container {
+            background-color: rgba(30, 30, 30, 0.8);
+            border-radius: 5px;
+            padding: 2rem;
+            margin-top: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .footer {
+            background-color: #1a1a1a !important;
+            border-top: 1px solid #333;
+        }
+
+        .nav-link {
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: #a0a0ff !important;
+        }
+
+        .navbar-brand {
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .profile-img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #8b9dc3;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            font-size: 0.7em;
+            background-color: #dc3545;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notification-wrapper {
+            position: relative;
+            margin-right: 15px;
+        }
+
+        .dropdown-menu {
+            background-color: #2a2a2a;
+            border: 1px solid #444;
+        }
+
+        .dropdown-item {
+            color: #e0e0e0;
+        }
+
+        .dropdown-item:hover {
+            background-color: #3a3a3a;
+            color: #ffffff;
+        }
+
+        .dropdown-divider {
+            border-color: #444;
+        }
+
+        .profile-pic {
+          max-width: 50px;
+          max-height: 50px;
+          object-fit: cover;  /* pour cadrer proprement */
+          border-radius: 10px; /* arrondir les coins si tu veux */
+      }
+
+
+    </style>
+
+    <style>
+  .notification-icon {
+    position: relative;
+    transition: all 0.3s ease;
+  }
+
+  .notification-icon:hover {
+    transform: scale(1.1);
+  }
+
+  .notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: #ff4757;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: bold;
+    animation: pulse 1.5s infinite;
+  }
+
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); box-shadow: 0 0 0 5px rgba(255, 71, 87, 0.3); }
+    100% { transform: scale(1); }
+  }
+
+  /* Animation quand un nouveau message arrive */
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+  }
+
+  .new-notification {
+    animation: bounce 0.5s ease;
+  }
+</style>
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+<!-- Barre de navigation -->
+<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #1a1a1a;">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{% url 'clientdash' %}">
+        <span style="color: #8b9dc3;">⚖️</span> Cabinet MIPGroup
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'mesdossiersclient' %}"><i class="fas fa-folder-open me-1"></i> Mes Dossiers</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'clientcommenter' %}"><i class="fas fa-comment me-1"></i> Commenter</a>
+        </li>
+      </ul>
+      <ul class="navbar-nav">
+        <li class="nav-item notification-wrapper">
+          <a class="nav-link notification-icon" href="#" data-bs-toggle="dropdown" id="notificationBell">
+  <i class="fas fa-bell"></i>
+  {% if unread_messages.count > 0 %}
+    <span class="notification-badge pulse">{{ unread_messages.count }}</span>
+  {% endif %}
+</a>
+        <ul class="dropdown-menu dropdown-menu-end notification-menu">
+  <li>
+    <h6 class="dropdown-header d-flex justify-content-between align-items-center">
+      <span>Notifications</span>
+      {% if unread_messages.count > 0 %}
+        <span class="badge bg-danger pulse-notification">{{ unread_messages.count }} non lues</span>
+      {% endif %}
+    </h6>
+  </li>
+
+  <div class="notification-container">
+    {% for message in derniers_messages %}
+    <li>
+      <a class="dropdown-item notification-item {% if not message.lu %}unread{% endif %}"
+         href="{% url 'dossierdetailclient' message.dossier.id %}"
+         data-message-id="{{ message.id }}">
+        <div class="d-flex align-items-center">
+          <div class="notification-icon me-2">
+            <i class="fas fa-envelope"></i>
+          </div>
+          <div class="notification-content">
+            <div class="notification-title">
+              {{ message.utilisateur.get_full_name|default:message.utilisateur.username }}
+            </div>
+            <small class="notification-text">
+              {{ message.texte|truncatechars:50 }}
+            </small>
+            <div class="notification-time text-white">
+              <small>{{ message.date_creation|timesince }}</small>
+            </div>
+          </div>
+          {% if not message.lu %}
+          <span class="unread-indicator ms-auto"></span>
+          {% endif %}
+        </div>
+      </a>
+    </li>
+    {% empty %}
+    <li><a class="dropdown-item text-center py-3 text-muted">
+      <i class="far fa-bell-slash fa-2x mb-2"></i><br>
+      Aucune notification
+    </a></li>
+    {% endfor %}
+  </div>
+
+  <li><hr class="dropdown-divider"></li>
+  <li>
+    <a class="dropdown-item text-center view-all" href="{% url 'mesdossiersclient' %}">
+      <span>Voir tous les messages</span>
+      <i class="fas fa-chevron-right ms-2"></i>
+    </a>
+  </li>
+</ul>
+
+
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                {% if client.photo %}
+                    <img src="{{ client.photo.url }}" alt="Photo" class="img-thumbnail profile-pic" width="150">
+                {% else %}
+                    <img src="{% static 'assets/img/profile.jpg' %}" alt="Photo" class="img-thumbnail profile-pic" width="150">
+                {% endif %}
+
+
+
+
+            {{ user.username }}
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" href=" {% url 'modifierprofileclient' %} "><i class="fas fa-user-cog me-2"></i>Modifier mon profile</a></li>
+            <li><a class="dropdown-item" href=" {% url 'modifiercompteclient' %} "><i class="fas fa-user-cog me-2"></i>Modifier mon compte</a></li>
+            <li><a class="dropdown-item" href=" {% url 'infosclient' %} "><i class="fas fa-envelope me-2"></i>Mes informations</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item text-danger" href="{% url 'deconnexion' %}"><i class="fas fa-sign-out-alt me-2"></i>Déconnexion</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Contenu principal -->
+<main class="flex-grow-1">
+    <div class="container mt-4 mb-5">
+        {% block content %}
+
+
+
+
+        {% endblock %}
+    </div>
+</main>
+
+<!-- Footer -->
+<footer class="footer mt-auto py-3">
+  <div class="container text-center">
+    <span class="text-muted">© {{ now|date:"Y" }} - Cabinet juridique virtuel | Tous droits réservés</span>
+  </div>
+</footer>
+
+<!-- Scripts JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const ctx = document.getElementById('paiementsChart').getContext('2d');
+const paiementsChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: {{ mois_paiements|safe }},
+        datasets: [{
+            label: 'Montant payé (GNF)',
+            data: {{ montants_paiements|safe }},
+            borderColor: '#8b9dc3',
+            backgroundColor: 'rgba(139, 157, 195, 0.2)',
+            tension: 0.4
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                ticks: { color: '#e0e0e0' },
+                beginAtZero: true
+            },
+            x: {
+                ticks: { color: '#e0e0e0' }
+            }
+        },
+        plugins: {
+            legend: { labels: { color: '#e0e0e0' } }
+        }
+    }
+});
+</script>
+
+<script>
+const docCtx = document.getElementById('documentsChart').getContext('2d');
+const documentsChart = new Chart(docCtx, {
+    type: 'doughnut',
+    data: {
+        labels: {{ types_documents_labels|safe }},
+        datasets: [{
+            data: {{ types_documents_data|safe }},
+            backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#8b9dc3', '#f6c23e'],
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { labels: { color: '#e0e0e0' } }
+        }
+    }
+});
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Marquer comme lu au clic
+  document.querySelectorAll('.notification-item.unread').forEach(item => {
+    item.addEventListener('click', function(e) {
+      const messageId = this.dataset.messageId;
+
+      // Animation visuelle immédiate
+      this.classList.remove('unread');
+      this.querySelector('.unread-indicator')?.remove();
+
+      // Appel AJAX pour marquer comme lu
+      if(messageId) {
+        fetch(`/api/messages/${messageId}/mark-as-read/`, {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            'Content-Type': 'application/json'
+          }
+        });
+      }
+
+      // Mettre à jour le compteur
+      const badge = document.querySelector('.pulse-notification');
+      if(badge) {
+        const count = parseInt(badge.textContent) - 1;
+        badge.textContent = count > 0 ? `${count} non lues` : '0 non lue';
+        if(count <= 0) badge.classList.remove('bg-danger', 'pulse-notification');
+      }
+    });
+  });
+
+  // Fonction utilitaire pour récupérer le cookie CSRF
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+});
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const notificationBell = document.getElementById('notificationBell');
+
+  // Animation au chargement si notifications non lues
+  if (document.querySelector('.notification-badge')) {
+    notificationBell.classList.add('new-notification');
+    setTimeout(() => {
+      notificationBell.classList.remove('new-notification');
+    }, 1000);
+  }
+
+  // Simulation de nouvelle notification (à remplacer par du WebSocket en réel)
+  function simulateNewNotification() {
+    const badge = notificationBell.querySelector('.notification-badge');
+    if (badge) {
+      badge.textContent = parseInt(badge.textContent) + 1;
+    } else {
+      notificationBell.innerHTML += `<span class="notification-badge pulse">1</span>`;
+    }
+    notificationBell.classList.add('new-notification');
+    setTimeout(() => {
+      notificationBell.classList.remove('new-notification');
+    }, 1000);
+  }
+
+  // Pour tester : décommentez la ligne suivante
+  // setTimeout(simulateNewNotification, 3000);
+});
+</script>
+
+</body>
+</html>

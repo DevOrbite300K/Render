@@ -1,0 +1,286 @@
+{% extends 'admin_base2.html' %}
+
+{% block style %}
+<style>
+    :root {
+        --primary-blue: #2c5fdc;
+        --primary-green: #3abf94;
+        --accent-red: #e74c3c;
+        --accent-yellow: #f39c12;
+        --dark: #2a3547;
+        --light: #f8f9fa;
+        --text-muted: #6c757d;
+        --card-bg: #ffffff;
+        --border-color: #e9ecef;
+    }
+
+    body {
+        background-color: var(--light);
+    }
+
+    .avocat-table {
+        background-color: var(--card-bg);
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        border: none;
+        position: relative;
+    }
+
+    .avocat-table:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 8px;
+        height: 100%;
+        background: linear-gradient(to bottom, 
+            var(--primary-blue), 
+            var(--primary-green),
+            var(--accent-yellow),
+            var(--accent-red));
+    }
+
+    .table-light {
+        background-color: transparent;
+        color: var(--dark);
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .table-light thead {
+        background: linear-gradient(135deg, var(--primary-blue), var(--primary-green));
+        color: white;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-size: 0.85rem;
+    }
+
+    .table-light th {
+        border: none;
+        padding: 1.2rem 1rem;
+        vertical-align: middle;
+        font-weight: 600;
+    }
+
+    .table-light td {
+        border-top: 1px solid var(--border-color);
+        padding: 1rem;
+        vertical-align: middle;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: rgba(44, 95, 220, 0.05);
+        transition: all 0.3s ease;
+    }
+
+    .img-thumbnail {
+        background-color: rgba(44, 95, 220, 0.05);
+        border: 1px solid var(--border-color);
+        transition: transform 0.3s ease;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .img-thumbnail:hover {
+        transform: scale(1.1);
+    }
+
+    .btn-action {
+        width: 36px;
+        height: 36px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-view {
+        background: var(--primary-blue);
+        color: white;
+    }
+
+    .btn-edit {
+        background: var(--accent-yellow);
+        color: var(--dark);
+    }
+
+    .btn-delete {
+        background: var(--accent-red);
+        color: white;
+    }
+
+    .btn-action:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+    }
+
+    .empty-state {
+        background-color: rgba(248, 249, 250, 0.8);
+    }
+
+    .section-title {
+        position: relative;
+        padding-bottom: 15px;
+        color: var(--dark);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .section-title:after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        bottom: 0;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary-blue), var(--primary-green), var(--accent-yellow));
+        border-radius: 2px;
+    }
+
+    .badge {
+        font-weight: 600;
+        padding: 0.4em 0.8em;
+        border-radius: 50px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .badge-specialite {
+        background-color: rgba(44, 95, 220, 0.1);
+        color: var(--primary-blue);
+    }
+
+    .card-header {
+        border-bottom: 1px solid var(--border-color);
+        background: white;
+    }
+
+    .avatar-placeholder {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: rgba(44, 95, 220, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-blue);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-xl-12 col-lg-12">
+            <div class="card avocat-table">
+                <div class="card-header border-0">
+                    <h2 class="section-title text-center mb-0">
+                        <i class="fas fa-balance-scale me-2" style="color: var(--primary-blue);"></i>Liste des Expert / Personnel Administratif
+                    </h2>
+                </div>
+                
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-light table-hover align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="ps-4">#</th>
+                                    <th>Photo</th>
+                                    <th>Nom Complet</th>
+                                    <th>Email</th>
+                                    <th>Spécialité</th>
+                                    <th>Role</th>
+                                    <th>Téléphone</th>
+                                    <th>Adresse</th>
+                                    <th class="text-center pe-4">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for avocat in avocats %}
+                                <tr>
+                                    <td class="ps-4">{{ forloop.counter }}</td>
+                                    <td>
+                                        {% if avocat.photo %}
+                                        <div class="avatar-container">
+                                            <img src="{{ avocat.photo.url }}" 
+                                                 alt="Photo de {{ avocat.utilisateur.get_full_name }}" 
+                                                 class="img-thumbnail rounded-circle"
+                                                 style="width:48px; height:48px; object-fit:cover;">
+                                        </div>
+                                        {% else %}
+                                        <div class="avatar-placeholder">
+                                            <i class="fas fa-user-tie"></i>
+                                        </div>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ avocat.utilisateur.get_full_name }}</td>
+                                    <td>{{ avocat.utilisateur.email }}</td>
+                                    <td>
+                                        <span class="badge badge-specialite">
+                                            {{ avocat.get_specialite_display }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge badge-specialite">
+                                            {{ avocat.utilisateur.role }}
+                                        </span>
+                                    <td>{{ avocat.telephone }}</td>
+                                    <td class="text-truncate" style="max-width: 200px;">{{ avocat.adresse }}</td>
+                                    <td class="text-center pe-4">
+                                        <div class="d-flex justify-content-center">
+                                            <a href="{% url 'detailavocat' avocat.id %}" 
+                                               class="btn btn-view btn-action me-2" 
+                                               title="Détails"
+                                               data-bs-toggle="tooltip">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{% url 'modifieavocat' avocat.id %}" 
+                                               class="btn btn-edit btn-action me-2" 
+                                               title="Modifier"
+                                               data-bs-toggle="tooltip">
+                                                <i class="fas fa-pencil-alt"></i>
+                                            </a>
+                                            <a href="{% url 'supprimeravocat' avocat.id %}" 
+                                               class="btn btn-delete btn-action" 
+                                               title="Supprimer"
+                                               data-bs-toggle="tooltip"
+                                               onclick="return confirm('Voulez-vous vraiment supprimer cet avocat ?');">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="8" class="text-center py-4 empty-state">
+                                        <div class="d-flex flex-column align-items-center">
+                                            <i class="fas fa-user-tie fa-3x text-muted mb-3" style="color: var(--primary-blue);"></i>
+                                            <h5 class="text-muted">Aucun avocat enregistré</h5>
+                                            <p class="text-muted mb-0">Commencez par ajouter un nouvel avocat</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Activer les tooltips Bootstrap
+    document.addEventListener('DOMContentLoaded', function() {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+</script>
+{% endblock %}

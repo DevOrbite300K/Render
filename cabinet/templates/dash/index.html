@@ -1,0 +1,578 @@
+{% extends 'admin_base2.html' %}
+{% block content %}
+
+<div class="container-fluid py-4">
+    <!-- En-tête -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-tachometer-alt mr-2"></i>Tableau de bord administratif
+        </h1>
+        <div class="d-flex">
+            <span class="badge bg-primary p-2 mr-2">
+                <i class="fas fa-user mr-1"></i> {{ user }}
+            </span>
+            <span class="badge bg-success p-2">
+                <i class="fas fa-calendar-alt mr-1"></i> {{ now|date:"d/m/Y" }}
+            </span>
+        </div>
+    </div>
+
+    <!-- Cartes de statistiques -->
+    <div class="row mb-4">
+        <!-- Carte Dossiers -->
+        <div class="col-xl-2 col-md-4 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Dossiers</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ nb_dossiers }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-folder fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Carte Avocats -->
+        <div class="col-xl-2 col-md-4 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Experts</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ nb_avocats }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-user-tie fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Carte Clients -->
+        <div class="col-xl-2 col-md-4 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Clients</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ nb_clients }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-users fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Carte Documents -->
+        <div class="col-xl-2 col-md-4 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Documents</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ nb_documents }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-file-alt fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Carte Utilisateurs -->
+        <div class="col-xl-2 col-md-4 mb-4">
+            <div class="card border-left-danger shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                Utilisateurs</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ nb_profils }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-user-shield fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Carte Paiements -->
+        <div class="col-xl-2 col-md-4 mb-4">
+            <div class="card border-left-dark shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-dark text-uppercase mb-1">
+                                Paiements (GNF)</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ montant_total|floatformat:2 }}</div>
+                        </div>
+                        <div class="col-auto">
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Première ligne de graphiques -->
+    <div class="row">
+        <!-- Graphique spécialités avocats -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow h-100">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between bg-primary text-white">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="fas fa-gavel mr-1"></i> Spécialités des avocats
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container" style="position: relative; height: 350px;">
+                        <canvas id="avocatsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Graphique types de documents -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow h-100">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between bg-success text-white">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="fas fa-file-contract mr-1"></i> Types de documents
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container" style="position: relative; height: 350px;">
+                        <canvas id="documentsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Deuxième ligne de graphiques -->
+    <div class="row">
+        <!-- Graphique modes de paiement -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow h-100">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between bg-info text-white">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="fas fa-credit-card mr-1"></i> Modes de paiement
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container" style="position: relative; height: 350px;">
+                        <canvas id="paiementsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Graphique types de clients -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow h-100">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between bg-warning text-dark">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="fas fa-user-tag mr-1"></i> Types de clients
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container" style="position: relative; height: 350px;">
+                        <canvas id="clientsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Graphique supplémentaire pour les rôles -->
+    <div class="row">
+        <div class="col-12 mb-4">
+            <div class="card shadow h-100">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between bg-secondary text-white">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="fas fa-users-cog mr-1"></i> Répartition des rôles utilisateurs
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container" style="position: relative; height: 400px;">
+                        <canvas id="rolesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section Activités récentes -->
+    <div class="row">
+        <!-- Dossiers récents -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow h-100">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between bg-primary text-white">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="fas fa-folder-open mr-1"></i> Dossiers récents
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        {% for dossier in recent_dossiers %}
+                        <a href="#" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ dossier.titre|truncatechars:30 }}</h6>
+                                <small>{{ dossier.date_ouverture|date:"d/m/Y" }}</small>
+                            </div>
+                            <p class="mb-1 text-muted">{{ dossier.description|truncatechars:50 }}</p>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Documents récents -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow h-100">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between bg-success text-white">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="fas fa-file-upload mr-1"></i> Documents récents
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        {% for doc in recent_documents %}
+                        <a href="#" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ doc.type_document }}</h6>
+                                <small>{{ doc.date_ajout|date:"d/m/Y" }}</small>
+                            </div>
+                            <p class="mb-1 text-muted">{{ doc.nom_fichier|truncatechars:30 }}</p>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Paiements récents -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow h-100">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between bg-info text-white">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="fas fa-money-bill-wave mr-1"></i> Paiements récents
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        {% for paiement in recent_paiements %}
+                        <a href="#" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ paiement.montant|floatformat:2 }} GNF</h6>
+                                <small>{{ paiement.date_paiement|date:"d/m/Y" }}</small>
+                            </div>
+                            <p class="mb-1 text-muted">{{ paiement.moyen_paiement }}</p>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chargement des bibliothèques JS -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+
+<script>
+// Configuration des couleurs
+const chartColors = {
+    primary: '#4e73df',
+    success: '#1cc88a',
+    info: '#36b9cc',
+    warning: '#f6c23e',
+    danger: '#e74a3b',
+    secondary: '#858796',
+    dark: '#5a5c69'
+};
+
+// Fonction pour créer un graphique camembert
+function createPieChart(ctxId, labels, data, title, colorScheme) {
+    const ctx = document.getElementById(ctxId);
+    if (!ctx) return null;
+    
+    return new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: data,
+                backgroundColor: colorScheme,
+                hoverBackgroundColor: colorScheme.map(c => Chart.helpers.color(c).darken(0.2).rgbString()),
+                hoverBorderColor: "rgba(234, 236, 244, 1)",
+            }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'right',
+                    labels: {
+                        padding: 20,
+                        usePointStyle: true,
+                        font: {
+                            size: 12
+                        }
+                    }
+                },
+                title: {
+                    display: true,
+                    text: title,
+                    font: {
+                        size: 16,
+                        weight: 'bold'
+                    },
+                    padding: {
+                        top: 10,
+                        bottom: 20
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label || '';
+                            const value = context.raw || 0;
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percentage = Math.round((value / total) * 100);
+                            return `${label}: ${value} (${percentage}%)`;
+                        }
+                    }
+                },
+                datalabels: {
+                    color: '#fff',
+                    font: {
+                        weight: 'bold'
+                    },
+                    formatter: (value, ctx) => {
+                        const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                        return Math.round((value / total) * 100) + '%';
+                    }
+                }
+            },
+            cutout: '60%'
+        },
+        plugins: [ChartDataLabels]
+    });
+}
+
+// Fonction pour créer un graphique en barres
+function createBarChart(ctxId, labels, data, title, color) {
+    const ctx = document.getElementById(ctxId);
+    if (!ctx) return null;
+    
+    return new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: title,
+                data: data,
+                backgroundColor: Chart.helpers.color(color).alpha(0.7).rgbString(),
+                borderColor: color,
+                borderWidth: 2,
+                hoverBackgroundColor: color,
+                hoverBorderColor: Chart.helpers.color(color).darken(0.3).rgbString(),
+            }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0,
+                        font: {
+                            weight: 'bold'
+                        }
+                    },
+                    grid: {
+                        drawBorder: false
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        font: {
+                            weight: 'bold'
+                        }
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                title: {
+                    display: true,
+                    text: title,
+                    font: {
+                        size: 16,
+                        weight: 'bold'
+                    },
+                    padding: {
+                        top: 10,
+                        bottom: 20
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `${context.parsed.y}`;
+                        }
+                    }
+                },
+                datalabels: {
+                    anchor: 'end',
+                    align: 'top',
+                    color: chartColors.dark,
+                    font: {
+                        weight: 'bold'
+                    }
+                }
+            }
+        },
+        plugins: [ChartDataLabels]
+    });
+}
+
+// Initialisation des graphiques
+document.addEventListener('DOMContentLoaded', function() {
+    try {
+        // Spécialités des avocats (camembert)
+        createPieChart(
+            'avocatsChart',
+            {{ avocat_labels|safe }},
+            {{ avocat_data|safe }},
+            'Répartition par spécialité',
+            [
+                chartColors.primary,
+                chartColors.success,
+                chartColors.info,
+                chartColors.warning,
+                chartColors.danger
+            ]
+        );
+
+        // Types de documents (barres)
+        createBarChart(
+            'documentsChart',
+            {{ document_labels|safe }},
+            {{ document_data|safe }},
+            'Nombre par type',
+            chartColors.success
+        );
+
+        // Modes de paiement (camembert)
+        createPieChart(
+            'paiementsChart',
+            {{ paiement_labels|safe }},
+            {{ paiement_data|safe }},
+            'Répartition des paiements',
+            [
+                chartColors.info,
+                chartColors.warning,
+                chartColors.secondary,
+                chartColors.primary
+            ]
+        );
+
+        // Types de clients (barres)
+        createBarChart(
+            'clientsChart',
+            {{ client_labels|safe }},
+            {{ client_data|safe }},
+            'Répartition des clients',
+            chartColors.warning
+        );
+
+        // Rôles utilisateurs (camembert)
+        createPieChart(
+            'rolesChart',
+            {{ roles_labels|safe }},
+            {{ roles_data|safe }},
+            'Distribution des rôles',
+            [
+                chartColors.primary,
+                chartColors.success,
+                chartColors.info,
+                chartColors.warning,
+                chartColors.danger,
+                chartColors.secondary
+            ]
+        );
+
+    } catch (error) {
+        console.error('Erreur lors de la création des graphiques:', error);
+        document.querySelectorAll('.chart-container').forEach(container => {
+            container.innerHTML = '<div class="alert alert-danger">Erreur lors du chargement des graphiques</div>';
+        });
+    }
+});
+</script>
+
+<style>
+    .chart-container {
+        min-height: 300px;
+        padding: 15px;
+    }
+    
+    .card {
+        border-radius: 0.5rem;
+        transition: all 0.3s ease;
+        border: none;
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.15) !important;
+    }
+    
+    .card-header {
+        border-radius: 0.5rem 0.5rem 0 0 !important;
+        border: none;
+    }
+    
+    .badge {
+        font-size: 0.85rem;
+        font-weight: 600;
+        border-radius: 0.25rem;
+    }
+    
+    .list-group-item {
+        border-left: none;
+        border-right: none;
+    }
+    
+    .list-group-item:first-child {
+        border-top: none;
+    }
+    
+    .list-group-item:last-child {
+        border-bottom: none;
+    }
+</style>
+{% endblock %}

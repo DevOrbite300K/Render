@@ -1,0 +1,90 @@
+
+{% extends 'baseS.html' %}
+{% load static %}
+
+
+{% block content %}
+    
+    <section class="hero-wrap hero-wrap-2" style="background-image: url('{% static "assetsS/images/img.png" %}');" data-stellar-background-ratio="0.5">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row no-gutters slider-text align-items-end justify-content-center">
+          <div class="col-md-9 ftco-animate pb-5 text-center">
+            <h1 class="mb-3 bread">Apercue integrale de la publication</h1>
+            <p class="breadcrumbs"><span class="mr-2"><a href="{% url 'index' %}">Accueil <i class="ion-ios-arrow-forward"></i></a></span> <span class="mr-2"><a href="{% url 'publications' %}">Publication <i class="ion-ios-arrow-forward"></i></a></span> <span>Apercue integrale <i class="ion-ios-arrow-forward"></i></span></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="ftco-section ftco-degree-bg">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 ftco-animate">
+          	<p>
+              {% if publication.image1 %}
+              <img src="{{ publication.image1.url }}" alt="" class="img-fluid">
+              {% endif %}
+            </p>
+            <h2 class="mb-3">{{ publication.titre }}</h2>
+            <p>Par {{ publication.auteur }} | {{ publication.date_publication|date:"d M Y H:i" }}</p>
+            
+            
+            {% if publication.contenu1 %}
+            <p>{{ publication.contenu1 }}</p>
+            {% endif %}
+            <p>
+              {% if publication.image2 %}
+              <img src="{{ publication.image2.url }}" alt="" class="img-fluid">
+              {% endif %}
+            </p>
+            {% if publication.contenu2 %}
+            <p>{{ publication.contenu2 }}</p>
+            {% endif %}
+            {% comment %} <div class="tag-widget post-tag-container mb-5 mt-5">
+              <div class="tagcloud">
+                <a href="#" class="tag-cloud-link">Life</a>
+                <a href="#" class="tag-cloud-link">Sport</a>
+                <a href="#" class="tag-cloud-link">Tech</a> 
+                <a href="#" class="tag-cloud-link">Travel</a>
+              </div>
+            </div> {% endcomment %}
+          </div> <!-- .col-md-8 -->
+          <div class="col-lg-4 sidebar pl-lg-5 ftco-animate">
+            
+           <div class="sidebar-box ftco-animate">
+              <div class="categories">
+                <h3>NOS CHAMPS D'EXPERTISE</h3>
+                <li class="active"><a href="{% url 'conseil6' %}">Administration publique <span class="ion-ios-arrow-forward"></span></a></li>
+                <li><a href="{% url 'conseil7' %}">Secteur de la santé <span class="ion-ios-arrow-forward"></span></a></li>
+                <li><a href="{% url 'conseil9' %}">Monde des affaires <span class="ion-ios-arrow-forward"></span></a></li>
+                <li><a href="{% url 'conseil10' %}">Marchés publics, PPP et contrats <span class="ion-ios-arrow-forward"></span></a></li>
+              </div>
+            </div>
+
+            <div class="sidebar-box ftco-animate">
+              <h3>Publication recentes</h3>
+              {% for pub in recentes %}
+              <div class="block-21 mb-4 d-flex">
+                <a class="blog-img mr-4" href="{% url 'detail_publication' pub.pk %}" style="background-image: url('{{ pub.image1.url }}');"></a>
+                <div class="text">
+                  <h3 class="heading"><a href="{% url 'detail_publication' pub.pk %}">{{ pub.titre }}</a>
+                  </h3>
+                  <div class="meta">
+                    <div><a href="#"><span class="icon-calendar"></span>{{ pub.date_publication|date:"d M Y" }}</a></div>
+                    <div><a href="#"><span class="icon-person"></span>Publié par {{ pub.auteur }}</a></div>
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section> <!-- .section -->
+
+    
+   
+
+{% endblock %}

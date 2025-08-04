@@ -1,0 +1,100 @@
+{% extends 'admin_base2.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card border-0 shadow-lg" style="background: white;">
+        <div class="card-header border-bottom d-flex justify-content-between align-items-center" 
+             style="background: #f8f9fa;">
+            <h2 class="mb-0 text-dark">
+                <i class="fas fa-folder mr-2" style="color: #28a745;"></i>Détail du Type d'Affaire
+            </h2>
+            <a href="{% url 'typeaffaireliste' %}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left mr-2"></i>Retour à la liste
+            </a>
+        </div>
+        <div class="card-body">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span class="font-weight-bold">ID :</span>
+                    <span class="badge badge-primary">{{ typeaffaire.id }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span class="font-weight-bold">Libellé :</span>
+                    <span>{{ typeaffaire.libelle }}</span>
+                </li>
+            </ul>
+        </div>
+        <div class="card-footer border-top d-flex justify-content-between bg-light">
+            <a href="{% url 'modifiertypeaffaire' typeaffaire.pk %}" class="btn btn-outline-green">
+                <i class="fas fa-edit mr-2"></i>Modifier
+            </a>
+            <a href="{% url 'supprimertypeaffaire' typeaffaire.pk %}" class="btn btn-outline-red">
+                <i class="fas fa-trash-alt mr-2"></i>Supprimer
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    :root {
+        --green: #28a745;
+        --blue: #007bff;
+        --red: #dc3545;
+        --yellow: #ffc107;
+        --black: #212529;
+    }
+    
+    .card {
+        border-radius: 8px;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .list-group-item {
+        padding: 1rem 1.25rem;
+        border-color: rgba(0, 0, 0, 0.05);
+    }
+    
+    .list-group-item:hover {
+        background-color: rgba(0, 0, 0, 0.02);
+    }
+    
+    .badge-primary {
+        background-color: var(--blue);
+        padding: 0.35em 0.65em;
+        font-size: 0.9em;
+    }
+    
+    .btn-outline-green {
+        border: 1px solid var(--green);
+        color: var(--green);
+    }
+    
+    .btn-outline-green:hover {
+        background-color: rgba(40, 167, 69, 0.1);
+    }
+    
+    .btn-outline-red {
+        border: 1px solid var(--red);
+        color: var(--red);
+    }
+    
+    .btn-outline-red:hover {
+        background-color: rgba(220, 53, 69, 0.1);
+    }
+    
+    .btn-outline-secondary {
+        border-color: #6c757d;
+        color: #6c757d;
+    }
+    
+    .btn-outline-secondary:hover {
+        background-color: rgba(108, 117, 125, 0.1);
+    }
+</style>
+{% endblock %}

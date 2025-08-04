@@ -1,0 +1,140 @@
+{% extends 'admin_base2.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card border-0 shadow-sm" style="background: white; border-radius: 12px;">
+        <div class="card-header border-bottom" style="background: linear-gradient(90deg, rgba(67, 160, 71, 0.1) 0%, rgba(30, 136, 229, 0.1) 100%);">
+            <h2 class="mb-0" style="color: #1e88e5;">
+                <i class="fas fa-user-tie mr-2"></i>Modifier le Dossier Avocat
+            </h2>
+        </div>
+        <div class="card-body">
+            <form method="post" class="needs-validation" novalidate>
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    {% for field in form %}
+                    <div class="mb-3">
+                        <label for="{{ field.id_for_label }}" class="form-label" style="color: #5f6368;">
+                            <i class="fas fa-{% if field.name == 'dossier' %}folder-open{% else %}user-tie{% endif %} mr-2"></i>
+                            {{ field.label }}
+                            {% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+                        </label>
+                        
+                        {{ field }}
+                        
+                        {% if field.help_text %}
+                        <small class="form-text text-muted">{{ field.help_text }}</small>
+                        {% endif %}
+                        
+                        {% for error in field.errors %}
+                        <div class="invalid-feedback d-block" style="color: #e53935;">
+                            <i class="fas fa-exclamation-circle mr-1"></i>{{ error }}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="d-flex justify-content-between mt-4">
+                    <a href="{% url 'dossieravocatliste' %}" class="btn btn-outline-secondary btn-rounded">
+                        <i class="fas fa-times mr-2"></i>Annuler
+                    </a>
+                    <button type="submit" class="btn btn-success btn-rounded" style="background-color: #43a047; border-color: #43a047;">
+                        <i class="fas fa-save mr-2"></i>Enregistrer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    :root {
+        --primary-blue: #1e88e5;
+        --primary-green: #43a047;
+        --primary-red: #e53935;
+        --primary-black: #212121;
+        --primary-yellow: #ffd600;
+        --light-gray: #f8f9fa;
+    }
+    
+    body {
+        background-color: #f8f9fa;
+    }
+    
+    .card {
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+    
+    .form-control, .form-select {
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #1e88e5;
+        box-shadow: 0 0 0 0.2rem rgba(30, 136, 229, 0.25);
+    }
+    
+    .btn-rounded {
+        border-radius: 50px;
+        padding: 8px 20px;
+        transition: all 0.3s ease;
+        font-weight: 500;
+    }
+    
+    .btn-success {
+        background-color: var(--primary-green);
+        border: none;
+    }
+    
+    .btn-success:hover {
+        background-color: #388e3c;
+        box-shadow: 0 4px 12px rgba(67, 160, 71, 0.2);
+    }
+    
+    .btn-outline-secondary {
+        border-color: #ddd;
+        color: #5f6368;
+    }
+    
+    .btn-outline-secondary:hover {
+        background-color: #f1f1f1;
+    }
+    
+    .is-invalid {
+        border-color: var(--primary-red) !important;
+    }
+    
+    .text-danger {
+        color: var(--primary-red) !important;
+    }
+    
+    .text-muted {
+        color: #9e9e9e !important;
+    }
+</style>
+
+<script>
+    // Client-side form validation
+    (function() {
+        'use strict';
+        window.addEventListener('load', function() {
+            var forms = document.getElementsByClassName('needs-validation');
+            var validation = Array.prototype.filter.call(forms, function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (form.checkValidity() === false) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        }, false);
+    })();
+</script>
+{% endblock %}

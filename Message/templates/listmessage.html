@@ -1,0 +1,282 @@
+{% extends "admin_base2.html" %}
+
+{% block content %}
+<div class="light-theme-container">
+  <div class="header-section">
+    <h2 class="page-title">
+      <i class="fas fa-comments"></i> Liste des Messages
+    </h2>
+    <a href="{% url 'creermessage' %}" class="btn btn-primary">
+      <i class="fas fa-plus"></i> Nouveau message
+    </a>
+  </div>
+
+  <div class="messages-container">
+    {% if messages %}
+    <div class="messages-list">
+      {% for msg in messages %}
+      <div class="message-card {% if not msg.lu %}unread{% endif %}">
+        <div class="message-header">
+          <div class="user-info">
+            <i class="fas fa-user" style="color: #3498db;"></i> <!-- Bleu -->
+            <strong>{{ msg.utilisateur }}</strong>
+          </div>
+          <div class="message-meta">
+            <span class="dossier-info">
+              <i class="fas fa-folder" style="color: #f39c12;"></i> <!-- Orange -->
+              <em>{{ msg.dossier }}</em>
+            </span>
+            <span class="date-info">
+              <i class="fas fa-clock" style="color: #7f8c8d;"></i> <!-- Gris -->
+              {{ msg.date_creation|date:"d/m/Y H:i" }}
+            </span>
+            {% if not msg.lu %}
+            <span class="unread-badge">
+              <i class="fas fa-envelope"></i> Non lu
+            </span>
+            {% endif %}
+          </div>
+        </div>
+        
+        <div class="message-actions">
+          <a href="{% url 'detailmessage' msg.pk %}" class="btn-action btn-view" title="Détails">
+            <i class="fas fa-eye"></i> Détails
+          </a>
+          <a href="{% url 'modifymessage' msg.pk %}" class="btn-action btn-edit" title="Modifier">
+            <i class="fas fa-edit"></i> Modifier
+          </a>
+          <a href="{% url 'supprimermessage' msg.pk %}" class="btn-action btn-delete" title="Supprimer">
+            <i class="fas fa-trash-alt"></i> Supprimer
+          </a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <i class="fas fa-comment-slash" style="color: #95a5a6;"></i> <!-- Gris clair -->
+      <h3>Aucun message enregistré</h3>
+      <p>Commencez par créer un nouveau message</p>
+      <a href="{% url 'creermessage' %}" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Créer un message
+      </a>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<style>
+  .light-theme-container {
+    background-color: #f8f9fa;
+    color: #333333;
+    padding: 2rem;
+    min-height: 100vh;
+  }
+
+  .header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .page-title {
+    color: #2c3e50;
+    font-weight: 500;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .page-title i {
+    color: #3498db; /* Bleu */
+  }
+
+  .messages-container {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e0e0e0;
+  }
+
+  .message-card {
+    background-color: #ffffff;
+    border-radius: 6px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+    border: 1px solid #e0e0e0;
+  }
+
+  .message-card.unread {
+    border-left: 4px solid #f1c40f; /* Jaune */
+    background-color: #fffde7; /* Fond jaune très clair */
+  }
+
+  .message-card:hover {
+    background-color: #f5f5f5;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  }
+
+  .message-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .user-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.1rem;
+  }
+
+  .message-meta {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    color: #7f8c8d; /* Gris */
+    font-size: 0.9rem;
+    flex-wrap: wrap;
+  }
+
+  .dossier-info, .date-info {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .unread-badge {
+    background-color: rgba(241, 196, 15, 0.2); /* Jaune */
+    color: #f39c12; /* Orange */
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .message-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    border-top: 1px solid #e0e0e0;
+    padding-top: 1.5rem;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: none;
+    gap: 10px;
+    font-weight: 500;
+  }
+
+  .btn-primary {
+    background-color: #3498db; /* Bleu */
+    color: white;
+  }
+
+  .btn-primary:hover {
+    background-color: #2980b9; /* Bleu plus foncé */
+  }
+
+  .btn-action {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+  }
+
+  .btn-view {
+    background-color: rgba(46, 204, 113, 0.2); /* Vert clair */
+    color: #2ecc71; /* Vert */
+  }
+
+  .btn-edit {
+    background-color: rgba(241, 196, 15, 0.2); /* Jaune clair */
+    color: #f39c12; /* Orange */
+  }
+
+  .btn-delete {
+    background-color: rgba(231, 76, 60, 0.2); /* Rouge clair */
+    color: #e74c3c; /* Rouge */
+  }
+
+  .btn-view:hover {
+    background-color: #27ae60; /* Vert */
+    color: white;
+  }
+
+  .btn-edit:hover {
+    background-color: #f39c12; /* Orange */
+    color: white;
+  }
+
+  .btn-delete:hover {
+    background-color: #e74c3c; /* Rouge */
+    color: white;
+  }
+
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    text-align: center;
+  }
+
+  .empty-state i {
+    font-size: 3rem;
+    color: #bdc3c7; /* Gris clair */
+    margin-bottom: 1.5rem;
+  }
+
+  .empty-state h3 {
+    color: #2c3e50; /* Noir bleuté */
+    margin: 0 0 0.5rem 0;
+    font-weight: 500;
+  }
+
+  .empty-state p {
+    color: #7f8c8d; /* Gris */
+    margin: 0 0 1.5rem 0;
+  }
+
+  @media (max-width: 768px) {
+    .message-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    
+    .message-meta {
+      gap: 0.8rem;
+      font-size: 0.85rem;
+    }
+    
+    .message-actions {
+      flex-direction: column;
+    }
+    
+    .btn-action {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+</style>
+{% endblock %}

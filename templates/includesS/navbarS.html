@@ -1,0 +1,26 @@
+{% load static %}
+
+<nav class="navbar px-md-0 navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
+	    <div class="container overlay">
+	      <a class="navbar-brand" href="{% url 'index' %}">MIPGroup <span>Mix In Plus Group </span></a>
+	      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
+	        <span class="oi oi-menu"></span> Menu
+	      </button>
+
+	      <div class="collapse navbar-collapse" id="ftco-nav">
+	        <ul class="navbar-nav ml-auto">
+	          <li class="nav-item active"><a href="{% url 'index' %}" class="nav-link">Home</a></li>
+	          <li class="nav-item"><a href="{% url 'conseil' %}" class="nav-link">Conseils & Assistance</a></li>
+	          <li class="nav-item"><a href="{% url 'team' %}" class="nav-link">Team</a></li>
+	          <li class="nav-item"><a href="{% url 'publications' %}" class="nav-link">Publications</a></li>
+	          <li class="nav-item"><a href="{% url 'politique' %}" class="nav-link">Politique des Prix</a></li>
+	          <li class="nav-item"><a href="{% url 'about' %}" class="nav-link">A propos</a></li>
+	          <li class="nav-item"><a href="{% url 'contact' %}" class="nav-link">Contact</a></li>
+	          <li class="nav-item cta"><a href="{% url 'connexion' %}" class="nav-link">Se Connecter</a></li>
+	        </ul>
+	      </div>
+	    </div>
+	  </nav>
+    <!-- END nav -->
+
+    

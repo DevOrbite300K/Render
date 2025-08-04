@@ -1,0 +1,367 @@
+{% extends 'admin_base2.html' %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="card border-0 shadow-lg" style="background: linear-gradient(145deg, #f8f9fa, #e9ecef);">
+        <div class="card-header border-bottom" style="background: rgba(30, 136, 229, 0.1);">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="mb-0 text-dark">
+                    <i class="fas fa-file-alt mr-2 text-primary"></i>Liste des Documents
+                </h2>
+                <a href="{% url 'documentcreer' %}" class="btn btn-primary btn-rounded">
+                    <i class="fas fa-plus mr-2"></i>Nouveau Document
+                </a>
+            </div>
+            
+            <!-- Barre de recherche JavaScript -->
+            <div class="mt-3">
+                <div class="input-group">
+                    <input type="text" id="searchInput" class="form-control rounded-pill" 
+                           placeholder="Rechercher un document..." aria-label="Rechercher">
+                    <div class="input-group-append">
+                        <button class="btn btn-primary rounded-pill" id="searchButton">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary rounded-pill ml-2" id="clearSearch">
+                            <i class="fas fa-times"></i> Effacer
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Filtres avancés -->
+                <div class="d-flex flex-wrap mt-2">
+                    <select id="typeFilter" class="form-control form-control-sm rounded-pill mr-2 mt-1" style="width: 180px;">
+                        <option value="">Tous les types</option>
+                        {% for type in type_choices %}
+                        <option value="{{ type.0 }}">{{ type.1 }}</option>
+                        {% endfor %}
+                    </select>
+                    
+                    <select id="sortFilter" class="form-control form-control-sm rounded-pill mr-2 mt-1" style="width: 180px;">
+                        <option value="">Trier par défaut</option>
+                        <option value="date_asc">Date (plus ancien)</option>
+                        <option value="date_desc">Date (plus récent)</option>
+                        <option value="name_asc">Nom (A-Z)</option>
+                        <option value="name_desc">Nom (Z-A)</option>
+                    </select>
+                    
+                    <button id="applyFilters" class="btn btn-sm btn-outline-primary rounded-pill mt-1">
+                        <i class="fas fa-filter mr-1"></i>Filtrer
+                    </button>
+                </div>
+                
+                <!-- Résultats de recherche -->
+                <div id="searchResults" class="mt-2" style="display: none;">
+                    <small class="text-muted">
+                        <i class="fas fa-info-circle mr-1"></i>
+                        <span id="resultsText"></span>
+                    </small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover table-borderless align-middle">
+                    <thead class="thead-light" style="background: rgba(67, 160, 71, 0.1);">
+                        <tr>
+                            <th class="text-primary">Titre</th>
+                            <th>Type</th>
+                            <th>Date d'ajout</th>
+                            <th>Taille</th>
+                            <th>Associé à</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="documentsTable">
+                        {% for document in documents %}
+                        <tr style="border-bottom: 1px solid rgba(0, 0, 0, 0.05);" 
+                            data-name="{{ document.nom_fichier|lower }}"
+                            data-type="{{ document.type_document }}"
+                            data-date="{{ document.date_ajout|date:'U' }}">
+                            <td>
+                                <a href="{% url 'documentdetail' document.pk %}" class="text-dark text-decoration-none">
+                                    <i class="fas fa-file-{{ document.get_file_type_icon }} mr-2 text-muted"></i>
+                                    <span class="document-name">{{ document.nom_fichier|truncatechars:40 }}</span>
+                                </a>
+                            </td>
+                            <td>
+                                <span class="badge document-type" style="background: rgba(255, 214, 0, 0.2); color: #ffd600;">
+                                    {{ document.type_document }}
+                                </span>
+                            </td>
+                            <td class="document-date">{{ document.date_ajout|date:"d/m/Y H:i" }}</td>
+                            <td>{{ document.fichier.size|filesizeformat }}</td>
+                            <td>
+                                {% if document.dossier %}
+                                <a href="{% url 'dossierdetail' document.dossier.pk %}" class="badge" style="background: rgba(30, 136, 229, 0.2); color: #1e88e5;">
+                                    {{ document.dossier.titre|truncatechars:20 }}
+                                </a>
+                                {% else %}
+                                <span class="text-muted">Non associé</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <a href="{{ document.fichier.url }}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-primary" title="Visualiser">
+                                        <i class="fas fa-eye"></i> Visualiser
+                                    </a>
+                                    <a href="{{ document.file.url }}" class="btn btn-sm btn-outline-info" title="Télécharger" download>
+                                        <i class="fas fa-download"></i>
+                                    </a>
+                                    <a href="{% url 'documentdetail' document.pk %}" class="btn btn-sm btn-outline-primary" title="Détails">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{% url 'documentmodifier' document.pk %}" class="btn btn-sm btn-outline-warning" title="Modifier">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="{% url 'documentsupprimer' document.pk %}" class="btn btn-sm btn-outline-danger" title="Supprimer">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr id="noDocuments">
+                            <td colspan="6" class="text-center py-4 text-muted">
+                                <i class="fas fa-folder-open fa-2x mb-2"></i><br>
+                                Aucun document disponible
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Pagination (cachée si recherche active) -->
+            <div id="paginationContainer">
+                {% if is_paginated %}
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center mt-4">
+                        {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1" aria-label="First">
+                                <span aria-hidden="true">&laquo;&laquo;</span>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        {% endif %}
+                        
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                            <li class="page-item active">
+                                <a class="page-link" style="background-color: #43a047; border-color: #43a047;" href="?page={{ num }}">{{ num }}</a>
+                            </li>
+                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                            </li>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="Last">
+                                <span aria-hidden="true">&raquo;&raquo;</span>
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Styles existants... */
+    
+    /* Styles pour la recherche */
+    .search-form .form-control {
+        border-radius: 50px;
+        padding: 10px 20px;
+        border: 1px solid #dee2e6;
+        box-shadow: none;
+        transition: all 0.3s;
+    }
+    
+    .search-form .form-control:focus {
+        border-color: var(--primary-blue);
+        box-shadow: 0 0 0 0.2rem rgba(30, 136, 229, 0.25);
+    }
+    
+    .search-form .btn {
+        border-radius: 50px;
+        padding: 10px 20px;
+    }
+    
+    .hidden-row {
+        display: none;
+    }
+    
+    .highlight {
+        background-color: rgba(255, 235, 59, 0.3);
+    }
+    
+    @media (max-width: 768px) {
+        .search-form .d-flex {
+            flex-direction: column;
+        }
+        
+        .search-form select, 
+        .search-form button {
+            width: 100% !important;
+            margin-right: 0 !important;
+            margin-bottom: 5px;
+        }
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const searchButton = document.getElementById('searchButton');
+    const clearSearch = document.getElementById('clearSearch');
+    const typeFilter = document.getElementById('typeFilter');
+    const sortFilter = document.getElementById('sortFilter');
+    const applyFilters = document.getElementById('applyFilters');
+    const searchResults = document.getElementById('searchResults');
+    const resultsText = document.getElementById('resultsText');
+    const documentsTable = document.getElementById('documentsTable');
+    const rows = documentsTable.querySelectorAll('tr:not(#noDocuments)');
+    const noDocumentsRow = document.getElementById('noDocuments');
+    const paginationContainer = document.getElementById('paginationContainer');
+    
+    // Cache le bouton effacer au départ
+    clearSearch.style.display = 'none';
+    
+    // Fonction de recherche
+    function performSearch() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const typeValue = typeFilter.value;
+        const sortValue = sortFilter.value;
+        let visibleCount = 0;
+        
+        rows.forEach(row => {
+            const name = row.getAttribute('data-name');
+            const type = row.getAttribute('data-type');
+            const date = parseInt(row.getAttribute('data-date'));
+            const nameElement = row.querySelector('.document-name');
+            const originalName = nameElement.textContent;
+            
+            // Filtre par recherche
+            const nameMatch = name.includes(searchTerm);
+            // Filtre par type
+            const typeMatch = typeValue === '' || type === typeValue;
+            
+            if (nameMatch && typeMatch) {
+                row.classList.remove('hidden-row');
+                visibleCount++;
+                
+                // Surlignage du texte trouvé
+                if (searchTerm) {
+                    const regex = new RegExp(searchTerm, 'gi');
+                    nameElement.innerHTML = originalName.replace(regex, match => 
+                        `<span class="highlight">${match}</span>`);
+                } else {
+                    nameElement.textContent = originalName;
+                }
+            } else {
+                row.classList.add('hidden-row');
+                nameElement.textContent = originalName;
+            }
+        });
+        
+        // Tri des résultats
+        if (sortValue) {
+            const visibleRows = Array.from(rows).filter(row => !row.classList.contains('hidden-row'));
+            
+            visibleRows.sort((a, b) => {
+                const aName = a.getAttribute('data-name');
+                const bName = b.getAttribute('data-name');
+                const aDate = parseInt(a.getAttribute('data-date'));
+                const bDate = parseInt(b.getAttribute('data-date'));
+                
+                switch(sortValue) {
+                    case 'date_asc': return aDate - bDate;
+                    case 'date_desc': return bDate - aDate;
+                    case 'name_asc': return aName.localeCompare(bName);
+                    case 'name_desc': return bName.localeCompare(aName);
+                    default: return 0;
+                }
+            });
+            
+            // Réorganise les lignes dans le DOM
+            visibleRows.forEach(row => {
+                documentsTable.appendChild(row);
+            });
+        }
+        
+        // Affichage des résultats
+        if (searchTerm || typeValue || sortValue) {
+            searchResults.style.display = 'block';
+            resultsText.textContent = `Résultats: ${visibleCount} document${visibleCount !== 1 ? 's' : ''} trouvé${visibleCount !== 1 ? 's' : ''}`;
+            
+            // Cache la pagination pendant la recherche
+            paginationContainer.style.display = 'none';
+            
+            // Affiche "Aucun résultat" si nécessaire
+            if (visibleCount === 0) {
+                noDocumentsRow.style.display = '';
+                noDocumentsRow.querySelector('td').textContent = 
+                    `Aucun document trouvé${searchTerm ? ` pour "${searchTerm}"` : ''}`;
+            } else {
+                noDocumentsRow.style.display = 'none';
+            }
+        } else {
+            searchResults.style.display = 'none';
+            paginationContainer.style.display = '';
+            noDocumentsRow.style.display = rows.length === 0 ? '' : 'none';
+        }
+        
+        // Affiche/masque le bouton effacer
+        clearSearch.style.display = searchTerm || typeValue || sortValue ? '' : 'none';
+    }
+    
+    // Événements
+    searchButton.addEventListener('click', performSearch);
+    clearSearch.addEventListener('click', function() {
+        searchInput.value = '';
+        typeFilter.value = '';
+        sortFilter.value = '';
+        performSearch();
+    });
+    applyFilters.addEventListener('click', performSearch);
+    
+    // Recherche en temps réel (optionnel)
+    searchInput.addEventListener('keyup', function(e) {
+        if (e.key === 'Enter') {
+            performSearch();
+        } else {
+            // Pour une recherche en temps réel, décommentez la ligne suivante:
+            // performSearch();
+        }
+    });
+    
+    // Auto-redirect si aucun document
+    if (document.querySelector('#noDocuments') && rows.length === 0) {
+        setTimeout(function() {
+            window.location.href = "{% url 'documentcreer' %}";
+        }, 3000);
+    }
+});
+</script>
+
+{% endblock %}

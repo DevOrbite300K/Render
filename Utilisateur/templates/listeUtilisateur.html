@@ -1,0 +1,416 @@
+{% extends 'admin_base2.html' %}
+
+{% block style %}
+<style>
+    :root {
+        --primary-blue: #2c5fdc;
+        --primary-green: #3abf94;
+        --accent-red: #e74c3c;
+        --accent-yellow: #f39c12;
+        --dark: #2a3547;
+        --light: #f8f9fa;
+        --text-muted: #6c757d;
+        --card-bg: #ffffff;
+        --border-color: #e9ecef;
+        --table-header-bg: linear-gradient(135deg, var(--primary-blue), var(--primary-green));
+    }
+
+    .users-table-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .table-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .table-title {
+        color: var(--dark);
+        font-weight: 700;
+        font-size: 1.5rem;
+        position: relative;
+        padding-bottom: 10px;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .table-title:after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(90deg, var(--primary-blue), var(--primary-green));
+        border-radius: 3px;
+    }
+
+    .add-user-btn {
+        background: linear-gradient(135deg, var(--primary-blue), var(--primary-green));
+        color: white;
+        padding: 0.7rem 1.5rem;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 600;
+        transition: all 0.3s;
+        border: none;
+        text-decoration: none;
+        font-family: 'Poppins', sans-serif;
+        box-shadow: 0 2px 6px rgba(44, 95, 220, 0.2);
+    }
+
+    .add-user-btn:hover {
+        background: linear-gradient(135deg, var(--primary-green), var(--accent-yellow));
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(58, 191, 148, 0.3);
+        color: white;
+    }
+
+    .users-table {
+        width: 100%;
+        background: var(--card-bg);
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        border-collapse: separate;
+        border-spacing: 0;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .users-table thead {
+        background: var(--table-header-bg);
+        color: white;
+    }
+
+    .users-table th {
+        padding: 1.2rem 1rem;
+        text-align: left;
+        font-weight: 500;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.5px;
+    }
+
+    .users-table td {
+        padding: 1rem;
+        border-bottom: 1px solid var(--border-color);
+        color: var(--dark);
+        vertical-align: middle;
+    }
+
+    .users-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .users-table tr:hover {
+        background: rgba(44, 95, 220, 0.05);
+    }
+
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--border-color);
+    }
+
+    .avatar-placeholder {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: rgba(44, 95, 220, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-blue);
+    }
+
+    .user-name {
+        font-weight: 600;
+        color: var(--dark);
+    }
+
+    .user-email {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 0.35em 0.65em;
+        font-size: 0.75em;
+        font-weight: 700;
+        line-height: 1;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        border-radius: 50rem;
+        font-family: 'Poppins', sans-serif;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .badge-primary {
+        color: white;
+        background-color: var(--primary-blue);
+    }
+
+    .badge-success {
+        color: white;
+        background-color: var(--primary-green);
+    }
+
+    .badge-warning {
+        color: var(--dark);
+        background-color: var(--accent-yellow);
+    }
+
+    .badge-danger {
+        color: white;
+        background-color: var(--accent-red);
+    }
+
+    .status-active {
+        color: var(--primary-green);
+        font-weight: 600;
+    }
+
+    .status-inactive {
+        color: var(--accent-red);
+        font-weight: 600;
+    }
+
+    .action-btn {
+        width: 35px;
+        height: 35px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+        transition: all 0.3s;
+        margin-right: 0.5rem;
+        color: white;
+    }
+
+    .action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-edit {
+        background: var(--accent-yellow);
+    }
+
+    .btn-delete {
+        background: var(--accent-red);
+    }
+
+    .btn-view {
+        background: var(--primary-green);
+    }
+
+    .empty-state {
+        padding: 3rem;
+        text-align: center;
+        color: var(--text-muted);
+    }
+
+    .empty-state i {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        color: var(--primary-blue);
+    }
+
+    .search-filter {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .search-input {
+        flex: 1;
+        background: white;
+        border: 1px solid var(--border-color);
+        color: var(--dark);
+        padding: 0.7rem 1rem;
+        border-radius: 6px;
+        font-family: 'Poppins', sans-serif;
+        box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: var(--primary-blue);
+        box-shadow: 0 0 0 3px rgba(44, 95, 220, 0.1);
+    }
+
+    .filter-select {
+        background: white;
+        border: 1px solid var(--border-color);
+        color: var(--dark);
+        padding: 0.7rem 1rem;
+        border-radius: 6px;
+        min-width: 200px;
+        font-family: 'Poppins', sans-serif;
+        box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    .filter-select:focus {
+        outline: none;
+        border-color: var(--primary-blue);
+        box-shadow: 0 0 0 3px rgba(44, 95, 220, 0.1);
+    }
+
+    .table-responsive {
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    @media (max-width: 768px) {
+        .search-filter {
+            flex-direction: column;
+        }
+        
+        .filter-select {
+            width: 100%;
+        }
+        
+        .table-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="users-table-container">
+    <div class="table-header">
+        <h1 class="table-title">
+            <i class="fas fa-users me-2" style="color: var(--primary-blue);"></i>Liste des Utilisateurs
+        </h1>
+        <a href="{% url 'creationUtilisateur' %}" class="add-user-btn">
+            <i class="fas fa-user-plus"></i> Nouvel utilisateur
+        </a>
+    </div>
+
+    <div class="search-filter">
+        <input type="text" class="search-input" placeholder="Rechercher un utilisateur...">
+        <select class="filter-select">
+            <option value="">Tous les rôles</option>
+            <option value="admin">Administrateur</option>
+            <option value="staff">Staff</option>
+            <option value="client">Client</option>
+            <option value="avocat">Avocat</option>
+        </select>
+    </div>
+
+    <div class="table-responsive">
+        <table class="users-table">
+            <thead>
+                <tr>
+                    <th>Utilisateur</th>
+                    <th>Email</th>
+                    <th>Rôle</th>
+                    <th>Statut</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in utilisateurs %}
+                <tr>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            {% if user.profile.photo %}
+                                <img src="{{ user.profile.photo.url }}" class="user-avatar">
+                            {% else %}
+                                <div class="avatar-placeholder">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                            {% endif %}
+                            <div>
+                                <div class="user-name">{{ user.get_full_name|default:user.username }}</div>
+                                <div class="user-email">@{{ user.username }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>{{ user.email }}</td>
+                    <td>
+                        {% if user.is_superuser %}
+                            <span class="badge badge-danger">Super Admin</span>
+                        {% elif user.is_staff %}
+                            <span class="badge badge-warning">Staff</span>
+                        {% else %}
+                            <span class="badge badge-primary">{{ user.role }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if user.is_active %}
+                            <span class="status-active"><i class="fas fa-check-circle"></i> Actif</span>
+                        {% else %}
+                            <span class="status-inactive"><i class="fas fa-times-circle"></i> Inactif</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'detailUtilisateur' user.pk %}" class="action-btn btn-view" title="Voir">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                        <a href="{% url 'modificationUtilisateur' user.pk %}" class="action-btn btn-edit" title="Modifier">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="{% url 'suppressionUtilisateur' user.pk %}" class="action-btn btn-delete" title="Supprimer"
+                           onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?');">
+                            <i class="fas fa-trash-alt"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="empty-state">
+                        <i class="fas fa-user-slash"></i>
+                        <h3>Aucun utilisateur trouvé</h3>
+                        <p>Commencez par ajouter un nouvel utilisateur</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    // Fonctionnalité de recherche
+    document.querySelector('.search-input').addEventListener('input', function(e) {
+        const searchTerm = e.target.value.toLowerCase();
+        document.querySelectorAll('.users-table tbody tr').forEach(row => {
+            const userName = row.querySelector('.user-name').textContent.toLowerCase();
+            const userEmail = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+            const userUsername = row.querySelector('.user-email').textContent.toLowerCase();
+            if (userName.includes(searchTerm) || userEmail.includes(searchTerm) || userUsername.includes(searchTerm)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+
+    // Fonctionnalité de filtrage
+    document.querySelector('.filter-select').addEventListener('change', function(e) {
+        const filterValue = e.target.value.toLowerCase();
+        document.querySelectorAll('.users-table tbody tr').forEach(row => {
+            const userRole = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
+            if (!filterValue || userRole.includes(filterValue)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+</script>
+{% endblock %}

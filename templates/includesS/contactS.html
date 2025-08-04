@@ -1,0 +1,67 @@
+{% extends 'baseS.html' %}
+
+{% load static %}
+
+{% block content %}
+	
+    
+    <section class="hero-wrap hero-wrap-2" style="background-image: url('{% static "assetsS/images/img.png" %}');" data-stellar-background-ratio="0.5">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row no-gutters slider-text align-items-end justify-content-center">
+          <div class="col-md-9 ftco-animate pb-5 text-center">
+            <h1 class="mb-3 bread">Contactez nous</h1>
+            <p class="breadcrumbs"><span class="mr-2"><a href="{% url 'index' %}">Acceuil <i class="ion-ios-arrow-forward"></i></a></span> <span>Contact <i class="ion-ios-arrow-forward"></i></span></p>
+          </div>
+        </div>
+      </div>
+    </section>
+   	
+   	<section class="ftco-section contact-section">
+      <div class="container">
+        <div class="row d-flex mb-5 contact-info">
+          <div class="col-md-12 mb-4">
+            <h2 class="h3">Contact Information</h2>
+          </div>
+          <div class="w-100"></div>
+          <div class="col-md-3">
+            <p><span>Adresse:</span>Université Gamal Abdel Nasser de Conakry, Republic de guinée</p>
+          </div>
+          <div class="col-md-3">
+            <p><span>Téléphone:</span> <a href="tel://1234567920">+224 627 401 733</a></p>
+          </div>
+          <div class="col-md-3">
+            <p><span>Email:</span> <a href="mailto:contact@mipgroup-expert.com">contact@mipgroup-expert.com</a></p>
+          </div>
+          <div class="col-md-3">
+            <p><span>Site Web</span> <a href="#">mipgroup-expert.com</a></p>
+          </div>
+          {% if messages %}
+            {% for message in messages %}
+            <p style="color: green;">{{ message }}</p>
+            {% endfor %}
+            {% endif %}
+        </div>
+        <div class="row block-9 no-gutters">
+          <div class="col-lg-6 order-md-last d-flex">
+
+            <form method="post" class="bg-light p-5 contact-form">
+              
+                {% csrf_token %}
+                {{ form.as_p }}
+              
+                <button type="submit" class="btn btn-primary py-3 px-5">Envoyer un Message</button>
+            </form>
+          
+          </div>
+
+          <div class="col-lg-6 d-flex">
+          	<div id="map" class="bg-white"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+   
+
+{% endblock  %}

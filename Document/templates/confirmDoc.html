@@ -1,0 +1,119 @@
+{% extends 'admin_base2.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card border-0 shadow-sm" style="background: white;">
+        <div class="card-header border-bottom" style="background: linear-gradient(90deg, rgba(67, 160, 71, 0.1) 0%, rgba(30, 136, 229, 0.1) 100%);">
+            <h2 class="mb-0" style="color: #1e88e5;">
+                <i class="fas fa-exclamation-triangle mr-2" style="color: #e53935;"></i>Confirmation de Suppression
+            </h2>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-light" style="background: rgba(255, 214, 0, 0.08); border-left: 4px solid #ffd600;">
+                <h4 class="alert-heading" style="color: #e53935;">
+                    <i class="fas fa-skull-crossbones mr-2"></i>Attention : Action Irréversible
+                </h4>
+                <p class="text-dark mb-0">
+                    Vous êtes sur le point de supprimer définitivement le document : 
+                    <strong style="color: #43a047;">"{{ document.title }}"</strong>
+                </p>
+                <hr style="border-color: rgba(33, 33, 33, 0.1);">
+                <div class="d-flex align-items-center text-muted">
+                    <i class="fas fa-info-circle mr-2" style="color: #1e88e5;"></i>
+                    <small>Cette action ne peut pas être annulée et supprimera toutes les données associées à ce document.</small>
+                </div>
+            </div>
+
+            <div class="mt-4 p-3" style="background: rgba(255, 255, 255, 0.7); border-radius: 8px; border: 1px solid rgba(30, 136, 229, 0.15); box-shadow: 0 2px 4px rgba(0,0,0,0.03);">
+                <h5 class="mb-3" style="color: #1e88e5;"><i class="fas fa-file-alt mr-2"></i>Détails du Document</h5>
+                <ul class="list-group list-group-flush" style="border-radius: 6px;">
+                    <li class="list-group-item d-flex justify-content-between" style="border-color: rgba(0,0,0,0.05);">
+                        <span class="font-weight-bold" style="color: #5f6368;">Type :</span>
+                        <span class="badge badge-pill" style="background: rgba(255, 214, 0, 0.15); color: #ffb300; font-weight: 500;">
+                            {{ document.type_document }}
+                        </span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between" style="border-color: rgba(0,0,0,0.05);">
+                        <span class="font-weight-bold" style="color: #5f6368;">Date d'ajout :</span>
+                        <span style="color: #212121;">{{ document.date_ajout|date:"d/m/Y" }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between" style="border-color: rgba(0,0,0,0.05);">
+                        <span class="font-weight-bold" style="color: #5f6368;">Taille :</span>
+                        <span style="color: #212121;">{{ document.fichier.size|filesizeformat }}</span>
+                    </li>
+
+                    <li class="list-group-item d-flex justify-content-between" style="border-color: rgba(0,0,0,0.05);">
+                        <span class="font-weight-bold" style="color: #5f6368;">Uploader par :</span>
+                        <span style="color: #212121;">{{ document.utilisateur.first_name }} --- {{document.utilisateur.email}} </span>
+                    </li>
+                </ul>
+            </div>
+
+            <form method="post" class="mt-4">
+                {% csrf_token %}
+                <div class="d-flex justify-content-between">
+                    <a href="{% url 'documentlist' %}" class="btn btn-light btn-rounded" style="border: 1px solid rgba(0,0,0,0.1); color: #5f6368;">
+                        <i class="fas fa-arrow-left mr-2"></i>Annuler
+                    </a>
+                    <button type="submit" class="btn btn-rounded" style="background: linear-gradient(135deg, #e53935 0%, #c62828 100%); color: white; border: none;">
+                        <i class="fas fa-trash-alt mr-2"></i>Confirmer la Suppression
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    :root {
+        --primary-blue: #1e88e5;
+        --primary-green: #43a047;
+        --primary-red: #e53935;
+        --primary-black: #212121;
+        --primary-yellow: #ffd600;
+        --light-gray: #f8f9fa;
+    }
+    
+    body {
+        background-color: #f8f9fa;
+        color: #212121;
+    }
+    
+    .card {
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        border: 1px solid rgba(0,0,0,0.03);
+    }
+    
+    .btn-rounded {
+        border-radius: 50px;
+        padding: 8px 24px;
+        transition: all 0.3s ease;
+        font-weight: 500;
+    }
+    
+    .btn-danger {
+        background: linear-gradient(135deg, #e53935 0%, #c62828 100%);
+        color: white;
+    }
+    
+    .btn-danger:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(229, 57, 53, 0.2);
+    }
+    
+    .btn-light:hover {
+        background-color: #f1f1f1;
+    }
+    
+    .text-muted {
+        color: #5f6368 !important;
+    }
+    
+    .badge {
+        padding: 5px 10px;
+        font-size: 0.85rem;
+    }
+</style>
+{% endblock %}

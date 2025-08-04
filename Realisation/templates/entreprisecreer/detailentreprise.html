@@ -1,0 +1,58 @@
+{% extends "admin_base2.html" %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2>Détails de l'entreprise</h2>
+
+  <table class="table table-bordered">
+    <tr>
+      <th>Denomination</th>
+      <td>{{ entreprise.denomination }}</td>
+    </tr>
+    <tr>
+      <th>RCCM</th>
+      <td>{{ entreprise.numeroRCCM }}</td>
+    </tr>
+    <tr>
+      <th>NIF</th>
+      <td>{{ entreprise.numeroNIF }}</td>
+    </tr>
+    <tr>
+      <th>Siège</th>
+      <td>{{ entreprise.siege }}</td>
+    </tr>
+    <tr>
+      <th>Nom Gérant</th>
+      <td>{{ entreprise.nomGerant }}</td>
+    </tr>
+    <tr>
+      <th>Adresse Gérant</th>
+      <td>{{ entreprise.adresseGerant }}</td>
+    </tr>
+    <tr>
+      <th>Email</th>
+      <td>{{ entreprise.emailGerant }}</td>
+    </tr>
+    <tr>
+      <th>Téléphone</th>
+      <td>{{ entreprise.telephoneGerant }}</td>
+    </tr>
+    <tr>
+      <th>Date de création</th>
+      <td>{{ entreprise.date_creation }}</td>
+    </tr>
+    <tr>
+      <th>Document</th>
+      <td>
+        {% if entreprise.documentation %}
+          <a href="{{ entreprise.documentation.url }}" target="_blank">Télécharger</a>
+        {% else %}
+          Aucun document
+        {% endif %}
+      </td>
+    </tr>
+  </table>
+
+  <a href="{% url 'listeentreprise' %}" class="btn btn-secondary">Retour</a>
+</div>
+{% endblock %}

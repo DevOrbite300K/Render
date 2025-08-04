@@ -1,0 +1,265 @@
+{% extends "admin_base2.html" %}
+
+{% block content %}
+<div class="light-theme-container">
+  <div class="delete-confirmation">
+    <div class="confirmation-header">
+      <div class="warning-icon-circle">
+        <i class="fas fa-exclamation-triangle warning-icon"></i>
+      </div>
+      <h2 class="page-title">Supprimer le Message</h2>
+    </div>
+    
+    <div class="confirmation-content">
+      <p>Vous êtes sur le point de supprimer définitivement ce message :</p>
+      
+      <div class="message-preview">
+        <div class="message-quote">
+          <i class="fas fa-quote-left"></i>
+          <div class="message-text">{{ object.message|truncatewords:30 }}</div>
+          <i class="fas fa-quote-right"></i>
+        </div>
+        
+        <div class="message-meta">
+          <div class="meta-item">
+            <i class="fas fa-user" style="color: #3498db;"></i>
+            <span>{{ object.utilisateur }}</span>
+          </div>
+          <div class="meta-item">
+            <i class="fas fa-calendar-alt" style="color: #f39c12;"></i>
+            <span>{{ object.date_creation|date:"d/m/Y H:i" }}</span>
+          </div>
+          {% if object.dossier %}
+          <div class="meta-item">
+            <i class="fas fa-folder" style="color: #27ae60;"></i>
+            <span>{{ object.dossier }}</span>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+      
+      <div class="warning-message">
+        <i class="fas fa-exclamation-circle"></i>
+        <p>Cette action est irréversible. Toutes les données associées à ce message seront perdues.</p>
+      </div>
+    </div>
+    
+    <form method="post" class="confirmation-form">
+      {% csrf_token %}
+      <div class="form-actions">
+        <button type="submit" class="btn btn-danger">
+          <i class="fas fa-trash-alt"></i> Confirmer la suppression
+        </button>
+        <a href="{% url 'messageliste' %}" class="btn btn-cancel">
+          <i class="fas fa-times"></i> Annuler
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<style>
+  .light-theme-container {
+    background-color: #f5f7fa;
+    color: #333333;
+    padding: 2rem;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .delete-confirmation {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 2.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    width: 100%;
+    border-left: 4px solid #e74c3c; /* Rouge */
+  }
+
+  .confirmation-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .warning-icon-circle {
+    width: 50px;
+    height: 50px;
+    background-color: rgba(231, 76, 60, 0.2); /* Rouge clair */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .warning-icon {
+    color: #e74c3c; /* Rouge */
+    font-size: 1.8rem;
+  }
+
+  .page-title {
+    color: #2c3e50; /* Noir bleuté */
+    font-weight: 500;
+    margin: 0;
+    font-size: 1.5rem;
+  }
+
+  .confirmation-content {
+    margin-bottom: 2rem;
+  }
+
+  .confirmation-content p {
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+    color: #4a5568; /* Gris foncé */
+  }
+
+  .message-preview {
+    background-color: #f8f9fa;
+    border-radius: 6px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    border: 1px solid #e0e0e0;
+  }
+
+  .message-quote {
+    position: relative;
+    padding: 0 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .message-quote .fa-quote-left {
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: #bdc3c7; /* Gris clair */
+    font-size: 1.5rem;
+  }
+
+  .message-quote .fa-quote-right {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    color: #bdc3c7; /* Gris clair */
+    font-size: 1.5rem;
+  }
+
+  .message-text {
+    font-style: italic;
+    color: #4a5568; /* Gris foncé */
+    line-height: 1.6;
+  }
+
+  .message-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    font-size: 0.9rem;
+  }
+
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #7f8c8d; /* Gris moyen */
+  }
+
+  .warning-message {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    background-color: rgba(231, 76, 60, 0.1); /* Rouge clair */
+    border: 1px solid rgba(231, 76, 60, 0.3); /* Rouge */
+    border-radius: 6px;
+    padding: 1rem;
+    color: #e74c3c; /* Rouge */
+  }
+
+  .warning-message i {
+    font-size: 1.2rem;
+    margin-top: 2px;
+  }
+
+  .confirmation-form {
+    margin-top: 1.5rem;
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: none;
+    gap: 10px;
+    font-weight: 500;
+  }
+
+  .btn-danger {
+    background-color: #e74c3c; /* Rouge */
+    color: white;
+  }
+
+  .btn-danger:hover {
+    background-color: #c0392b; /* Rouge foncé */
+  }
+
+  .btn-cancel {
+    background-color: #f39c12; /* Orange */
+    color: white;
+  }
+
+  .btn-cancel:hover {
+    background-color: #e67e22; /* Orange foncé */
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  @media (max-width: 600px) {
+    .delete-confirmation {
+      padding: 1.5rem;
+    }
+    
+    .confirmation-header {
+      flex-direction: column;
+      gap: 1rem;
+      text-align: center;
+    }
+    
+    .warning-icon-circle {
+      margin: 0 auto;
+    }
+    
+    .form-actions {
+      flex-direction: column;
+    }
+    
+    .btn {
+      width: 100%;
+      justify-content: center;
+    }
+    
+    .message-meta {
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+  }
+</style>
+{% endblock %}

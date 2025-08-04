@@ -1,0 +1,125 @@
+{% extends 'admin_base2.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card border-0" style="background: white; border: 2px solid #1a1a2e;">
+        <div class="card-header border-bottom" style="background: #1a1a2e;">
+            <h2 class="mb-0 text-white">
+                <i class="fas fa-user-edit mr-2" style="color: #FFA500;"></i>Modifier le Dossier Client
+            </h2>
+        </div>
+        <div class="card-body">
+            <form method="post" class="needs-validation" novalidate>
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    {% for field in form %}
+                    <div class="mb-3">
+                        <label for="{{ field.id_for_label }}" class="form-label" style="color: #1a1a2e; font-weight: 600;">
+                            <i class="fas fa-{% if field.name == 'dossier' %}folder-open{% elif field.name == 'client' %}user{% else %}user-tag{% endif %} mr-2" 
+                               style="color: {% cycle '#008000' '#1a1a2e' '#FF0000' %}"></i>
+                            {{ field.label }}
+                            {% if field.field.required %}<span style="color: #FF0000;">*</span>{% endif %}
+                        </label>
+                        
+                        {{ field }}
+                        
+                        {% if field.help_text %}
+                        <small class="form-text" style="color: #666;">{{ field.help_text }}</small>
+                        {% endif %}
+                        
+                        {% for error in field.errors %}
+                        <div class="invalid-feedback d-block" style="color: #FF0000;">
+                            <i class="fas fa-exclamation-circle mr-1"></i>{{ error }}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="d-flex justify-content-between mt-4">
+                    <a href="{% url 'dossierclientliste' %}" class="btn" style="background: white; color: #1a1a2e; border: 2px solid #1a1a2e;">
+                        <i class="fas fa-times mr-2"></i>Annuler
+                    </a>
+                    <button type="submit" class="btn" style="background: #FFA500; color: white; font-weight: bold;">
+                        <i class="fas fa-save mr-2"></i>Enregistrer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+    
+    .card {
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .form-control, .form-select {
+        background-color: white;
+        border: 2px solid #ddd;
+        color: #333;
+        transition: all 0.3s;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        background-color: white;
+        border-color: #008000;
+        color: #333;
+        box-shadow: 0 0 0 0.2rem rgba(0, 128, 0, 0.1);
+    }
+    
+    .btn {
+        border-radius: 6px;
+        padding: 8px 20px;
+        transition: all 0.3s;
+    }
+    
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .btn[style*="FFA500"]:hover {
+        background: #e69500 !important;
+    }
+    
+    .is-invalid {
+        border-color: #FF0000 !important;
+    }
+    
+    /* Style des icônes */
+    i.fas {
+        transition: transform 0.2s;
+    }
+    
+    i.fas:hover {
+        transform: scale(1.1);
+    }
+</style>
+
+<script>
+    // Validation côté client
+    (function() {
+        'use strict';
+        window.addEventListener('load', function() {
+            var forms = document.getElementsByClassName('needs-validation');
+            var validation = Array.prototype.filter.call(forms, function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (form.checkValidity() === false) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        }, false);
+    })();
+</script>
+{% endblock %}

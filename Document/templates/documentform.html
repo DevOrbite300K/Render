@@ -1,0 +1,205 @@
+{% extends 'admin_base2.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card border-0 shadow-lg" style="background: linear-gradient(145deg, #f8f9fa, #e9ecef);">
+        <div class="card-header border-bottom" style="background: rgba(67, 160, 71, 0.1);">
+            <h2 class="mb-0 text-dark">
+                <i class="fas fa-file-alt mr-2 text-primary"></i>
+                {% if form.instance.pk %}Modifier{% else %}Créer{% endif %} un Document
+            </h2>
+        </div>
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    {% for field in form %}
+                    <div class="mb-3">
+                        <label for="{{ field.id_for_label }}" class="form-label text-muted">
+                            {{ field.label }}
+                            {% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+                        </label>
+                        
+                        {% if field.name == 'fichier' %}
+                        <div class="file-upload-wrapper">
+                            <div class="input-group">
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input" id="{{ field.id_for_label }}" 
+                                           name="{{ field.name }}" {% if field.field.required %}required{% endif %}>
+                                    <label class="custom-file-label" for="{{ field.id_for_label }}" 
+                                           data-browse="Parcourir">
+                                        {% if field.value %}
+                                            {{ field.value }}
+                                        {% else %}
+                                            Choisir un fichier...
+                                        {% endif %}
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        {% else %}
+                        {{ field }}
+                        {% endif %}
+                        
+                        {% if field.help_text %}
+                        <small class="form-text text-muted">{{ field.help_text }}</small>
+                        {% endif %}
+                        
+                        {% for error in field.errors %}
+                        <div class="invalid-feedback d-block text-danger">
+                            {{ error }}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="d-flex justify-content-between mt-4">
+                    <a href="{% url 'documentlist' %}" class="btn btn-outline-secondary btn-rounded">
+                        <i class="fas fa-times mr-2"></i>Annuler
+                    </a>
+                    <button type="submit" class="btn btn-primary btn-rounded">
+                        <i class="fas fa-save mr-2"></i>Enregistrer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    :root {
+        --primary-blue: #1e88e5;
+        --primary-green: #43a047;
+        --primary-red: #e53935;
+        --primary-black: #212121;
+        --primary-yellow: #ffd600;
+    }
+    
+    body {
+        background-color: #f8f9fa;
+    }
+    
+    .card {
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    
+    .form-control, .form-select {
+        background-color: white;
+        border: 1px solid #ced4da;
+        color: var(--primary-black);
+    }
+    
+    .form-control:focus, .form-select:focus {
+        background-color: white;
+        border-color: var(--primary-blue);
+        color: var(--primary-black);
+        box-shadow: 0 0 0 0.2rem rgba(30, 136, 229, 0.25);
+    }
+    
+    .custom-file-label {
+        background-color: white;
+        border: 1px solid #ced4da;
+        color: #495057;
+    }
+    
+    .custom-file-input:focus ~ .custom-file-label {
+        border-color: var(--primary-blue);
+        box-shadow: 0 0 0 0.2rem rgba(30, 136, 229, 0.25);
+    }
+    
+    .btn-rounded {
+        border-radius: 50px;
+        padding: 8px 20px;
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+    
+    .btn-primary {
+        background-color: var(--primary-green);
+        border-color: var(--primary-green);
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        background-color: #2e7d32;
+        border-color: #2e7d32;
+        box-shadow: 0 4px 12px rgba(67, 160, 71, 0.3);
+    }
+    
+    .btn-outline-secondary {
+        border-color: #6c757d;
+        color: #6c757d;
+    }
+    
+    .btn-outline-secondary:hover {
+        background-color: #6c757d;
+        color: white;
+    }
+    
+    .is-invalid {
+        border-color: var(--primary-red) !important;
+    }
+    
+    .text-danger {
+        color: var(--primary-red) !important;
+    }
+    
+    .custom-file-input ~ .custom-file-label::after {
+        content: "Parcourir";
+        background-color: #e9ecef;
+        border-left: 1px solid #ced4da;
+        color: var(--primary-black);
+    }
+
+    select.form-select {
+        background-color: white;
+        color: var(--primary-black);
+        border: 1px solid #ced4da;
+    }
+
+    select.form-select option {
+        background-color: white;
+        color: var(--primary-black);
+    }
+
+    select.form-select:focus {
+        background-color: white;
+        color: var(--primary-black);
+        border-color: var(--primary-blue);
+        box-shadow: 0 0 0 0.2rem rgba(30, 136, 229, 0.25);
+        outline: none;
+    }
+
+    .text-primary {
+        color: var(--primary-blue) !important;
+    }
+</style>
+
+<script>
+    // Client-side form validation
+    (function() {
+        'use strict';
+        window.addEventListener('load', function() {
+            // Form validation
+            var forms = document.getElementsByClassName('needs-validation');
+            var validation = Array.prototype.filter.call(forms, function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (form.checkValidity() === false) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+            
+            // File input label update
+            $('.custom-file-input').on('change', function() {
+                let fileName = $(this).val().split('\\').pop();
+                $(this).next('.custom-file-label').addClass("selected").html(fileName);
+            });
+        }, false);
+    })();
+</script>
+{% endblock %}

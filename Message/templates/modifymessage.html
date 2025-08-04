@@ -1,0 +1,313 @@
+{% extends "admin_base2.html" %}
+
+{% block content %}
+<div class="light-theme-container">
+  <div class="message-edit-header">
+    <div>
+      <h2 class="page-title">
+        <i class="fas fa-edit"></i> Modifier le Message
+      </h2>
+      <div class="breadcrumb">
+        <a href="{% url 'messageliste' %}" class="breadcrumb-link">
+          <i class="fas fa-comments"></i> Messages
+        </a>
+        <span class="breadcrumb-separator">/</span>
+        <a href="{% url 'detailmessage' object.pk %}" class="breadcrumb-link">
+          {{ object.dossier|truncatechars:20 }}
+        </a>
+        <span class="breadcrumb-separator">/</span>
+        <span class="breadcrumb-current">Modification</span>
+      </div>
+    </div>
+    <div class="message-status">
+      <span class="status-label">Statut actuel :</span>
+      <span class="status-badge {% if object.lu %}status-read{% else %}status-unread{% endif %}">
+        {{ object.lu|yesno:"Lu,Non lu" }}
+      </span>
+    </div>
+  </div>
+
+  <div class="message-edit-form">
+    <form method="post" class="edit-form">
+      {% csrf_token %}
+      
+      <div class="form-grid">
+        {% for field in form %}
+        <div class="form-group {% if field.errors %}has-error{% endif %}">
+          <label for="{{ field.id_for_label }}">
+            <i class="fas fa-{% if field.name == 'dossier' %}folder{% elif field.name == 'utilisateur' %}user{% elif field.name == 'message' %}comment-alt{% elif field.name == 'date_creation' %}calendar-alt{% elif field.name == 'lu' %}envelope{% else %}info-circle{% endif %}"></i>
+            {{ field.label }}
+          </label>
+          
+          {{ field }}
+          
+          {% if field.help_text %}
+            <small class="form-help-text">{{ field.help_text }}</small>
+          {% endif %}
+          
+          {% for error in field.errors %}
+            <div class="form-error">
+              <i class="fas fa-exclamation-circle"></i> {{ error }}
+            </div>
+          {% endfor %}
+        </div>
+        {% endfor %}
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-save">
+          <i class="fas fa-save"></i> Enregistrer
+        </button>
+        <a href="{% url 'detailmessage' object.pk %}" class="btn btn-cancel">
+          <i class="fas fa-times"></i> Annuler
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<style>
+  .light-theme-container {
+    background-color: #f5f7fa;
+    color: #333333;
+    padding: 2rem;
+    min-height: 100vh;
+  }
+
+  .message-edit-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+
+  .page-title {
+    color: #2c3e50;
+    font-weight: 600;
+    margin: 0 0 1rem 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 0.9rem;
+    color: #7f8c8d;
+  }
+
+  .breadcrumb-link {
+    color: #7f8c8d;
+    text-decoration: none;
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .breadcrumb-link:hover {
+    color: #3498db;
+  }
+
+  .breadcrumb-separator {
+    color: #bdc3c7;
+  }
+
+  .breadcrumb-current {
+    color: #2c3e50;
+    font-weight: 500;
+  }
+
+  .message-status {
+    background-color: #ffffff;
+    border-radius: 6px;
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
+  .status-label {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+  }
+
+  .status-badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-weight: 500;
+    font-size: 0.9rem;
+  }
+
+  .status-read {
+    background-color: rgba(46, 204, 113, 0.2);
+    color: #27ae60;
+  }
+
+  .status-unread {
+    background-color: rgba(241, 196, 15, 0.2);
+    color: #f39c12;
+  }
+
+  .message-edit-form {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e0e0e0;
+  }
+
+  .edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .form-group label {
+    font-weight: 600;
+    color: #2c3e50;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    background-color: #ffffff;
+    border: 1px solid #bdc3c7;
+    color: #333333;
+    padding: 12px 14px;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    width: 100%;
+  }
+
+  .form-group textarea {
+    min-height: 200px;
+    resize: vertical;
+    line-height: 1.6;
+  }
+
+  .form-group select {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%237f8c8d'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+  }
+
+  .form-help-text {
+    color: #7f8c8d;
+    font-size: 0.85rem;
+  }
+
+  .form-error {
+    color: #e74c3c;
+    font-size: 0.85rem;
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .has-error input,
+  .has-error select,
+  .has-error textarea {
+    border-color: #e74c3c;
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    border-top: 1px solid #ecf0f1;
+    padding-top: 1.5rem;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: none;
+    gap: 10px;
+    font-weight: 500;
+  }
+
+  .btn-save {
+    background-color: #27ae60;
+    color: white;
+  }
+
+  .btn-save:hover {
+    background-color: #2ecc71;
+  }
+
+  .btn-cancel {
+    background-color: #e74c3c;
+    color: white;
+  }
+
+  .btn-cancel:hover {
+    background-color: #c0392b;
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  @media (max-width: 768px) {
+    .message-edit-header {
+      flex-direction: column;
+    }
+    
+    .form-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .form-actions {
+      flex-direction: column;
+    }
+    
+    .btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+</style>
+{% endblock %}

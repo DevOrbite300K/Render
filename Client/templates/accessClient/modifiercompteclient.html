@@ -1,0 +1,163 @@
+{% extends 'client_base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="profile-edit-container">
+    <div class="card border-0 shadow-lg">
+        <div class="card-header bg-dark d-flex align-items-center">
+            <i class="fas fa-user-cog me-3 fs-4" style="color: #8b9dc3;"></i>
+            <h2 class="mb-0">Modifier vos informations personnelles</h2>
+        </div>
+        
+        <div class="card-body bg-gray-800">
+            <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.first_name.id_for_label }}" class="form-label">
+                            <i class="fas fa-user me-2"></i>{{ form.first_name.label }}
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-dark border-dark">
+                                <i class="fas fa-signature"></i>
+                            </span>
+                            {{ form.first_name }}
+                        </div>
+                        {% if form.first_name.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.first_name.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.last_name.id_for_label }}" class="form-label">
+                            <i class="fas fa-user me-2"></i>{{ form.last_name.label }}
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-dark border-dark">
+                                <i class="fas fa-signature"></i>
+                            </span>
+                            {{ form.last_name }}
+                        </div>
+                        {% if form.last_name.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.last_name.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label for="{{ form.email.id_for_label }}" class="form-label">
+                        <i class="fas fa-envelope me-2"></i>{{ form.email.label }}
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-dark border-dark">
+                            <i class="fas fa-at"></i>
+                        </span>
+                        {{ form.email }}
+                    </div>
+                    {% if form.email.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.email.errors %}{{ error }}{% endfor %}
+                        </div>
+                    {% endif %}
+                    <small class="text-muted">Votre adresse email est utilisée pour vous connecter</small>
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <a href="{% url 'mesdossiersclient' %}" class="btn btn-outline-light">
+                        <i class="fas fa-arrow-left me-1"></i> Retour
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i> Enregistrer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .profile-edit-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    .bg-gray-800 {
+        background-color: #2a2a2a;
+    }
+    
+    .form-control, .form-select {
+        background-color: #1a1a1a;
+        border: 1px solid #444;
+        color: #e0e0e0;
+    }
+    
+    .form-control:focus {
+        background-color: #1a1a1a;
+        border-color: #8b9dc3;
+        color: #e0e0e0;
+        box-shadow: 0 0 0 0.25rem rgba(139, 157, 195, 0.25);
+    }
+    
+    .input-group-text {
+        color: #8b9dc3;
+    }
+    
+    .btn-outline-light {
+        border-color: #666;
+        color: #e0e0e0;
+    }
+    
+    .btn-outline-light:hover {
+        background-color: #3a3a3a;
+        border-color: #8b9dc3;
+    }
+    
+    .btn-primary {
+        background-color: #8b9dc3;
+        border-color: #8b9dc3;
+    }
+    
+    .btn-primary:hover {
+        background-color: #7a8cb2;
+        border-color: #7a8cb2;
+    }
+    
+    .invalid-feedback {
+        color: #ff6b6b;
+    }
+    
+    .was-validated .form-control:invalid {
+        border-color: #ff6b6b;
+    }
+    
+    .card {
+        border-radius: 8px;
+        overflow: hidden;
+    }
+</style>
+
+<script>
+    // Activation de la validation Bootstrap
+    (function() {
+        'use strict';
+        window.addEventListener('load', function() {
+            var forms = document.getElementsByClassName('needs-validation');
+            Array.prototype.filter.call(forms, function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (form.checkValidity() === false) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        }, false);
+    })();
+</script>
+{% endblock %}

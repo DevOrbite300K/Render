@@ -1,0 +1,59 @@
+{% extends 'baseS.html' %}
+
+{% load static %}
+
+{% block content %}
+    <section class="hero-wrap hero-wrap-2" style="background-image: url('{% static "assetsS/images/img.png" %}');" data-stellar-background-ratio="0.5">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row no-gutters slider-text align-items-end justify-content-center">
+          <div class="col-md-9 ftco-animate pb-5 text-center">
+            <h1 class="mb-3 bread">Publications</h1>
+            <p class="breadcrumbs"><span class="mr-2"><a href="{% url 'index' %}">Accueil <i class="ion-ios-arrow-forward"></i></a></span> <span>Publications <i class="ion-ios-arrow-forward"></i></span></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="ftco-section bg-light">
+      <div class="container">
+        <div class="row d-flex">
+          {% for publication in publications %}
+          <div class="col-md-4 d-flex ftco-animate">
+          	<div class="blog-entry justify-content-end">
+          		<div class="text px-4 py-4">
+          			<h3 class="heading mb-0">
+                  <a href="{% url 'detail_publication' publication.pk %}">
+                    {{ publication.titre }}
+                  </a>
+                </h3>
+          		</div>
+              {% if publication.image1 %}
+              <a href="{% url 'detail_publication' publication.pk %}" class="block-20" style="background-image: url('{{ publication.image1.url }}');"> 
+              </a>
+              {% endif %}
+              <div class="text p-4 float-right d-block">
+              	<div class="topper d-flex align-items-center">
+              		<div class="one py-2 pl-3 pr-1 align-self-stretch">
+              			<span class="day">"</span>
+              		</div>
+              		<div class="two pl-0 pr-3 py-2 align-self-stretch">
+              			<span class="yr">Publié par {{ publication.auteur }}</span>
+              			<span class="mos">le {{ publication.date_publication|date:"d M Y" }}</span>
+              		</div>
+              	</div>
+                <p>{{ publication.contenu1|truncatechars:100 }}</p>
+                <p>Publié par {{ publication.auteur }} le {{ publication.date_publication|date:"d M Y" }}</p>
+                <p><a href="{% url 'detail_publication' publication.pk %}" class="btn btn-primary">Read more</a></p>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      
+    </section>
+
+    
+
+{% endblock  %}

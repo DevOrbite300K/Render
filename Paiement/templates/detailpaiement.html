@@ -1,0 +1,227 @@
+{% extends "admin_base2.html" %}
+
+{% block content %}
+<div class="light-theme-container">
+  <div class="payment-detail-header">
+    <div>
+      <h2 class="page-title">
+        <i class="fas fa-receipt"></i> Détails du Paiement
+      </h2>
+      <p class="payment-reference">Dossier: {{ paiement.dossier }}</p>
+    </div>
+    <div class="payment-actions">
+      <a href="{% url 'modifierpaiement' paiement.pk %}" class="btn btn-edit">
+        <i class="fas fa-edit"></i> Modifier
+      </a>
+      <a href="{% url 'supprimerpaiement' paiement.pk %}" class="btn btn-delete">
+        <i class="fas fa-trash-alt"></i> Supprimer
+      </a>
+      <a href="{% url 'paiementliste' %}" class="btn btn-back">
+        <i class="fas fa-arrow-left"></i> Retour
+      </a>
+    </div>
+  </div>
+
+  <div class="payment-detail-card">
+    <div class="detail-grid">
+      <div class="detail-item">
+        <div class="detail-label">
+          <i class="fas fa-user"></i> Client
+        </div>
+        <div class="detail-value">{{ paiement.client }}</div>
+      </div>
+
+      <div class="detail-item">
+        <div class="detail-label">
+          <i class="fas fa-money-bill-wave"></i> Montant
+        </div>
+        <div class="detail-value amount-value">{{ paiement.montant|floatformat:"0" }} GNF</div>
+      </div>
+
+      <div class="detail-item">
+        <div class="detail-label">
+          <i class="fas fa-calendar-day"></i> Date
+        </div>
+        <div class="detail-value">{{ paiement.date_paiement|date:"d/m/Y H:i" }}</div>
+      </div>
+
+      <div class="detail-item">
+        <div class="detail-label">
+          <i class="fas fa-credit-card"></i> Moyen de paiement
+        </div>
+        <div class="detail-value">{{ paiement.get_moyen_paiement_display }}</div>
+      </div>
+
+      {% if paiement.url_facture %}
+      <div class="detail-item">
+        <div class="detail-label">
+          <i class="fas fa-file-invoice"></i> Facture
+        </div>
+        <div class="detail-value">
+          <a href="{{ paiement.url_facture }}" target="_blank" class="invoice-link">
+            <i class="fas fa-external-link-alt"></i> Voir la facture
+          </a>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<style>
+  .light-theme-container {
+    background-color: #f8f9fa;
+    color: #333333;
+    padding: 2rem;
+    min-height: 100vh;
+  }
+
+  .payment-detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+
+  .page-title {
+    color: #2c3e50;
+    font-weight: 600;
+    margin: 0 0 0.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .payment-reference {
+    color: #3498db; /* Bleu */
+    font-size: 1.1rem;
+    margin: 0;
+    font-weight: 500;
+  }
+
+  .payment-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .payment-detail-card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e0e0e0;
+  }
+
+  .detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .detail-label {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .detail-value {
+    color: #2c3e50;
+    font-size: 1.1rem;
+    padding-left: 1.5rem;
+    word-break: break-word;
+  }
+
+  .amount-value {
+    color: #27ae60; /* Vert */
+    font-weight: 600;
+    font-size: 1.2rem;
+  }
+
+  .invoice-link {
+    color: #e74c3c; /* Rouge */
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.2s;
+  }
+
+  .invoice-link:hover {
+    color: #c0392b;
+    text-decoration: underline;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: none;
+    gap: 8px;
+    white-space: nowrap;
+  }
+
+  .btn-edit {
+    background-color: #f39c12; /* Orange */
+    color: white;
+  }
+
+  .btn-edit:hover {
+    background-color: #e67e22;
+  }
+
+  .btn-delete {
+    background-color: #e74c3c; /* Rouge */
+    color: white;
+  }
+
+  .btn-delete:hover {
+    background-color: #c0392b;
+  }
+
+  .btn-back {
+    background-color: #3498db; /* Bleu */
+    color: white;
+  }
+
+  .btn-back:hover {
+    background-color: #2980b9;
+  }
+
+  .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  @media (max-width: 768px) {
+    .payment-detail-header {
+      flex-direction: column;
+    }
+    
+    .payment-actions {
+      width: 100%;
+    }
+    
+    .btn {
+      flex: 1;
+      justify-content: center;
+    }
+  }
+</style>
+{% endblock %}

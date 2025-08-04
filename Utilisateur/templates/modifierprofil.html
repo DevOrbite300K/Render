@@ -1,0 +1,206 @@
+{% extends 'admin_base2.html' %}
+
+{% block style %}
+<style>
+    :root {
+        --primary-blue: #2c5fdc;
+        --primary-green: #3abf94;
+        --accent-red: #e74c3c;
+        --accent-yellow: #f39c12;
+        --dark: #2a3547;
+        --light: #f8f9fa;
+        --border-color: #e9ecef;
+    }
+
+    .card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+    }
+
+    .card-header {
+        background: linear-gradient(135deg, var(--primary-blue), var(--primary-green));
+        color: white;
+        border-bottom: none;
+        padding: 1.5rem;
+    }
+
+    .card-title {
+        font-weight: 700;
+        margin-bottom: 0;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .card-body {
+        padding: 2rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        font-weight: 600;
+        color: var(--dark);
+    }
+
+    .form-control {
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 0.8rem 1rem;
+        transition: all 0.3s;
+    }
+
+    .form-control:focus {
+        border-color: var(--primary-blue);
+        box-shadow: 0 0 0 3px rgba(44, 95, 220, 0.1);
+    }
+
+    textarea.form-control {
+        min-height: 120px;
+    }
+
+    .custom-file {
+        position: relative;
+    }
+
+    .custom-file-input {
+        position: absolute;
+        opacity: 0;
+        height: 100%;
+        width: 100%;
+        z-index: 2;
+        cursor: pointer;
+    }
+
+    .custom-file-label {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1;
+        height: calc(2.25rem + 2px);
+        padding: 0.8rem 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: var(--dark);
+        background-color: white;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .custom-file-label::after {
+        content: "Parcourir";
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 3;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.8rem 1.2rem;
+        color: white;
+        background: linear-gradient(135deg, var(--primary-blue), var(--primary-green));
+        border-left: 1px solid var(--border-color);
+        border-radius: 0 8px 8px 0;
+        font-weight: 600;
+    }
+
+    .text-danger {
+        color: var(--accent-red) !important;
+    }
+
+    .btn-info {
+        background: linear-gradient(135deg, var(--primary-blue), var(--primary-green));
+        color: white;
+        border: none;
+        padding: 0.8rem 2rem;
+        border-radius: 50px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        box-shadow: 0 4px 15px rgba(44, 95, 220, 0.2);
+        transition: all 0.3s;
+    }
+
+    .btn-info:hover {
+        background: linear-gradient(135deg, var(--primary-green), var(--accent-yellow));
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(58, 191, 148, 0.3);
+        color: white;
+    }
+
+    .btn-round {
+        border-radius: 50px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h4 class="card-title">
+            <i class="fas fa-user-edit mr-2"></i>Modifier mon profil
+        </h4>
+    </div>
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data" class="form-horizontal">
+            {% csrf_token %}
+            
+            <div class="row form-group">
+                <div class="col col-md-3">
+                    {{ form.bio.label_tag }}
+                </div>
+                <div class="col-12 col-md-9">
+                    {{ form.bio }}
+                    {% for error in form.bio.errors %}
+                        <small class="form-text text-danger">
+                            <i class="fas fa-exclamation-circle mr-1"></i>{{ error }}
+                        </small>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="row form-group">
+                <div class="col col-md-3">
+                    {{ form.profile.label_tag }}
+                </div>
+                <div class="col-12 col-md-9">
+                    <div class="custom-file">
+                        {{ form.profile }}
+                        <label class="custom-file-label" for="id_profile">Choisir une image...</label>
+                    </div>
+                    {% for error in form.profile.errors %}
+                        <small class="form-text text-danger">
+                            <i class="fas fa-exclamation-circle mr-1"></i>{{ error }}
+                        </small>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="form-actions float-right">
+                <button type="submit" class="btn btn-info btn-round">
+                    <i class="fas fa-save mr-2"></i> Enregistrer
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Script pour afficher le nom du fichier sélectionné
+    document.querySelector('.custom-file-input').addEventListener('change', function(e) {
+        var fileName = document.getElementById("id_profile").files[0].name;
+        var nextSibling = e.target.nextElementSibling;
+        nextSibling.innerText = fileName;
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,287 @@
+{% extends 'admin_base2.html' %}
+
+{% block style %}
+<style>
+    :root {
+        --primary-blue: #2c5fdc;       /* Bleu principal */
+        --primary-green: #3abf94;     /* Vert principal */
+        --accent-red: #e74c3c;        /* Rouge d'accent */
+        --accent-yellow: #f39c12;     /* Jaune d'accent */
+        --dark: #2a3547;              /* Noir/textes */
+        --light: #f8f9fa;             /* Fond clair */
+        --border-color: #e9ecef;
+    }
+
+    .profile-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .profile-header {
+        margin-bottom: 2.5rem;
+        text-align: center;
+    }
+
+    .profile-title {
+        color: var(--dark);
+        font-weight: 700;
+        font-size: 2rem;
+        position: relative;
+        padding-bottom: 15px;
+        font-family: 'Poppins', sans-serif;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .profile-title:after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        bottom: 0;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(90deg, 
+            var(--primary-blue), 
+            var(--primary-green),
+            var(--accent-red),
+            var(--accent-yellow));
+        border-radius: 2px;
+    }
+
+    .profile-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        padding: 2.5rem;
+        border: none;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .profile-card:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 8px;
+        height: 100%;
+        background: linear-gradient(to bottom, 
+            var(--primary-blue), 
+            var(--primary-green),
+            var(--accent-yellow),
+            var(--accent-red));
+    }
+
+    .profile-avatar {
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 5px solid white;
+        margin: 0 auto 1.5rem;
+        display: block;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .avatar-placeholder {
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, 
+            rgba(44,95,220,0.1), 
+            rgba(58,191,148,0.1));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-blue);
+        font-size: 3rem;
+        border: 5px solid white;
+        margin: 0 auto 1.5rem;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .profile-info {
+        margin-top: 2rem;
+    }
+
+    .info-item {
+        display: flex;
+        margin-bottom: 1.2rem;
+        padding-bottom: 1.2rem;
+        border-bottom: 1px dashed var(--border-color);
+    }
+
+    .info-label {
+        flex: 0 0 180px;
+        font-weight: 600;
+        color: var(--dark);
+        font-family: 'Poppins', sans-serif;
+        position: relative;
+        padding-left: 15px;
+    }
+
+    .info-label:before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--primary-green);
+    }
+
+    .info-value {
+        flex: 1;
+        color: var(--dark);
+        font-family: 'Poppins', sans-serif;
+        font-weight: 500;
+    }
+
+    .edit-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.8rem;
+        background: linear-gradient(135deg, var(--primary-blue), var(--primary-green));
+        color: white;
+        padding: 0.9rem 2rem;
+        border-radius: 50px;
+        text-decoration: none;
+        margin-top: 2rem;
+        transition: all 0.3s ease;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border: none;
+        box-shadow: 0 4px 15px rgba(44, 95, 220, 0.3);
+        width: 100%;
+        max-width: 250px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .edit-btn:hover {
+        background: linear-gradient(135deg, var(--primary-green), var(--accent-yellow));
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(58, 191, 148, 0.4);
+        color: white;
+    }
+
+    .role-badge {
+        display: inline-block;
+        padding: 0.35rem 0.8rem;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .role-admin {
+        background: linear-gradient(135deg, var(--accent-red), #c0392b);
+        color: white;
+    }
+
+    .role-user {
+        background: linear-gradient(135deg, var(--primary-blue), #1a4fc4);
+        color: white;
+    }
+
+    .role-staff {
+        background: linear-gradient(135deg, var(--accent-yellow), #e67e22);
+        color: white;
+    }
+
+    @media (max-width: 768px) {
+        .info-item {
+            flex-direction: column;
+        }
+        
+        .info-label {
+            margin-bottom: 0.5rem;
+            padding-left: 0;
+        }
+
+        .info-label:before {
+            display: none;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <div class="profile-header">
+        <h2 class="profile-title">
+            <i class="fas fa-user-cog me-2"></i>Mon Profil Administrateur
+        </h2>
+    </div>
+
+    <div class="profile-card">
+        {% if user.profile.profile %}
+            <img src="{{ user.profile.profile.url }}" class="profile-avatar" alt="Photo de profil">
+        {% else %}
+            <div class="avatar-placeholder">
+                <i class="fas fa-user-tie"></i>
+            </div>
+        {% endif %}
+
+        <div class="profile-info">
+            <div class="info-item">
+                <span class="info-label">Identifiant:</span>
+                <span class="info-value">{{ user.username }}</span>
+            </div>
+            
+            <div class="info-item">
+                <span class="info-label">Email:</span>
+                <span class="info-value">{{ user.email }}</span>
+            </div>
+            
+            <div class="info-item">
+                <span class="info-label">Membre depuis:</span>
+                <span class="info-value">{{ user.date_joined|date:"d/m/Y" }}</span>
+            </div>
+            
+            <div class="info-item">
+                <span class="info-label">Nom complet:</span>
+                <span class="info-value">
+                    {% if user.first_name or user.last_name %}
+                        {{ user.first_name }} {{ user.last_name }}
+                    {% else %}
+                        <span style="color: var(--accent-red);">Non renseigné</span>
+                    {% endif %}
+                </span>
+            </div>
+
+            <div class="info-item">
+                <span class="info-label">Rôle:</span>
+                <span class="info-value">
+                    <span class="role-badge role-{{ user.role|default:'user'|lower }}">
+                        {{ user.role|default:"Utilisateur" }}
+                    </span>
+                </span>
+            </div>
+
+            <div class="info-item">
+                <span class="info-label">Biographie:</span>
+                <span class="info-value">
+                    {% if user.profile.bio %}
+                        {{ user.profile.bio }}
+                    {% else %}
+                        <span style="font-style: italic; color: var(--accent-yellow);">Aucune biographie ajoutée</span>
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+
+        <a href="{% url 'modifiermonProfil' %}" class="edit-btn">
+            <i class="fas fa-edit"></i> Modifier le profil
+        </a>
+    </div>
+</div>
+{% endblock %}

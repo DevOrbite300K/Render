@@ -1,0 +1,52 @@
+{% extends "admin_base2.html" %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2 class="mb-4">Liste des entreprises créées</h2>
+
+  <a href="{% url 'creerentreprise' %}" class="btn btn-primary mb-3">Nouvelle entreprise</a>
+
+  <!-- barre de recherche -->
+    <form method="get" class="mb-4">
+        <div class="input-group">
+        <input type="text" name="q" class="form-control" placeholder="Rechercher une entreprise..." value="{{ request.GET.q }}">
+        <div class="input-group-append">
+            <button class="btn btn-secondary" type="submit">Rechercher</button>
+        </div>
+        </div>
+    </form>
+
+  <table class="table table-bordered table-striped">
+    <thead class="thead-dark">
+      <tr>
+        <th>Denomination</th>
+        <th>N°RCCM</th>
+        <th>N°NIF</th>
+        <th>Gérant</th>
+        <th>Date création</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for entreprise in entreprises %}
+      <tr>
+        <td>{{ entreprise.denomination }}</td>
+        <td>{{ entreprise.numeroRCCM }}</td>
+        <td>{{ entreprise.numeroNIF }}</td>
+        <td>{{ entreprise.nomGerant }}</td>
+        <td>{{ entreprise.date_creation }}</td>
+        <td>
+          <a href="{% url 'detailentreprise' entreprise.pk %}" class="btn btn-info btn-sm">Détail</a>
+          <a href="{% url 'modifierentreprise' entreprise.pk %}" class="btn btn-warning btn-sm">Modifier</a>
+          <a href="{% url 'supprimerentreprise' entreprise.pk %}" class="btn btn-danger btn-sm">Supprimer</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="6">Aucune entreprise enregistrée.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

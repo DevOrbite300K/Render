@@ -1,0 +1,941 @@
+{% extends 'admin_base2.html' %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header avec statistiques -->
+    <div class="page-header mb-4">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <div class="header-content">
+                    <div class="header-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div>
+                        <h1 class="page-title">Liste des Clients</h1>
+                        <p class="page-subtitle">Gérez tous vos clients en un seul endroit</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                <div class="stats-card">
+                    <div class="stat-item">
+                        <span class="stat-number">{{ clients.count }}</span>
+                        <span class="stat-label">Clients</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Barre d'actions -->
+    <div class="actions-bar mb-4">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <a href="{% url 'ajouterclient' %}" class="btn-primary-custom">
+                    <i class="fas fa-plus"></i>
+                    <span>Ajouter un Client</span>
+                </a>
+            </div>
+            <div class="col-md-6">
+                <div class="search-container">
+                    <input type="text" class="search-input" placeholder="Rechercher un client..." id="searchInput">
+                    <i class="fas fa-search search-icon"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table des clients -->
+    <div class="table-container">
+        <div class="table-wrapper">
+            <table class="clients-table">
+                <thead>
+                    <tr>
+                        <th class="sortable" data-sort="number">
+                            <span>#</span>
+                            <i class="fas fa-sort sort-icon"></i>
+                        </th>
+                        <th class="sortable" data-sort="name">
+                            <span>Nom utilisateur</span>
+                            <i class="fas fa-sort sort-icon"></i>
+                        </th>
+                        <th class="sortable" data-sort="email">
+                            <span>Email</span>
+                            <i class="fas fa-sort sort-icon"></i>
+                        </th>
+                        <th>Adresse</th>
+                        <th>Téléphone</th>
+                        <th class="sortable" data-sort="date">
+                            <span>Date de Naissance</span>
+                            <i class="fas fa-sort sort-icon"></i>
+                        </th>
+                        <th>Photo</th>
+                        <th class="actions-column">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for client in clients %}
+                        <tr class="client-row" data-client-id="{{ client.pk }}">
+                            <td class="number-cell">
+                                <span class="row-number">{{ forloop.counter }}</span>
+                            </td>
+                            <td class="name-cell">
+                                <div class="user-info">
+                                    <div class="user-avatar">
+                                        {% if client.photo %}
+                                            <img src="{{ client.photo.url }}" alt="Avatar" class="avatar-img">
+                                        {% else %}
+                                            <div class="avatar-placeholder">
+                                                <i class="fas fa-user"></i>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="user-details">
+                                        <span class="user-name">{{ client.utilisateur.get_full_name|default:"Nom non défini" }}</span>
+                                        <span class="user-status">Actif</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="email-cell">
+                                <div class="email-container">
+                                    <i class="fas fa-envelope email-icon"></i>
+                                    <span class="email-text">{{ client.utilisateur.email|default:"Email non défini" }}</span>
+                                </div>
+                            </td>
+                            <td class="address-cell">
+                                <div class="address-container">
+                                    <i class="fas fa-map-marker-alt address-icon"></i>
+                                    <span class="address-text">{{ client.adresse|default:"Non renseignée" }}</span>
+                                </div>
+                            </td>
+                            <td class="phone-cell">
+                                <div class="phone-container">
+                                    <i class="fas fa-phone phone-icon"></i>
+                                    <span class="phone-text">{{ client.telephone|default:"Non renseigné" }}</span>
+                                </div>
+                            </td>
+                            <td class="date-cell">
+                                <div class="date-container">
+                                    <i class="fas fa-calendar date-icon"></i>
+                                    <span class="date-text">{{ client.datenaissance|date:"d/m/Y"|default:"Non renseignée" }}</span>
+                                </div>
+                            </td>
+                            <td class="photo-cell">
+                                {% if client.photo %}
+                                    <div class="photo-preview">
+                                        <img src="{{ client.photo.url }}" alt="Photo" class="client-photo">
+                                        <div class="photo-overlay">
+                                            <i class="fas fa-expand-alt"></i>
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <div class="no-photo">
+                                        <i class="fas fa-image"></i>
+                                        <span>Aucune photo</span>
+                                    </div>
+                                {% endif %}
+                            </td>
+                            <td class="actions-cell">
+                                <div class="action-buttons">
+                                    <a href="{% url 'detailclient' client.pk %}" class="btn-action btn-view" title="Voir les détails">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{% url 'modifierclient' client.pk %}" class="btn-action btn-edit" title="Modifier">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="{% url 'supprimerclient' client.pk %}" class="btn-action btn-delete" title="Supprimer"
+                                       onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce client ?');">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="8" class="empty-state">
+                                <div class="empty-content">
+                                    <i class="fas fa-users empty-icon"></i>
+                                    <h3>Aucun client disponible</h3>
+                                    <p>Commencez par ajouter votre premier client</p>
+                                    <a href="{% url 'ajouterclient' %}" class="btn-primary-custom">
+                                        <i class="fas fa-plus"></i>
+                                        <span>Ajouter un Client</span>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Pagination moderne -->
+    {% if is_paginated %}
+        <div class="pagination-container">
+            <nav class="pagination-nav">
+                <div class="pagination-info">
+                    <span class="page-info">
+                        Page {{ page_obj.number }} sur {{ page_obj.paginator.num_pages }}
+                    </span>
+                    <span class="total-info">
+                        ({{ page_obj.paginator.count }} client{{ page_obj.paginator.count|pluralize }})
+                    </span>
+                </div>
+                
+                <ul class="pagination-list">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
+                                <i class="fas fa-chevron-left"></i>
+                                <span>Précédent</span>
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">
+                                <i class="fas fa-chevron-left"></i>
+                                <span>Précédent</span>
+                            </span>
+                        </li>
+                    {% endif %}
+
+                    <li class="page-item current">
+                        <span class="page-link">{{ page_obj.number }}</span>
+                    </li>
+
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}">
+                                <span>Suivant</span>
+                                <i class="fas fa-chevron-right"></i>
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">
+                                <span>Suivant</span>
+                                <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+/* Variables CSS pour la cohérence */
+:root {
+    --primary-color: #1e88e5; /* Bleu */
+    --secondary-color: #43a047; /* Vert */
+    --danger-color: #e53935; /* Rouge */
+    --accent-black: #212121; /* Noir */
+    --accent-yellow: #ffd600; /* Jaune */
+    
+    --bg-primary: #f8f9fa;
+    --bg-secondary: #ffffff;
+    --bg-tertiary: #f5f6fa;
+    --bg-card: #ffffff;
+    --bg-hover: #f5f6fa;
+    
+    --text-primary: #12263f;
+    --text-secondary: #6e84a3;
+    --text-muted: #95aac9;
+    
+    --border-color: #e3ebf6;
+    --border-light: #edf2f9;
+    
+    --shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    --shadow-md: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 1rem 3rem rgba(0, 0, 0, 0.175);
+    --shadow-xl: 0 2rem 4rem rgba(0, 0, 0, 0.2);
+}
+
+/* Styles de base */
+body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* Header de la page */
+.page-header {
+    background: var(--bg-secondary);
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 1.5rem;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+}
+
+.header-icon {
+    width: 3.5rem;
+    height: 3.5rem;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1.25rem;
+    box-shadow: var(--shadow-sm);
+    color: white;
+}
+
+.header-icon i {
+    font-size: 1.25rem;
+}
+
+.page-title {
+    color: var(--accent-black);
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.2;
+}
+
+.page-subtitle {
+    color: var(--text-secondary);
+    margin: 0.25rem 0 0;
+    font-size: 0.875rem;
+}
+
+.stats-card {
+    background: var(--bg-secondary);
+    border-radius: 0.5rem;
+    padding: 1rem 1.5rem;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+    display: inline-block;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stat-number {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    line-height: 1;
+}
+
+.stat-label {
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 0.25rem;
+}
+
+/* Barre d'actions */
+.actions-bar {
+    background: var(--bg-secondary);
+    border-radius: 0.5rem;
+    padding: 1rem 1.5rem;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 1.5rem;
+}
+
+.btn-primary-custom {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.625rem 1.25rem;
+    background: var(--secondary-color);
+    color: white;
+    text-decoration: none;
+    border-radius: 0.375rem;
+    font-weight: 600;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+    border: none;
+    box-shadow: 0 4px 6px rgba(67, 160, 71, 0.2);
+}
+
+.btn-primary-custom:hover {
+    background: #2e7d32;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 8px rgba(67, 160, 71, 0.25);
+    color: white;
+}
+
+.btn-primary-custom i {
+    margin-right: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.search-container {
+    position: relative;
+    max-width: 20rem;
+    margin-left: auto;
+}
+
+.search-input {
+    width: 100%;
+    padding: 0.625rem 2.5rem 0.625rem 1rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 0.375rem;
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(30, 136, 229, 0.25);
+}
+
+.search-icon {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 0.875rem;
+}
+
+/* Container de la table */
+.table-container {
+    background: var(--bg-secondary);
+    border-radius: 0.5rem;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+}
+
+.table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.clients-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 0;
+}
+
+.clients-table thead {
+    background: var(--bg-tertiary);
+}
+
+.clients-table th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--border-color);
+    position: relative;
+    white-space: nowrap;
+}
+
+.sortable {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+.sortable:hover {
+    color: var(--primary-color);
+}
+
+.sort-icon {
+    opacity: 0.5;
+    margin-left: 0.25rem;
+    font-size: 0.75rem;
+    transition: opacity 0.2s ease;
+}
+
+.sortable:hover .sort-icon {
+    opacity: 1;
+}
+
+.clients-table tbody tr {
+    transition: all 0.2s ease;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.clients-table tbody tr:not(:last-child) {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.clients-table tbody tr:hover {
+    background-color: var(--bg-hover);
+}
+
+.clients-table td {
+    padding: 1rem;
+    vertical-align: middle;
+    color: var(--text-primary);
+    font-size: 0.875rem;
+}
+
+/* Cellules spécifiques */
+.number-cell {
+    width: 3.5rem;
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 0.8125rem;
+}
+
+.row-number {
+    display: inline-block;
+    width: 1.75rem;
+    height: 1.75rem;
+    line-height: 1.75rem;
+    background: var(--bg-tertiary);
+    border-radius: 50%;
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-align: center;
+}
+
+.name-cell {
+    min-width: 12rem;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+}
+
+.user-avatar {
+    width: 2.5rem;
+    height: 2.5rem;
+    margin-right: 0.75rem;
+    flex-shrink: 0;
+}
+
+.avatar-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--border-light);
+}
+
+.avatar-placeholder {
+    width: 100%;
+    height: 100%;
+    background: var(--bg-tertiary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    border: 2px solid var(--border-light);
+}
+
+.user-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-name {
+    color: var(--accent-black);
+    font-weight: 600;
+    font-size: 0.875rem;
+    line-height: 1.3;
+}
+
+.user-status {
+    color: var(--secondary-color);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 0.125rem;
+}
+
+.email-cell, .address-cell, .phone-cell, .date-cell {
+    min-width: 10rem;
+}
+
+.email-container, .address-container, .phone-container, .date-container {
+    display: flex;
+    align-items: center;
+}
+
+.email-icon, .address-icon, .phone-icon, .date-icon {
+    color: var(--text-muted);
+    margin-right: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.email-text, .address-text, .phone-text, .date-text {
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    word-break: break-word;
+}
+
+.photo-cell {
+    width: 5rem;
+    text-align: center;
+}
+
+.photo-preview {
+    position: relative;
+    width: 3rem;
+    height: 3rem;
+    margin: 0 auto;
+    border-radius: 0.375rem;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.photo-preview:hover {
+    transform: scale(1.05);
+}
+
+.client-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.photo-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.photo-preview:hover .photo-overlay {
+    opacity: 1;
+}
+
+.photo-overlay i {
+    color: white;
+    font-size: 0.875rem;
+}
+
+.no-photo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+}
+
+.no-photo i {
+    font-size: 1rem;
+    margin-bottom: 0.125rem;
+}
+
+.actions-cell {
+    width: 9rem;
+    text-align: center;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 0.375rem;
+}
+
+.btn-action {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.375rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    font-size: 0.75rem;
+    color: white;
+    opacity: 0.85;
+}
+
+.btn-action:hover {
+    opacity: 1;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-view {
+    background: var(--primary-color);
+}
+
+.btn-edit {
+    background: var(--accent-yellow);
+}
+
+.btn-delete {
+    background: var(--danger-color);
+}
+
+/* État vide */
+.empty-state {
+    padding: 3rem 1.5rem;
+    text-align: center;
+}
+
+.empty-content {
+    color: var(--text-muted);
+    max-width: 24rem;
+    margin: 0 auto;
+}
+
+.empty-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.empty-content h3 {
+    color: var(--accent-black);
+    margin-bottom: 0.5rem;
+    font-size: 1.25rem;
+}
+
+.empty-content p {
+    margin-bottom: 1.5rem;
+    font-size: 0.875rem;
+}
+
+/* Pagination */
+.pagination-container {
+    background: var(--bg-secondary);
+    border-radius: 0.5rem;
+    padding: 1rem 1.5rem;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+}
+
+.pagination-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.pagination-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.page-info {
+    color: var(--accent-black);
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.total-info {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+}
+
+.pagination-list {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 0.375rem;
+}
+
+.page-item {
+    border-radius: 0.375rem;
+    overflow: hidden;
+}
+
+.page-link {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 0.875rem;
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    text-decoration: none;
+    border: 1px solid var(--border-color);
+    border-radius: 0.375rem;
+    transition: all 0.2s ease;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.page-link:hover {
+    background: var(--bg-tertiary);
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.page-item.current .page-link {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.page-item.disabled .page-link {
+    background: var(--bg-secondary);
+    color: var(--text-muted);
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.page-link i {
+    font-size: 0.75rem;
+}
+
+.page-link span {
+    margin: 0 0.25rem;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .stats-card {
+        margin-top: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .page-header {
+        padding: 1.25rem;
+    }
+    
+    .header-content {
+        flex-direction: row;
+        align-items: center;
+    }
+    
+    .header-icon {
+        margin-right: 1rem;
+        margin-bottom: 0;
+        width: 3rem;
+        height: 3rem;
+    }
+    
+    .page-title {
+        font-size: 1.25rem;
+    }
+    
+    .actions-bar .row {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .search-container {
+        max-width: none;
+        margin-left: 0;
+        width: 100%;
+    }
+    
+    .clients-table th,
+    .clients-table td {
+        padding: 0.75rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .clients-table thead {
+        display: none;
+    }
+    
+    .clients-table tbody tr {
+        display: block;
+        background: var(--bg-secondary);
+        margin-bottom: 1rem;
+        border-radius: 0.5rem;
+        border: 1px solid var(--border-color);
+        padding: 1rem;
+        box-shadow: var(--shadow-sm);
+    }
+    
+    .clients-table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        text-align: right;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid var(--border-light);
+    }
+    
+    .clients-table td:last-child {
+        border-bottom: none;
+    }
+    
+    .clients-table td:before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        margin-right: 1rem;
+    }
+    
+    .action-buttons {
+        justify-content: flex-end;
+    }
+    
+    .pagination-nav {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+    }
+    
+    .pagination-list {
+        justify-content: center;
+    }
+}
+</style>
+
+<script>
+// Recherche en temps réel
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const tableRows = document.querySelectorAll('.client-row');
+    
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            
+            tableRows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                const isVisible = text.includes(searchTerm);
+                row.style.display = isVisible ? '' : 'none';
+            });
+        });
+    }
+    
+    // Tri des colonnes
+    const sortableHeaders = document.querySelectorAll('.sortable');
+    sortableHeaders.forEach(header => {
+        header.addEventListener('click', function() {
+            const sortType = this.dataset.sort;
+            console.log('Tri par:', sortType);
+            // Ici vous pouvez implémenter la logique de tri
+        });
+    });
+});
+</script>
+{% endblock %}

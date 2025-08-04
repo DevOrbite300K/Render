@@ -1,0 +1,103 @@
+{% extends 'client_base.html' %}
+
+{% block content %}
+<div class="comment-form-container">
+    <div class="d-flex align-items-center mb-4">
+        <h2 class="mb-0 text-light">
+            <i class="fas fa-comment-dots me-2" style="color: #6c7ae0;"></i>
+            Ajouter un commentaire
+        </h2>
+    </div>
+
+    <div class="card border-0 shadow-lg" style="background: #1e1e2d;">
+        <div class="card-header py-3" style="background: linear-gradient(135deg, #121212 0%, #2a2a3a 100%); border-bottom: 1px solid #2e2e3e;">
+            <h4 class="mb-0 text-light">
+                <i class="fas fa-envelope me-2"></i>
+                Nouveau message pour le dossier : <span class="text-info">{{ dossier.titre }}</span>
+            </h4>
+        </div>
+        
+        <div class="card-body" style="color: #e0e0e0;">
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="mb-4">
+                    {% for field in form %}
+                    <div class="form-group mb-3">
+                        <label for="{{ field.id_for_label }}" class="form-label small font-weight-bold" style="color: #a0aec0;">
+                            <i class="fas fa-{% if field.name == 'contenu' %}comment-alt{% else %}tag{% endif %} me-1"></i>
+                            {{ field.label }}
+                        </label>
+                        {{ field }}
+                        
+                        {% if field.help_text %}
+                        <small class="form-text" style="color: #6c7ae0;">{{ field.help_text }}</small>
+                        {% endif %}
+                        
+                        {% for error in field.errors %}
+                        <div class="invalid-feedback d-block" style="color: #ff6b6b;">
+                            {{ error }}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <a href="{% url 'mesdossiersclient' %}" class="btn" style="background-color: #252538; color: #a0aec0; border: 1px solid #3a3a4a;">
+                        <i class="fas fa-arrow-left me-1"></i> Retour
+                    </a>
+                    <button type="submit" class="btn font-weight-bold" 
+                            style="background: linear-gradient(135deg, #6c7ae0 0%, #4a5cd6 100%); 
+                                   border: none; 
+                                   color: white;
+                                   letter-spacing: 0.5px;">
+                        <i class="fas fa-paper-plane me-1"></i> Envoyer le message
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .comment-form-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 0 15px;
+    }
+    
+    body {
+        background-color: #161623;
+    }
+    
+    .form-control, .form-select, textarea.form-control {
+        background-color: #252538;
+        border: 1px solid #3a3a4a;
+        color: #f0f0f0;
+        padding: 0.75rem;
+    }
+    
+    .form-control:focus, .form-select:focus, textarea.form-control:focus {
+        background-color: #2a2a3a;
+        border-color: #6c7ae0;
+        color: #ffffff;
+        box-shadow: 0 0 0 0.2rem rgba(108, 122, 224, 0.25);
+    }
+    
+    textarea.form-control {
+        min-height: 150px;
+        resize: vertical;
+    }
+    
+    .card {
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    
+    .btn:hover {
+        transform: translateY(-1px);
+        transition: all 0.2s ease;
+    }
+</style>
+{% endblock %}

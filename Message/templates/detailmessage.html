@@ -1,0 +1,236 @@
+{% extends "admin_base2.html" %}
+
+{% block content %}
+<div class="light-theme-container">
+  <div class="message-detail-header">
+    <div>
+      <h2 class="page-title">
+        <i class="fas fa-envelope-open-text" style="color: #3498db;"></i> Détails du Message
+      </h2>
+      <p class="message-reference">Dossier: {{ message.dossier }}</p>
+    </div>
+    <div class="message-actions">
+      <a href="{% url 'modifymessage' message.pk %}" class="btn btn-edit">
+        <i class="fas fa-edit"></i> Modifier
+      </a>
+      <a href="{% url 'supprimermessage' message.pk %}" class="btn btn-delete">
+        <i class="fas fa-trash-alt"></i> Supprimer
+      </a>
+      <a href="{% url 'messageliste' %}" class="btn btn-back">
+        <i class="fas fa-arrow-left"></i> Retour
+      </a>
+    </div>
+  </div>
+
+  <div class="message-detail-card">
+    <div class="message-metadata">
+      <div class="metadata-item">
+        <div class="metadata-label">
+          <i class="fas fa-user" style="color: #3498db;"></i> Émis par
+        </div>
+        <div class="metadata-value">{{ message.utilisateur }}</div>
+      </div>
+
+      <div class="metadata-item">
+        <div class="metadata-label">
+          <i class="fas fa-calendar-day" style="color: #9b59b6;"></i> Date
+        </div>
+        <div class="metadata-value">{{ message.date_creation|date:"d/m/Y H:i" }}</div>
+      </div>
+
+      <div class="metadata-item">
+        <div class="metadata-label">
+          <i class="fas fa-envelope" style="color: #f39c12;"></i> Statut
+        </div>
+        <div class="metadata-value status-{% if message.lu %}read{% else %}unread{% endif %}">
+          {{ message.lu|yesno:"Lu,Non lu" }}
+        </div>
+      </div>
+    </div>
+
+    <div class="message-content">
+      <div class="content-label">
+        <i class="fas fa-comment-dots" style="color: #2ecc71;"></i> Contenu du message
+      </div>
+      <div class="content-text">
+        {{ message.message|linebreaksbr }}
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .light-theme-container {
+    background-color: #f8f9fa;
+    color: #333333;
+    padding: 2rem;
+    min-height: 100vh;
+  }
+
+  .message-detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+
+  .page-title {
+    color: #2c3e50;
+    font-weight: 500;
+    margin: 0 0 0.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .message-reference {
+    color: #3498db; /* Bleu */
+    font-size: 1.1rem;
+    margin: 0;
+    font-weight: 500;
+  }
+
+  .message-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .message-detail-card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e0e0e0;
+  }
+
+  .message-metadata {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  .metadata-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .metadata-label {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .metadata-value {
+    color: #2d3748;
+    font-size: 1.1rem;
+    padding-left: 1.5rem;
+  }
+
+  .status-read {
+    color: #27ae60; /* Vert */
+  }
+
+  .status-unread {
+    color: #f39c12; /* Orange */
+    font-weight: 500;
+  }
+
+  .message-content {
+    margin-top: 1.5rem;
+  }
+
+  .content-label {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 1rem;
+  }
+
+  .content-text {
+    background-color: #f8f9fa;
+    border-radius: 6px;
+    padding: 1.5rem;
+    color: #2d3748;
+    line-height: 1.6;
+    white-space: pre-line;
+    border: 1px solid #e0e0e0;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: none;
+    gap: 8px;
+    white-space: nowrap;
+  }
+
+  .btn-edit {
+    background-color: #f39c12; /* Orange */
+    color: white;
+  }
+
+  .btn-edit:hover {
+    background-color: #e67e22; /* Orange foncé */
+  }
+
+  .btn-delete {
+    background-color: #e74c3c; /* Rouge */
+    color: white;
+  }
+
+  .btn-delete:hover {
+    background-color: #c0392b; /* Rouge foncé */
+  }
+
+  .btn-back {
+    background-color: #95a5a6; /* Gris */
+    color: white;
+  }
+
+  .btn-back:hover {
+    background-color: #7f8c8d; /* Gris foncé */
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  @media (max-width: 768px) {
+    .message-detail-header {
+      flex-direction: column;
+    }
+    
+    .message-actions {
+      width: 100%;
+    }
+    
+    .btn {
+      flex: 1;
+      justify-content: center;
+    }
+
+    .message-metadata {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends "admin_base2.html" %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2>Détails de l'étude</h2>
+
+  <table class="table table-bordered">
+    <tr>
+      <th>Intitulé</th>
+      <td>{{ etude.intitule }}</td>
+    </tr>
+    <tr>
+      <th>Date début</th>
+      <td>{{ etude.date_debut }}</td>
+    </tr>
+    <tr>
+      <th>Date fin</th>
+      <td>{{ etude.date_fin }}</td>
+    </tr>
+    <tr>
+      <th>Lieu</th>
+      <td>{{ etude.lieu }}</td>
+    </tr>
+    <tr>
+      <th>Commanditaire</th>
+      <td>{{ etude.commanditaire }}</td>
+    </tr>
+    <tr>
+      <th>Document</th>
+      <td>
+        {% if etude.document %}
+          <a href="{{ etude.document.url }}" target="_blank">Télécharger</a>
+        {% else %}
+          Aucun document
+        {% endif %}
+      </td>
+    </tr>
+  </table>
+
+  <a href="{% url 'listeetude' %}" class="btn btn-secondary">Retour</a>
+</div>
+{% endblock %}

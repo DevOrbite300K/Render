@@ -1,0 +1,220 @@
+{% extends 'client_base.html' %}
+
+{% block content %}
+<div class="dossier-container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0"><i class="fas fa-folder-open me-2"></i>Mes dossiers</h2>
+        <div>
+            <span class="badge bg-secondary me-2">{{ dossiers|length }} dossier(s)</span>
+            <span class="badge bg-primary">{{ total_paiements }} paiement(s)</span>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Section Dossiers -->
+        <div class="col-lg-7 mb-4">
+            {% if dossiers %}
+            <div class="dossier-list">
+                {% for dossier in dossiers %}
+                <div class="dossier-card mb-3">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-dark d-flex justify-content-between align-items-center">
+                            <div>
+                                <i class="fas fa-file-alt me-2"></i>
+                                <strong>{{ dossier.titre }}</strong>
+                            </div>
+                            <div>
+                                <span class="badge me-2" style="background-color: #8b9dc3;">{{ dossier.type_affaire.libelle }}</span>
+                                <span class="badge bg-info">{{ dossier.paiements.count }} paiement(s)</span>
+                            </div>
+                        </div>
+                        <div class="card-body bg-gray-800">
+                            <div class="dossier-meta mb-3">
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar-alt me-1"></i> Créé le {{ dossier.date_creation|date:"d/m/Y" }}
+                                </small>
+                                {% if dossier.date_modification %}
+                                <small class="text-muted ms-3">
+                                    <i class="fas fa-edit me-1"></i> Modifié le {{ dossier.date_modification|date:"d/m/Y" }}
+                                </small>
+                                {% endif %}
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    {% if dossier.has_paiements  %}
+                                    <small class="text-success">
+                                        <i class="fas fa-check-circle me-1"></i> Dernier paiement : {{ dossier.paiement_set.first.date_paiement|date:"d/m/Y" }}
+                                    </small>
+                                    {% else %}
+                                    <small class="text-warning">
+                                        <i class="fas fa-exclamation-circle me-1"></i> Aucun paiement enregistré
+                                    </small>
+                                    {% endif %}
+                                </div>
+                                <a href="{% url 'dossierdetailclient' dossier.pk %}" class="btn btn-sm btn-outline-light">
+                                    <i class="fas fa-chevron-right me-1"></i> Voir les détails
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state text-center py-5">
+                <i class="fas fa-folder-open fa-3x mb-3" style="color: #8b9dc3;"></i>
+                <h4 class="text-muted">Aucun dossier disponible</h4>
+                <p class="text-muted">Vos dossiers apparaîtront ici une fois créés</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Section Paiements -->
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-dark text-white">
+                    <i class="fas fa-money-bill-wave me-2"></i>
+                    <strong>Historique des paiements</strong>
+                </div>
+                <div class="card-body bg-gray-800" style="overflow-y: auto; max-height: 600px;">
+                    {% if paiements %}
+                    <div class="list-group">
+                        {% for paiement in paiements %}
+                        <div class="list-group-item bg-gray-700 border-dark mb-2 rounded">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <strong class="text-primary">{{ paiement.dossier.titre|truncatechars:25 }}</strong>
+                                <span class="badge bg-success">{{ paiement.montant }} GNF</span>
+                            </div>
+                            <div class="d-flex justify-content-between text-muted small mb-1">
+                                <span><i class="fas fa-calendar me-1"></i> {{ paiement.date_paiement|date:"d/m/Y" }}</span>
+                                <span>{{ paiement.get_moyen_paiement_display }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <small class="text-muted">Ref: PAY-{{ paiement.id|stringformat:"06d" }}</small>
+                                <button class="btn btn-sm btn-outline-info py-0 px-2" data-bs-toggle="modal" data-bs-target="#paiementModal{{ paiement.id }}">
+                                    <i class="fas fa-eye"></i> Détails
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Modal Détails Paiement -->
+                        <div class="modal fade" id="paiementModal{{ paiement.id }}" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content bg-dark border border-secondary">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title text-white">
+                                            <i class="fas fa-receipt me-2"></i>Détails du paiement
+                                        </h5>
+                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="row mb-3">
+                                            <div class="col-md-6">
+                                                <p class="mb-1"><strong>Référence:</strong></p>
+                                                <p>PAY-{{ paiement.id|stringformat:"06d" }}</p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p class="mb-1"><strong>Date:</strong></p>
+                                                <p>{{ paiement.date_paiement|date:"d/m/Y H:i" }}</p>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-md-6">
+                                                <p class="mb-1"><strong>Montant:</strong></p>
+                                                <p class="text-success">{{ paiement.montant }} GNF</p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p class="mb-1"><strong>Moyen:</strong></p>
+                                                <p>{{ paiement.get_moyen_paiement_display }}</p>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <p class="mb-1"><strong>Dossier:</strong></p>
+                                            <p>{{ paiement.dossier.titre }}</p>
+                                        </div>
+                                        <div class="mb-3">
+                                            <p class="mb-1"><strong>Description:</strong></p>
+                                            <p class="text-muted">{{ paiement.description|default:"Aucune description fournie" }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <a href="{% url 'imprimerpaiementclient' paiement.id %}" class="btn btn-primary">
+                                            <i class="fas fa-print me-1"></i> Imprimer
+                                        </a>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-money-bill-alt fa-3x mb-3" style="color: #8b9dc3;"></i>
+                        <h5 class="text-muted">Aucun paiement enregistré</h5>
+                        <p class="text-muted">Vos paiements apparaîtront ici</p>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="card-footer bg-dark text-muted small">
+                    <div class="d-flex justify-content-between">
+                        <span class="text-white">Total payé: <strong class="text-success">{{ total_montant }} GNF</strong></span>
+                        <span>Dernier: {% if paiements %}{{ paiements.first.date_paiement|date:"d/m/Y" }}{% else %}---{% endif %}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .dossier-card .card-header {
+        border-bottom: 1px solid #444;
+    }
+    
+    .bg-gray-800 {
+        background-color: #2a2a2a;
+    }
+    
+    .bg-gray-700 {
+        background-color: #333;
+    }
+    
+    .dossier-card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    .dossier-card:hover {
+        transform: translateY(-2px);
+    }
+    
+    .empty-state {
+        background-color: rgba(40, 40, 40, 0.5);
+        border-radius: 8px;
+        border: 1px dashed #444;
+    }
+    
+    .btn-outline-light {
+        border-color: #666;
+        color: #e0e0e0;
+    }
+    
+    .btn-outline-light:hover {
+        background-color: #3a3a3a;
+        border-color: #8b9dc3;
+        color: white;
+    }
+    
+    .list-group-item {
+        transition: all 0.2s ease;
+    }
+    
+    .list-group-item:hover {
+        background-color: #3a3a3a !important;
+    }
+    
+    .modal-content {
+        border: 1px solid #444;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends 'admin_base.html' %}
+
+{% block content %}
+<h2>➕ Ajouter une activité</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-success">Enregistrer</button>
+    <a href="{% url 'journallist' %}" class="btn btn-secondary">Retour</a>
+</form>
+{% endblock %}

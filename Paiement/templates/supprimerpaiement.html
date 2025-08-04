@@ -1,0 +1,258 @@
+{% extends "admin_base2.html" %}
+
+{% block content %}
+<div class="light-theme-container">
+  <div class="delete-confirmation">
+    <div class="confirmation-header">
+      <div class="warning-icon-circle">
+        <i class="fas fa-exclamation-triangle warning-icon"></i>
+      </div>
+      <h2 class="page-title">Supprimer le Paiement</h2>
+    </div>
+    
+    <div class="confirmation-content">
+      <p>Vous êtes sur le point de supprimer définitivement le paiement suivant :</p>
+      
+      <div class="payment-details">
+        <div class="detail-row">
+          <span class="detail-label"><i class="fas fa-user"></i> Client :</span>
+          <span class="detail-value">{{ object.client }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label"><i class="fas fa-money-bill-wave"></i> Montant :</span>
+          <span class="detail-value amount-value">{{ object.montant|floatformat:"2" }} €</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label"><i class="fas fa-calendar-alt"></i> Date :</span>
+          <span class="detail-value">{{ object.date_paiement|date:"d/m/Y H:i" }}</span>
+        </div>
+        {% if object.dossier %}
+        <div class="detail-row">
+          <span class="detail-label"><i class="fas fa-folder"></i> Dossier :</span>
+          <span class="detail-value">{{ object.dossier }}</span>
+        </div>
+        {% endif %}
+      </div>
+      
+      <div class="warning-message">
+        <i class="fas fa-exclamation-circle"></i>
+        <p>Cette action est irréversible. Toutes les données associées à ce paiement seront perdues.</p>
+      </div>
+    </div>
+    
+    <form method="post" class="confirmation-form">
+      {% csrf_token %}
+      <div class="form-actions">
+        <button type="submit" class="btn btn-danger">
+          <i class="fas fa-trash-alt"></i> Confirmer la suppression
+        </button>
+        <a href="{% url 'paiementliste' %}" class="btn btn-cancel">
+          <i class="fas fa-times"></i> Annuler
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<style>
+  .light-theme-container {
+    background-color: #f5f7fa;
+    color: #333333;
+    padding: 2rem;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .delete-confirmation {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 2.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    width: 100%;
+    border-left: 4px solid #ff6b6b;
+  }
+
+  .confirmation-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .warning-icon-circle {
+    width: 50px;
+    height: 50px;
+    background-color: rgba(255, 107, 107, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .warning-icon {
+    color: #ff6b6b;
+    font-size: 1.8rem;
+  }
+
+  .page-title {
+    color: #2c3e50;
+    font-weight: 500;
+    margin: 0;
+    font-size: 1.5rem;
+  }
+
+  .confirmation-content {
+    margin-bottom: 2rem;
+  }
+
+  .confirmation-content p {
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+    color: #4a5568;
+  }
+
+  .payment-details {
+    background-color: #f8f9fa;
+    border-radius: 6px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    border: 1px solid #e2e8f0;
+  }
+
+  .detail-row {
+    display: flex;
+    margin-bottom: 1rem;
+    align-items: center;
+  }
+
+  .detail-row:last-child {
+    margin-bottom: 0;
+  }
+
+  .detail-label {
+    font-weight: 500;
+    color: #4a5568;
+    min-width: 120px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .detail-label i {
+    color: #3498db; /* Bleu */
+  }
+
+  .detail-value {
+    color: #2d3748;
+    font-weight: 400;
+    flex: 1;
+  }
+
+  .amount-value {
+    color: #27ae60; /* Vert */
+    font-weight: 600;
+  }
+
+  .warning-message {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    background-color: rgba(255, 107, 107, 0.1);
+    border: 1px solid rgba(255, 107, 107, 0.3);
+    border-radius: 6px;
+    padding: 1rem;
+    color: #e74c3c; /* Rouge */
+  }
+
+  .warning-message i {
+    font-size: 1.2rem;
+    margin-top: 2px;
+  }
+
+  .confirmation-form {
+    margin-top: 1.5rem;
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: none;
+    gap: 10px;
+    font-weight: 500;
+  }
+
+  .btn-danger {
+    background-color: #ff6b6b; /* Rouge clair */
+    color: white;
+  }
+
+  .btn-danger:hover {
+    background-color: #e74c3c; /* Rouge plus foncé */
+  }
+
+  .btn-cancel {
+    background-color: #f39c12; /* Orange */
+    color: white;
+  }
+
+  .btn-cancel:hover {
+    background-color: #e67e22; /* Orange plus foncé */
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  @media (max-width: 600px) {
+    .delete-confirmation {
+      padding: 1.5rem;
+    }
+    
+    .confirmation-header {
+      flex-direction: column;
+      gap: 1rem;
+      text-align: center;
+    }
+    
+    .warning-icon-circle {
+      margin: 0 auto;
+    }
+    
+    .form-actions {
+      flex-direction: column;
+    }
+    
+    .btn {
+      width: 100%;
+      justify-content: center;
+    }
+    
+    .detail-row {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+    
+    .detail-label {
+      min-width: auto;
+    }
+  }
+</style>
+{% endblock %}

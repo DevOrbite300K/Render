@@ -1,0 +1,279 @@
+{% extends 'avocat_base.html' %}
+
+{% block content %}
+<div class="dashboard-container">
+  <h2 class="dashboard-title mb-4 animate__animated animate__fadeInDown">📊 Tableau de Bord {{request.user.role}}</h2>
+
+  <!-- Cartes de statistiques -->
+  <div class="row g-4 mb-5 stats-cards">
+    <div class="col-md-3">
+      <div class="card stats-card bg-green-gradient text-white h-100 shadow animate__animated animate__fadeInLeft">
+        <div class="card-body">
+          <div class="stats-icon">
+            <i class="fas fa-folder-open"></i>
+          </div>
+          <h5 class="card-title">Dossiers</h5>
+          <div class="stats-numbers">
+            <span class="stat-value">{{ stats.dossiers_total }}</span>
+            <span class="stat-label">Total</span>
+          </div>
+          <div class="stats-numbers">
+            <span class="stat-value">{{ stats.dossiers_actifs }}</span>
+            <span class="stat-label">Actifs</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    {% comment %} <div class="col-md-3">
+      <div class="card stats-card bg-blue-gradient text-white h-100 shadow animate__animated animate__fadeInLeft animate__delay-1s">
+        <div class="card-body">
+          <div class="stats-icon">
+            <i class="fas fa-file-invoice-dollar"></i>
+          </div>
+          <h5 class="card-title">Paiements</h5>
+          <div class="stats-numbers">
+            <span class="stat-value">{{ stats.total_paiements }}</span>
+            <span class="stat-label">Transactions</span>
+          </div>
+          <div class="stats-numbers">
+            <span class="stat-value">{{ stats.montant_total|floatformat:0 }}</span>
+            <span class="stat-label">GNF</span>
+          </div>
+        </div>
+      </div>
+    </div> {% endcomment %}
+    
+    <div class="col-md-3">
+      <div class="card stats-card bg-orange-gradient text-white h-100 shadow animate__animated animate__fadeInRight">
+        <div class="card-body">
+          <div class="stats-icon">
+            <i class="fas fa-file-alt"></i>
+          </div>
+          <h5 class="card-title">Documents</h5>
+          <div class="stats-numbers">
+            <span class="stat-value">{{ stats.total_documents }}</span>
+            <span class="stat-label">Total</span>
+          </div>
+          <div class="stats-numbers">
+            <span class="stat-value">{{ stats.documents_30j }}</span>
+            <span class="stat-label">Récents (30j)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-3">
+      <div class="card stats-card bg-yellow-gradient text-white h-100 shadow animate__animated animate__fadeInRight animate__delay-1s">
+        <div class="card-body">
+          <div class="stats-icon">
+            <i class="fas fa-envelope"></i>
+          </div>
+          <h5 class="card-title">Messages</h5>
+          <div class="stats-numbers">
+            <span class="stat-value">{{ stats.total_messages }}</span>
+            <span class="stat-label">Total</span>
+          </div>
+          <div class="stats-numbers">
+            <span class="stat-value">{{ stats.messages_non_lus }}</span>
+            <span class="stat-label">Non lus</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dossiers récents -->
+  <div class="card border-0 shadow-sm">
+    <div class="card-header py-3" style="background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);">
+        <h5 class="mb-0 text-white font-weight-bold">
+            <i class="fas fa-folder-open mr-2"></i>
+            Dossiers Récents
+        </h5>
+    </div>
+    <div class="card-body px-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead style="background-color: #f8f9fa;">
+                    <tr class="text-center">
+                        <th style="color: #2c3e50; font-weight: 600; border-bottom: 2px solid #e74c3c;">Référence</th>
+                        <th style="color: #2c3e50; font-weight: 600; border-bottom: 2px solid #3498db;">Type d'affaire</th>
+                        <th style="color: #2c3e50; font-weight: 600; border-bottom: 2px solid #f39c12;">Client</th>
+                        <th style="color: #2c3e50; font-weight: 600; border-bottom: 2px solid #2ecc71;">Date Ouverture</th>
+                        <th style="color: #2c3e50; font-weight: 600; border-bottom: 2px solid #9b59b6;">Statut</th>
+                        <th style="color: #2c3e50; font-weight: 600; border-bottom: 2px solid #1abc9c;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for dossier in dossiers_recents %}
+                    <tr>
+                        <td class="text-center font-weight-bold" style="color: #3498db;">#{{ dossier.id }}</td>
+                        <td>{{ dossier.type_affaire }}</td>
+                        <td>
+                            {% for client in dossier.clients.all %}
+                                {{ client.utilisateur.first_name }} {{ client.telephone }}{% if not forloop.last %}, {% endif %}
+                            {% empty %}
+                                <span class="text-muted">Aucun client</span>
+                            {% endfor %}
+                        </td>
+                        <td class="text-center">{{ dossier.date_ouverture|date:"d/m/Y" }}</td>
+                        <td class="text-center">
+                            {% if dossier.date_cloture %}
+                                {% if dossier.date_cloture > today %}
+                                    <span class="badge py-2 px-3" style="background-color: #2ecc71; color: white;">En cours</span>
+                                {% else %}
+                                    <span class="badge py-2 px-3" style="background-color: #e74c3c; color: white;">En retard</span>
+                                {% endif %}
+                            {% else %}
+                                <span class="badge py-2 px-3" style="background-color: #f39c12; color: white;">Date clôture non définie</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                            <a href="{% url 'dossierdetail' dossier.id %}" class="btn btn-sm" style="background-color: #3498db; color: white;">
+                                <i class="fas fa-eye"></i> Voir
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center py-4" style="color: #7f8c8d;">
+                            <i class="fas fa-folder-open fa-2x mb-2" style="color: #bdc3c7;"></i><br>
+                            Aucun dossier récent
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div>
+
+<style>
+  .dashboard-container {
+    background-color: #f8f9fa;
+    padding: 2rem;
+    min-height: 100vh;
+  }
+
+  .dashboard-title {
+    color: #2c3e50;
+    font-weight: 600;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 0.5rem;
+    display: inline-block;
+  }
+
+  /* Cartes de statistiques */
+  .stats-card {
+    border-radius: 10px;
+    border: none;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .stats-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+  }
+
+  .stats-icon {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    opacity: 0.8;
+  }
+
+  .card-title {
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+  }
+
+  .stats-numbers {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+  }
+
+  .stat-value {
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  .stat-label {
+    font-size: 0.9rem;
+    opacity: 0.8;
+  }
+
+  /* Dégradés de couleurs */
+  .bg-green-gradient {
+    background: linear-gradient(135deg, #27ae60, #2ecc71);
+  }
+
+  .bg-blue-gradient {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+  }
+
+  .bg-orange-gradient {
+    background: linear-gradient(135deg, #e67e22, #f39c12);
+  }
+
+  .bg-yellow-gradient {
+    background: linear-gradient(135deg, #f1c40f, #f39c12);
+  }
+
+  .bg-black {
+    background-color: #2c3e50 !important;
+  }
+
+  /* Badges */
+  .badge {
+    font-weight: 500;
+    padding: 0.35em 0.65em;
+    font-size: 0.75em;
+  }
+
+  .bg-green {
+    background-color: #27ae60 !important;
+  }
+
+  .bg-red {
+    background-color: #e74c3c !important;
+  }
+
+  .bg-gray {
+    background-color: #95a5a6 !important;
+  }
+
+  /* Boutons */
+  .btn-outline-blue {
+    color: #3498db;
+    border-color: #3498db;
+  }
+
+  .btn-outline-blue:hover {
+    background-color: #3498db;
+    color: white;
+  }
+
+  /* Table */
+  .table {
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .table thead th {
+    background-color: #ecf0f1;
+    color: #2c3e50;
+    font-weight: 600;
+    border-bottom: 2px solid #bdc3c7;
+  }
+
+  .table-hover tbody tr:hover {
+    background-color: rgba(52, 152, 219, 0.05);
+  }
+
+  /* Animations */
+  .animate__animated {
+    animation-duration: 0.5s;
+  }
+</style>
+{% endblock %}

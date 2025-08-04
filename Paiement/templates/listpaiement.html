@@ -1,0 +1,478 @@
+{% extends "admin_base2.html" %}
+
+{% block content %}
+<div class="vibrant-theme-container">
+  <div class="form-header">
+    <h2 class="page-title">
+      <i class="fas fa-money-bill-wave text-success"></i> Liste des Paiements
+    </h2>
+    <div class="breadcrumb">
+      <a href="#" class="breadcrumb-link">
+        <i class="fas fa-home"></i> Accueil
+      </a>
+      <span class="breadcrumb-separator">/</span>
+      <span class="breadcrumb-current">Paiements</span>
+    </div>
+    <a href="{% url 'creerpaiement' %}" class="btn btn-success">
+      <i class="fas fa-plus-circle"></i> Nouveau paiement
+    </a>
+  </div>
+
+  <div class="payments-container">
+    {% if paiements %}
+    <div class="payments-table">
+      <div class="table-header">
+        <div class="header-cell">Client</div>
+        <div class="header-cell">Montant</div>
+        <div class="header-cell">Date</div>
+        <div class="header-cell">Méthode</div>
+        <div class="header-cell actions-cell">Actions</div>
+      </div>
+
+      {% for paiement in paiements %}
+      <div class="table-row">
+        <div class="table-cell client-cell">
+          <div class="client-avatar" style="background-color: {{ paiement.client.color_code|default:'#007bff' }};">
+             <img src="{{paiement.client.photo.url}}" alt="" style="width: 25px; height: 10;">  {{ paiement.client.nom|first|upper }}
+          </div>
+          <div>
+            <div class="client-name">{{ paiement.client }}</div>
+            <div class="client-ref">Ref: {{ paiement.reference }}</div>
+          </div>
+        </div>
+        <div class="table-cell amount-cell">
+          <span class="amount-badge">{{ paiement.montant }} GNF</span>
+        </div>
+        <div class="table-cell date-cell">
+          <div class="date-day">{{ paiement.date_paiement|date:"d/m/Y" }}</div>
+          <div class="date-time">{{ paiement.date_paiement|date:"H:i" }}</div>
+        </div>
+        <div class="table-cell method-cell">
+          <span class="method-badge {{ paiement.methode|lower }}">
+            <i class="fas fa-{% if paiement.methode == 'Espèce' %}money-bill-wave{% elif paiement.methode == 'Chèque' %}file-invoice-dollar{% else %}credit-card{% endif %}"></i>
+            {{ paiement.methode }}
+          </span>
+        </div>
+        <div class="table-cell actions-cell">
+          <div class="action-buttons">
+            <a href="{% url 'detailpaiement' paiement.pk %}" class="btn-action btn-view" title="Détails">
+              <i class="fas fa-eye"></i>
+            </a>
+            <a href="{% url 'modifierpaiement' paiement.pk %}" class="btn-action btn-edit" title="Modifier">
+              <i class="fas fa-edit"></i>
+            </a>
+            <a href="{% url 'supprimerpaiement' paiement.pk %}" class="btn-action btn-delete" title="Supprimer">
+              <i class="fas fa-trash-alt"></i>
+            </a>
+            <a href="{% url 'imprimerpaiement' paiement.pk %}" class="btn-action btn-print" title="Imprimer">
+              <i class="fas fa-print"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <div class="empty-icon">
+        <i class="fas fa-money-bill-alt text-muted"></i>
+      </div>
+      <h3>Aucun paiement enregistré</h3>
+      <p>Commencez par ajouter un nouveau paiement</p>
+      <a href="{% url 'creerpaiement' %}" class="btn btn-success">
+        <i class="fas fa-plus-circle"></i> Ajouter un paiement
+      </a>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<style>
+  :root {
+    --primary-blue: #007bff;
+    --primary-green: #28a745;
+    --primary-red: #dc3545;
+    --primary-yellow: #ffc107;
+    --primary-orange: #fd7e14;
+    --primary-cyan: #17a2b8;
+    --primary-black: #343a40;
+    --primary-gray: #6c757d;
+  }
+  
+  .vibrant-theme-container {
+    background-color: #f8f9fa;
+    color: #495057;
+    padding: 2rem;
+    min-height: 100vh;
+  }
+
+  .form-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .page-title {
+    color: var(--primary-black);
+    font-weight: 500;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .text-success {
+    color: var(--primary-green);
+  }
+
+  .text-muted {
+    color: var(--primary-gray);
+  }
+
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 0.9rem;
+    color: var(--primary-gray);
+    margin: 0.5rem 0 1.5rem 0;
+    width: 100%;
+  }
+
+  .breadcrumb-link {
+    color: var(--primary-gray);
+    text-decoration: none;
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .breadcrumb-link:hover {
+    color: var(--primary-blue);
+  }
+
+  .breadcrumb-separator {
+    color: #adb5bd;
+  }
+
+  .breadcrumb-current {
+    color: var(--primary-black);
+    font-weight: 500;
+  }
+
+  .payments-container {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    border: 1px solid #e9ecef;
+  }
+
+  .payments-table {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .table-header {
+    display: flex;
+    background-color: var(--primary-black);
+    padding: 14px 20px;
+    font-weight: 500;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    color: white;
+  }
+
+  .header-cell {
+    flex: 1;
+    padding: 0 10px;
+  }
+
+  .actions-cell {
+    flex: 0.8;
+    text-align: center;
+  }
+
+  .table-row {
+    display: flex;
+    padding: 16px 20px;
+    align-items: center;
+    border-bottom: 1px solid #e9ecef;
+    transition: all 0.3s ease;
+  }
+
+  .table-row:hover {
+    background-color: #f8f9fa;
+    transform: translateX(4px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+
+  .table-cell {
+    flex: 1;
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .client-cell {
+    flex: 1.2;
+  }
+
+  .client-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 1.1rem;
+    background-color: var(--primary-blue);
+  }
+
+  .client-name {
+    font-weight: 500;
+    color: var(--primary-black);
+  }
+
+  .client-ref {
+    font-size: 0.8rem;
+    color: var(--primary-gray);
+  }
+
+  .amount-cell {
+    justify-content: flex-end;
+  }
+
+  .amount-badge {
+    background-color: rgba(40, 167, 69, 0.1);
+    color: var(--primary-green);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    border: 1px solid rgba(40, 167, 69, 0.3);
+  }
+
+  .date-cell {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .date-day {
+    font-weight: 500;
+  }
+
+  .date-time {
+    font-size: 0.85rem;
+    color: var(--primary-gray);
+  }
+
+  .method-cell {
+    justify-content: center;
+  }
+
+  .method-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .method-badge.espece {
+    background-color: rgba(40, 167, 69, 0.1);
+    color: var(--primary-green);
+    border: 1px solid rgba(40, 167, 69, 0.3);
+  }
+
+  .method-badge.chèque {
+    background-color: rgba(255, 193, 7, 0.1);
+    color: var(--primary-yellow);
+    border: 1px solid rgba(255, 193, 7, 0.3);
+  }
+
+  .method-badge {
+    background-color: rgba(0, 123, 255, 0.1);
+    color: var(--primary-blue);
+    border: 1px solid rgba(0, 123, 255, 0.3);
+  }
+
+  .actions-cell {
+    justify-content: center;
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 8px;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: none;
+    gap: 10px;
+    font-weight: 500;
+  }
+
+  .btn-success {
+    background-color: var(--primary-green);
+    color: white;
+  }
+
+  .btn-success:hover {
+    background-color: #218838;
+    box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+  }
+
+  .btn-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    color: white;
+  }
+
+  .btn-view {
+    background-color: var(--primary-blue);
+  }
+
+  .btn-edit {
+    background-color: var(--primary-yellow);
+    color: var(--primary-black);
+  }
+
+  .btn-delete {
+    background-color: var(--primary-red);
+  }
+
+  .btn-print {
+    background-color: var(--primary-orange);
+  }
+
+  .btn-action:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 2rem;
+    text-align: center;
+  }
+
+  .empty-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(108, 117, 125, 0.1);
+    margin-bottom: 1.5rem;
+  }
+
+  .empty-icon i {
+    font-size: 2.5rem;
+  }
+
+  .empty-state h3 {
+    color: var(--primary-black);
+    margin: 0 0 0.5rem 0;
+    font-weight: 500;
+  }
+
+  .empty-state p {
+    color: var(--primary-gray);
+    margin: 0 0 1.5rem 0;
+    max-width: 400px;
+  }
+
+  @media (max-width: 992px) {
+    .table-header {
+      display: none;
+    }
+    
+    .payments-table {
+      padding: 1rem;
+    }
+    
+    .table-row {
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 1.5rem;
+      gap: 1.2rem;
+      border-bottom: 1px solid #e9ecef;
+      position: relative;
+    }
+    
+    .table-cell {
+      width: 100%;
+      justify-content: space-between;
+      padding: 0;
+    }
+    
+    .actions-cell {
+      justify-content: center;
+      width: 100%;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid #e9ecef;
+    }
+
+    .action-buttons {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .table-cell::before {
+      content: attr(data-label);
+      font-weight: 500;
+      color: var(--primary-gray);
+      margin-right: 1rem;
+      flex: 0 0 120px;
+    }
+
+    .client-cell::before { content: "Client"; }
+    .amount-cell::before { content: "Montant"; }
+    .date-cell::before { content: "Date"; }
+    .method-cell::before { content: "Méthode"; }
+  }
+
+  @media (max-width: 576px) {
+    .form-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .btn {
+      width: 100%;
+    }
+  }
+</style>
+{% endblock %}

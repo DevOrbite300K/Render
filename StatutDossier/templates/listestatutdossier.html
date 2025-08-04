@@ -1,0 +1,224 @@
+{% extends 'admin_base2.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card border-0 shadow-lg" style="background: white;">
+        <div class="card-header border-bottom d-flex justify-content-between align-items-center" 
+             style="background: #f8f9fa;">
+            <h2 class="mb-0 text-dark">
+                <i class="fas fa-list-alt mr-2" style="color: #28a745;"></i>Liste des Statuts Dossier
+            </h2>
+            <a href="{% url 'creerstatutdossier' %}" class="btn btn-yellow">
+                <i class="fas fa-plus mr-2"></i>Créer un nouveau statut
+            </a>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nom</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for statut in statuts %}
+                        <tr class="align-middle">
+                            <td>{{ statut.id }}</td>
+                            <td>{{ statut.libelle }}</td>
+                            <td>
+                                <div class="d-flex justify-content-center">
+                                    <a href="{% url 'detailstatutdossier' statut.pk %}" 
+                                       class="btn btn-outline-blue btn-sm btn-rounded mr-2">
+                                        <i class="fas fa-eye"></i> Détails
+                                    </a>
+                                    <a href="{% url 'modifierstatutdossier' statut.pk %}" 
+                                       class="btn btn-outline-green btn-sm btn-rounded mr-2">
+                                        <i class="fas fa-edit"></i> Modifier
+                                    </a>
+                                    <a href="{% url 'supprimerstatutdossier' statut.pk %}" 
+                                       class="btn btn-outline-red btn-sm btn-rounded">
+                                        <i class="fas fa-trash-alt"></i> Supprimer
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" class="text-center text-muted py-4">
+                                <i class="fas fa-info-circle mr-2"></i>Aucun statut trouvé
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card-footer d-flex justify-content-end" style="background: #f8f9fa;">
+            <nav aria-label="Page navigation">
+                <ul class="pagination mb-0">
+                    {% if statuts.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1" aria-label="First">
+                            <span aria-hidden="true">&laquo;&laquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ statuts.previous_page_number }}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    {% endif %}
+                    
+                    {% for num in statuts.paginator.page_range %}
+                        {% if statuts.number == num %}
+                        <li class="page-item active">
+                            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                        </li>
+                        {% elif num > statuts.number|add:'-3' and num < statuts.number|add:'3' %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                        </li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if statuts.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ statuts.next_page_number }}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ statuts.paginator.num_pages }}" aria-label="Last">
+                            <span aria-hidden="true">&raquo;&raquo;</span>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<style>
+    :root {
+        --green: #28a745;
+        --blue: #007bff;
+        --red: #dc3545;
+        --yellow: #ffc107;
+        --black: #212529;
+        --light-gray: #f8f9fa;
+    }
+    
+    body {
+        background-color: #f8f9fa;
+    }
+    
+    .card {
+        border-radius: 8px;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn {
+        border-radius: 50px;
+        padding: 6px 12px;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        font-size: 0.875rem;
+    }
+    
+    .btn-yellow {
+        background-color: var(--yellow);
+        color: var(--black);
+        border: 1px solid var(--yellow);
+    }
+    
+    .btn-yellow:hover {
+        background-color: #e0a800;
+        border-color: #d39e00;
+        color: var(--black);
+    }
+    
+    .table {
+        background-color: white;
+        color: var(--black);
+    }
+    
+    .table thead th {
+        background-color: var(--light-gray);
+        color: var(--black);
+        border-bottom: 2px solid #dee2e6;
+        font-weight: 600;
+    }
+    
+    .table tbody tr:hover {
+        background-color: rgba(0, 0, 0, 0.02);
+    }
+    
+    .btn-outline-blue {
+        border: 1px solid var(--blue);
+        color: var(--blue);
+    }
+    
+    .btn-outline-blue:hover {
+        background-color: rgba(0, 123, 255, 0.1);
+        color: var(--blue);
+    }
+    
+    .btn-outline-green {
+        border: 1px solid var(--green);
+        color: var(--green);
+    }
+    
+    .btn-outline-green:hover {
+        background-color: rgba(40, 167, 69, 0.1);
+        color: var(--green);
+    }
+    
+    .btn-outline-red {
+        border: 1px solid var(--red);
+        color: var(--red);
+    }
+    
+    .btn-outline-red:hover {
+        background-color: rgba(220, 53, 69, 0.1);
+        color: var(--red);
+    }
+    
+    .text-muted {
+        color: #6c757d !important;
+    }
+    
+    .card-header {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-rounded {
+        border-radius: 50px;
+    }
+    
+    .page-item.active .page-link {
+        background-color: var(--blue);
+        border-color: var(--blue);
+    }
+    
+    .page-link {
+        color: var(--blue);
+    }
+    
+    .page-link:hover {
+        color: #0056b3;
+    }
+    
+    .card-footer {
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,188 @@
+{% extends 'client_base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="profile-edit-container">
+    <div class="card border-0 shadow-lg">
+        <div class="card-header bg-dark d-flex align-items-center">
+            <i class="fas fa-user-edit me-3 fs-4" style="color: #8b9dc3;"></i>
+            <h2 class="mb-0">Modifier votre profil</h2>
+        </div>
+        
+        <div class="card-body bg-gray-800">
+            <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+                {% csrf_token %}
+                
+                <div class="row">
+                    <!-- Photo de profil -->
+                    <div class="col-md-4 text-center mb-4">
+                        <div class="profile-picture-container">
+                            {% if request.user.client_profile.photo %}
+                                <img src="{{ request.user.client_profile.photo.url }}" alt="Photo de profil" class="profile-picture img-thumbnail mb-3">
+                            {% else %}
+                                <img src="{% static 'images/default-profile.png' %}" alt="Photo par défaut" class="profile-picture img-thumbnail mb-3">
+                            {% endif %}
+                            <div class="file-upload btn btn-sm btn-outline-light">
+                                <span><i class="fas fa-camera me-1"></i> Changer la photo</span>
+                                {{ form.photo }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Informations personnelles -->
+                    <div class="col-md-8">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.adresse.id_for_label }}" class="form-label">
+                                    <i class="fas fa-map-marker-alt me-2"></i>{{ form.adresse.label }}
+                                </label>
+                                {{ form.adresse }}
+                                <div class="invalid-feedback">
+                                    Veuillez fournir une adresse valide.
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.telephone.id_for_label }}" class="form-label">
+                                    <i class="fas fa-phone me-2"></i>{{ form.telephone.label }}
+                                </label>
+                                {{ form.telephone }}
+                                <div class="invalid-feedback">
+                                    Veuillez fournir un numéro valide.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.datenaissance.id_for_label }}" class="form-label">
+                                    <i class="fas fa-birthday-cake me-2"></i>{{ form.datenaissance.label }}
+                                </label>
+                                {{ form.datenaissance }}
+                                <div class="invalid-feedback">
+                                    Veuillez sélectionner une date valide.
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.type_client.id_for_label }}" class="form-label">
+                                    <i class="fas fa-user-tag me-2"></i>{{ form.type_client.label }}
+                                </label>
+                                {{ form.type_client }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="d-flex justify-content-end mt-4">
+                    <a href="{% url 'mesdossiersclient' %}" class="btn btn-outline-light me-2">
+                        <i class="fas fa-times me-1"></i> Annuler
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i> Enregistrer les modifications
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .profile-edit-container {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+    
+    .bg-gray-800 {
+        background-color: #2a2a2a;
+    }
+    
+    .profile-picture {
+        width: 200px;
+        height: 200px;
+        object-fit: cover;
+        border: 3px solid #8b9dc3;
+    }
+    
+    .profile-picture-container {
+        position: relative;
+    }
+    
+    .file-upload {
+        position: relative;
+        overflow: hidden;
+        display: inline-block;
+    }
+    
+    .file-upload input[type="file"] {
+        position: absolute;
+        left: 0;
+        top: 0;
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+    }
+    
+    .form-control, .form-select {
+        background-color: #1a1a1a;
+        border: 1px solid #444;
+        color: #e0e0e0;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        background-color: #1a1a1a;
+        border-color: #8b9dc3;
+        color: #e0e0e0;
+        box-shadow: 0 0 0 0.25rem rgba(139, 157, 195, 0.25);
+    }
+    
+    .btn-outline-light {
+        border-color: #666;
+        color: #e0e0e0;
+    }
+    
+    .btn-outline-light:hover {
+        background-color: #3a3a3a;
+        border-color: #8b9dc3;
+    }
+    
+    .btn-primary {
+        background-color: #8b9dc3;
+        border-color: #8b9dc3;
+    }
+    
+    .btn-primary:hover {
+        background-color: #7a8cb2;
+        border-color: #7a8cb2;
+    }
+    
+    .invalid-feedback {
+        color: #ff6b6b;
+    }
+    
+    .was-validated .form-control:invalid, 
+    .was-validated .form-control.is-invalid {
+        border-color: #ff6b6b;
+    }
+</style>
+
+<script>
+    // Validation côté client
+    (function() {
+        'use strict';
+        window.addEventListener('load', function() {
+            var forms = document.getElementsByClassName('needs-validation');
+            var validation = Array.prototype.filter.call(forms, function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (form.checkValidity() === false) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        }, false);
+    })();
+</script>
+{% endblock %}

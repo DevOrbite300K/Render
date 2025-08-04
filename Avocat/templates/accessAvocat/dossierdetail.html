@@ -1,0 +1,459 @@
+{% extends 'avocat_base.html' %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="card shadow-lg border-0" style="background: #ffffff; border: 1px solid #e0e0e0;">
+        <!-- En-tête avec effet de profondeur -->
+        <div class="card-header" style="background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%); border-bottom: 1px solid #e0e0e0;">
+            <h2 class="h4 mb-0 font-weight-bold" style="color: #2c3e50;">
+                <i class="fas fa-folder-open mr-2" style="color: #3498db;"></i>
+                Dossier : <span style="color: #e74c3c;">{{ dossier.titre }}</span>
+            </h2>
+        </div>
+        
+        <div class="card-body" style="color: #34495e;">
+            <!-- Section Description avec mise en valeur -->
+            <div class="mb-4 p-4 rounded" style="background: #f8f9fa; border-left: 3px solid #3498db;">
+                <h5 class="text-uppercase small font-weight-bold mb-3" style="color: #3498db; letter-spacing: 1px;">
+                    <i class="fas fa-align-left mr-2"></i>Description
+                </h5>
+                <p class="mb-0" style="color: #2c3e50; line-height: 1.7;">{{ dossier.description }}</p>
+            </div>
+
+            <!-- Séparateur stylisé -->
+            <hr class="my-4" style="border-top: 1px solid #e0e0e0;">
+
+            <!-- Section Commentaires -->
+            <div class="mb-4">
+                <h3 class="h5 mb-3" style="color: #2c3e50;">
+                    <i class="fas fa-comments mr-2" style="color: #2ecc71;"></i>Commentaires associés
+                </h3>
+                
+                {% if messages %}
+                <div class="comment-list" style="max-height: 400px; overflow-y: auto; padding-right: 10px;">
+                    {% for message in messages %}
+                    <div class="mb-3 p-3 rounded message-card" 
+                         style="background: #f8f9fa; border-left: 2px solid #f39c12; transition: all 0.3s ease;">
+                        <div class="d-flex justify-content-between mb-2 align-items-center">
+                            <strong style="color: #e74c3c;">{{ message.utilisateur.username }}</strong>
+                            <small class="text-muted" style="color: #7f8c8d !important;">
+                                {{ message.date_creation|date:"d/m/Y H:i" }}
+                            </small>
+                        </div>
+                        <p class="mb-0" style="color: #34495e; line-height: 1.6;">{{ message.message }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-4" style="background: #f8f9fa; border-radius: 6px; border: 1px dashed #bdc3c7;">
+                    <i class="fas fa-comment-slash fa-2x mb-3" style="color: #bdc3c7;"></i>
+                    <p class="mb-0" style="color: #7f8c8d;">Aucun commentaire pour ce dossier</p>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Section Documents -->
+            <div class="mb-4">
+                <h3 class="h5 mb-3" style="color: #2c3e50;">
+                    <i class="fas fa-file-alt mr-2" style="color: #f39c12;"></i>Documents associés
+                </h3>
+
+                {% if documents %}
+                <div class="document-list" style="max-height: 300px; overflow-y: auto; padding-right: 10px;">
+                    {% for document in documents %}
+                    <div class="mb-3 p-3 rounded document-card" 
+                        style="background: #f8f9fa; border-left: 2px solid #e74c3c; transition: all 0.3s ease;">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div>
+                                <strong style="color: #3498db;">{{ document.type_document|capfirst }}</strong>
+                                <span style="color: #34495e;">— {{ document.nom_fichier }}</span>
+                                <small class="d-block text-muted">
+                                    Type: <span class="document-extension">{{ document.fichier.name|slice:'-4:'|upper }}</span>
+                                    • {{ document.fichier.size|filesizeformat }}
+                                </small>
+                            </div>
+                            <small style="color: #7f8c8d;">{{ document.date_ajout|date:"d/m/Y H:i" }}</small>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <a href="{{ document.fichier.url }}" download="{{ document.nom_fichier }}" 
+                               class="btn btn-sm" style="background: #2ecc71; color: white;">
+                                <i class="fas fa-download"></i> Télécharger
+                            </a>
+                            <button class="btn btn-sm preview-btn" 
+                                    style="background: #3498db; color: white;"
+                                    data-url="{{ document.fichier.url }}"
+                                    data-extension="{{ document.fichier.name|slice:'-4:'|lower }}"
+                                    data-filename="{{ document.nom_fichier }}">
+                                <i class="fas fa-eye"></i> Visualiser
+                            </button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-4" style="background: #f8f9fa; border-radius: 6px; border: 1px dashed #bdc3c7;">
+                    <i class="fas fa-file-alt fa-2x mb-3" style="color: #bdc3c7;"></i>
+                    <p class="mb-0" style="color: #7f8c8d;">Aucun document disponible pour ce dossier</p>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Boutons d'action avec couleurs variées -->
+            <div class="d-flex flex-column flex-md-row justify-content-between mt-4 gap-2">
+                <a href="{% url 'avocatcommenter' %}?dossier={{ dossier.pk }}" 
+                   class="btn py-2 font-weight-bold flex-grow-1" 
+                   style="background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); 
+                          border: none; 
+                          color: white;
+                          letter-spacing: 0.5px;
+                          transition: all 0.3s ease;">
+                   <i class="fas fa-plus-circle mr-2"></i>Ajouter un commentaire
+                </a>
+
+                <a href="{% url 'ajoutdocumentavocat' %}?dossier={{ dossier.pk }}" 
+                   class="btn py-2 font-weight-bold flex-grow-1"
+                   style="background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+                          border: none;
+                          color: white;
+                          letter-spacing: 0.5px;
+                          transition: all 0.3s ease;">
+                    <i class="fas fa-upload mr-2"></i>Ajouter un document
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal pour visualiser les documents -->
+<div class="modal fade" id="documentModal" tabindex="-1" aria-labelledby="documentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="documentModalLabel">
+                    <i class="fas fa-file-alt me-2"></i>
+                    <span id="modal-filename">Visualisation du document</span>
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0" id="documentPreview" style="height: 70vh;">
+                <div class="d-flex justify-content-center align-items-center h-100 bg-light">
+                    <div class="text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Chargement...</span>
+                        </div>
+                        <p class="mt-3">Chargement du document...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i> Fermer
+                </button>
+                <a id="downloadFromPreview" href="#" download class="btn btn-primary">
+                    <i class="fas fa-download me-1"></i> Télécharger
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .message-card:hover {
+        transform: translateX(5px);
+        border-left-color: #e74c3c !important;
+        background: #ecf0f1 !important;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    .comment-list::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    .comment-list::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+    
+    .comment-list::-webkit-scrollbar-thumb {
+        background: #f39c12;
+        border-radius: 3px;
+    }
+    
+    body {
+        background-color: #ecf0f1;
+    }
+
+    .document-card:hover {
+        transform: translateX(5px);
+        border-left-color: #3498db !important;
+        background: #ecf0f1 !important;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    .document-list::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    .document-list::-webkit-scrollbar-thumb {
+        background: #e74c3c;
+        border-radius: 3px;
+    }
+    
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+    
+    /* Style pour l'iframe de prévisualisation */
+    .preview-iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+        background: white;
+    }
+    
+    /* Style pour les documents non visualisables */
+    .unsupported-document {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        flex-direction: column;
+        text-align: center;
+        padding: 20px;
+        background: #f8f9fa;
+    }
+    
+    .document-extension {
+        background: #e3f2fd;
+        padding: 2px 5px;
+        border-radius: 3px;
+        font-size: 0.8em;
+        color: #1976d2;
+        font-family: monospace;
+    }
+    
+    .image-preview-container {
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #f0f0f0;
+        padding: 20px;
+    }
+    
+    .image-preview {
+        max-height: 100%;
+        max-width: 100%;
+        object-fit: contain;
+    }
+    
+    .text-preview {
+        height: 100%;
+        overflow: auto;
+        padding: 15px;
+        background: white;
+        font-family: monospace;
+        white-space: pre-wrap;
+    }
+    
+    .office-preview-container {
+        height: 100%;
+        background: #f8f9fa;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Gestion de la visualisation des documents
+    const previewButtons = document.querySelectorAll('.preview-btn');
+    const documentModal = new bootstrap.Modal(document.getElementById('documentModal'));
+    const documentPreview = document.getElementById('documentPreview');
+    const downloadFromPreview = document.getElementById('downloadFromPreview');
+    const modalFilename = document.getElementById('modal-filename');
+    
+    // Liste des extensions supportées avec leurs types
+    const supportedExtensions = {
+        // Documents PDF
+        '.pdf': { type: 'pdf', name: 'PDF' },
+        
+        // Images
+        '.jpg': { type: 'image', name: 'Image JPEG' },
+        '.jpeg': { type: 'image', name: 'Image JPEG' },
+        '.png': { type: 'image', name: 'Image PNG' },
+        '.gif': { type: 'image', name: 'Image GIF' },
+        '.bmp': { type: 'image', name: 'Image BMP' },
+        '.svg': { type: 'image', name: 'Image SVG' },
+        '.webp': { type: 'image', name: 'Image WebP' },
+        
+        // Documents texte
+        '.txt': { type: 'text', name: 'Fichier texte' },
+        '.csv': { type: 'text', name: 'Fichier CSV' },
+        '.json': { type: 'text', name: 'Fichier JSON' },
+        '.xml': { type: 'text', name: 'Fichier XML' },
+        '.html': { type: 'text', name: 'Fichier HTML' },
+        '.css': { type: 'text', name: 'Fichier CSS' },
+        '.js': { type: 'text', name: 'Fichier JavaScript' },
+        
+        // Documents Office
+        '.doc': { type: 'office', name: 'Document Word' },
+        '.docx': { type: 'office', name: 'Document Word' },
+        '.xls': { type: 'office', name: 'Document Excel' },
+        '.xlsx': { type: 'office', name: 'Document Excel' },
+        '.ppt': { type: 'office', name: 'Document PowerPoint' },
+        '.pptx': { type: 'office', name: 'Document PowerPoint' },
+        
+        // Autres
+        '.rtf': { type: 'rtf', name: 'Document RTF' }
+    };
+    
+    previewButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const fileUrl = this.getAttribute('data-url');
+            const fileExt = this.getAttribute('data-extension').toLowerCase();
+            const fileName = this.getAttribute('data-filename');
+            
+            // Mettre à jour le modal
+            modalFilename.textContent = fileName;
+            downloadFromPreview.href = fileUrl;
+            downloadFromPreview.setAttribute('download', fileName);
+            
+            // Afficher le loader
+            documentPreview.innerHTML = `
+                <div class="d-flex justify-content-center align-items-center h-100 bg-light">
+                    <div class="text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Chargement...</span>
+                        </div>
+                        <p class="mt-3">Préparation de la visualisation...</p>
+                    </div>
+                </div>
+            `;
+            
+            // Afficher le modal
+            documentModal.show();
+            
+            // Détecter le type de fichier
+            const fileInfo = supportedExtensions[fileExt];
+            
+            if (fileInfo) {
+                switch(fileInfo.type) {
+                    case 'pdf':
+                        showPdfPreview(fileUrl, fileName);
+                        break;
+                    case 'image':
+                        showImagePreview(fileUrl, fileName);
+                        break;
+                    case 'text':
+                        showTextPreview(fileUrl, fileName);
+                        break;
+                    case 'office':
+                        showOfficePreview(fileUrl, fileName);
+                        break;
+                    default:
+                        showUnsupportedMessage(fileExt, fileName);
+                }
+            } else {
+                showUnsupportedMessage(fileExt, fileName);
+            }
+        });
+    });
+    
+    function showPdfPreview(url, filename) {
+        const iframe = document.createElement('iframe');
+        iframe.src = `https://docs.google.com/gview?url=${encodeURIComponent(url)}&embedded=true`;
+        iframe.className = 'preview-iframe';
+        iframe.onload = () => {
+            documentPreview.innerHTML = '';
+            documentPreview.appendChild(iframe);
+        };
+        iframe.onerror = () => {
+            showFallbackPdfPreview(url, filename);
+        };
+    }
+    
+    function showFallbackPdfPreview(url, filename) {
+        // Solution de repli pour les PDF
+        const fallbackDiv = document.createElement('div');
+        fallbackDiv.className = 'unsupported-document';
+        fallbackDiv.innerHTML = `
+            <i class="fas fa-file-pdf fa-3x mb-3 text-danger"></i>
+            <h4 class="mb-3">Visualisation PDF non disponible</h4>
+            <p class="mb-3">Le PDF n'a pas pu être chargé dans le visualiseur.</p>
+            <p class="mb-3">Veuillez télécharger le fichier pour le consulter.</p>
+            <a href="${url}" download="${filename}" class="btn btn-danger">
+                <i class="fas fa-download me-1"></i> Télécharger le PDF
+            </a>
+        `;
+        documentPreview.innerHTML = '';
+        documentPreview.appendChild(fallbackDiv);
+    }
+    
+    function showImagePreview(url, filename) {
+        const container = document.createElement('div');
+        container.className = 'image-preview-container';
+        
+        const img = document.createElement('img');
+        img.className = 'image-preview';
+        img.alt = filename;
+        img.onload = () => {
+            documentPreview.innerHTML = '';
+            container.appendChild(img);
+            documentPreview.appendChild(container);
+        };
+        img.onerror = () => {
+            showUnsupportedMessage('.image', filename);
+        };
+        img.src = url;
+    }
+    
+    function showTextPreview(url, filename) {
+        fetch(url)
+            .then(response => {
+                if (!response.ok) throw new Error('Erreur de chargement');
+                return response.text();
+            })
+            .then(text => {
+                const pre = document.createElement('pre');
+                pre.className = 'text-preview';
+                pre.textContent = text;
+                documentPreview.innerHTML = '';
+                documentPreview.appendChild(pre);
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                showUnsupportedMessage('.txt', filename);
+            });
+    }
+    
+    function showOfficePreview(url, filename) {
+        const iframe = document.createElement('iframe');
+        iframe.src = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(url)}`;
+        iframe.className = 'preview-iframe';
+        iframe.onload = () => {
+            documentPreview.innerHTML = '';
+            documentPreview.appendChild(iframe);
+        };
+        iframe.onerror = () => {
+            showUnsupportedMessage('.office', filename);
+        };
+    }
+    
+    function showUnsupportedMessage(extension, filename) {
+        documentPreview.innerHTML = `
+            <div class="unsupported-document">
+                <i class="fas fa-exclamation-triangle fa-3x mb-3 text-warning"></i>
+                <h4 class="mb-3">Format non supporté</h4>
+                <p class="mb-2">L'extension <span class="document-extension">${extension}</span> ne peut pas être prévisualisée.</p>
+                <p class="mb-3">Veuillez télécharger le fichier pour le consulter avec une application appropriée.</p>
+                <a href="${downloadFromPreview.href}" download="${filename}" class="btn btn-warning">
+                    <i class="fas fa-download me-1"></i> Télécharger "${filename}"
+                </a>
+            </div>
+        `;
+    }
+});
+</script>
+{% endblock %}

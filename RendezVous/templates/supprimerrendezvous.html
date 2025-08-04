@@ -1,0 +1,167 @@
+{% extends "admin_base2.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card border-0 shadow-lg" style="background-color: #ffffff;">
+        <div class="card-header border-bottom" style="background: linear-gradient(to right, #28a745, #007bff);">
+            <h2 class="mb-0 text-white">
+                <i class="fas fa-calendar-times mr-2 text-warning"></i>Supprimer le Rendez-Vous
+            </h2>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-warning border-warning" style="background-color: rgba(255, 193, 7, 0.1); border-color: #ffc107;">
+                <h4 class="alert-heading text-dark">
+                    <i class="fas fa-exclamation-triangle mr-2 text-warning"></i>Action Irréversible
+                </h4>
+                <p class="text-dark mb-0">
+                    Vous êtes sur le point de supprimer définitivement le rendez-vous :
+                </p>
+                <ul class="text-dark mt-2 mb-0">
+                    <li><strong class="text-primary">{{ object.objet }}</strong></li>
+                    <li>Prévu le <strong>{{ object.date_rdv|date:"d/m/Y" }}</strong> à <strong>{{ object.heure_rdv|time:"H:i" }}</strong></li>
+                    {% if object.client %}<li>Client: <strong>{{ object.client.nom_complet }}</strong></li>{% endif %}
+                </ul>
+                <hr class="border-warning">
+                <div class="d-flex align-items-center text-muted">
+                    <i class="fas fa-info-circle mr-2"></i>
+                    <small>Toutes les informations associées seront perdues de manière permanente.</small>
+                </div>
+            </div>
+
+            <div class="mt-4 p-3 border rounded" style="background-color: rgba(220, 53, 69, 0.05);">
+                <h5 class="text-dark mb-3"><i class="fas fa-calendar-alt mr-2 text-primary"></i>Détails du Rendez-Vous</h5>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between border-light">
+                        <span class="font-weight-bold text-muted">Lieu :</span>
+                        <span class="text-dark">{{ object.lieu|default:"Non spécifié" }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between border-light">
+                        <span class="font-weight-bold text-muted">Statut :</span>
+                        <span class="badge {% if object.statut_rdv == 'confirme' %}bg-success{% elif object.statut_rdv == 'annule' %}bg-danger{% else %}bg-warning{% endif %}">
+                            {{ object.get_statut_rdv_display }}
+                        </span>
+                    </li>
+                    {% if object.avocat %}
+                    <li class="list-group-item d-flex justify-content-between border-light">
+                        <span class="font-weight-bold text-muted">Avocat :</span>
+                        <span class="text-dark">{{ object.avocat.nom_complet }}</span>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+
+            <form method="post" class="mt-4">
+                {% csrf_token %}
+                <div class="d-flex justify-content-between">
+                    <a href="{% url 'rendezvousliste' %}" class="btn btn-outline-secondary btn-rounded">
+                        <i class="fas fa-arrow-left mr-2"></i>Annuler
+                    </a>
+                    <button type="submit" class="btn btn-danger btn-rounded">
+                        <i class="fas fa-trash-alt mr-2"></i>Confirmer la suppression
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    :root {
+        --primary-blue: #007bff;
+        --primary-green: #28a745;
+        --primary-red: #dc3545;
+        --primary-yellow: #ffc107;
+        --primary-orange: #fd7e14;
+        --primary-black: #343a40;
+    }
+    
+    body {
+        background-color: #f8f9fa;
+    }
+    
+    .card {
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid #dee2e6;
+    }
+    
+    .btn-rounded {
+        border-radius: 50px;
+        padding: 8px 20px;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-danger {
+        background-color: var(--primary-red);
+        color: white;
+        border: none;
+    }
+    
+    .btn-danger:hover {
+        background-color: #c82333;
+        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+    }
+    
+    .btn-outline-secondary {
+        border-color: #6c757d;
+        color: #6c757d;
+    }
+    
+    .btn-outline-secondary:hover {
+        background-color: #6c757d;
+        color: white;
+    }
+    
+    .alert-warning {
+        background-color: rgba(255, 193, 7, 0.1);
+        border-color: #ffeeba;
+        color: #856404;
+    }
+    
+    .text-warning {
+        color: var(--primary-yellow) !important;
+    }
+    
+    .border-warning {
+        border-color: var(--primary-yellow) !important;
+    }
+    
+    .badge.bg-success {
+        background-color: rgba(40, 167, 69, 0.1) !important;
+        color: var(--primary-green) !important;
+        border: 1px solid var(--primary-green);
+    }
+    
+    .badge.bg-warning {
+        background-color: rgba(255, 193, 7, 0.1) !important;
+        color: var(--primary-yellow) !important;
+        border: 1px solid var(--primary-yellow);
+    }
+    
+    .badge.bg-danger {
+        background-color: rgba(220, 53, 69, 0.1) !important;
+        color: var(--primary-red) !important;
+        border: 1px solid var(--primary-red);
+    }
+    
+    /* Effet spécial pour le header */
+    .card-header {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .card-header::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background: linear-gradient(45deg, 
+            rgba(255, 193, 7, 0.1) 0%, 
+            rgba(220, 53, 69, 0.1) 50%, 
+            rgba(253, 126, 20, 0.1) 100%);
+        pointer-events: none;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,151 @@
+{% extends 'baseS.html' %}
+
+{% load static %}
+
+{% block content %}
+	
+    
+    <section class="hero-wrap hero-wrap-2" style="background-image: url('{% static "assetsS/images/img.png" %}');" data-stellar-background-ratio="0.5">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row no-gutters slider-text align-items-end justify-content-center">
+          <div class="col-md-9 ftco-animate pb-5 text-center">
+            <h1 class="mb-3 bread">La Team</h1>
+            <p class="breadcrumbs"><span class="mr-2"><a href="{% url 'index' %}">Accueil <i class="ion-ios-arrow-forward"></i></a></span> <span>Team <i class="ion-ios-arrow-forward"></i></span></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="ftco-section">
+	      <div class="container">
+		      <div class="row">
+		      
+			        <h2 class="mb-3">Le Directoire et nos Experts</h2>
+                <p>
+                  Notre structure repose sur l’expertise et l’engagement d’une équipe pluridisciplinaire composée de professionnels qualifiés. La présente section vous offre un aperçu de notre équipe dirigeante ainsi que des experts qui œuvrent chaque jour à la réalisation de nos missions, dans le respect des plus hauts standards de qualité et de déontologie.
+                </p>
+                <div class="tag-widget post-tag-container mb-5 mt-5">
+                  <div class="tagcloud">
+                    <a href="#public" class="tag-cloud-link"> Directoire </a>
+                    <a href="#societe" class="tag-cloud-link"> Experts </a>
+                  </div>
+                </div>
+            </div>
+	      </div>
+    </section>
+
+
+    <section class="ftco-section ftco-no-pt ">
+    	<div class="container-fluid px-md-5">
+        <div class="row justify-content-center mb-5 pb-3">
+          <div class="col-md-7 text-center heading-section ftco-animate">
+            <h2 class="mb-4">🔵Le Directoire</h2>
+            <span class="subheading">Engagés pour vous servir</span>
+          </div>
+        </div>
+        <div class="row">
+          {% for membre in membres %}
+        	<div class="col-lg-3 col-sm-6">
+        		<div class="block-2 ftco-animate">
+	            <div class="flipper">
+                {% if membre.photo %}
+	              <div class="front" style="background-image: url('{{ membre.photo.url }}');">
+                {% endif %}
+	                <div class="box">
+	                  <h2>{{ membre.nom }}</h2>
+	                  <p>{{ membre.fonction }}</p>
+	                </div>
+	              </div>
+	              <div class="back">
+	                <!-- back content -->
+	                <blockquote>
+	                  <p>&ldquo;{{ membre.biographie }} &rdquo;</p>
+	                </blockquote>
+	                <div class="author d-flex">
+	                  <div class="image align-self-center">
+	                    <img src="{{ membre.photo.url }}" alt="">
+	                  </div>
+	                  <div class="name align-self-center ml-3">{{ membre.nom }} <span class="position">{{ membre.fonction }}</span></div>
+	                </div>
+	              </div>
+	            </div>
+	          </div>
+        	</div>
+          {% endfor %}
+        </div>
+    	</div>
+    </section>
+
+
+    <section class="ftco-section ftco-no-pt ftco-no-pb">
+      <div class="container-fluid px-md-5">
+    		<div class="row justify-content-center mb-5 pb-3">
+          <div class="col-md-7 text-center heading-section ftco-animate">
+            <h2 class="mb-4">🔵Nos Experts</h2>
+            <span class="subheading">Engagés pour vous servir</span>
+          </div>
+        </div>
+        <div class="row">
+          {% for expert in experts %}
+        	<div class="col-lg-3 col-sm-6">
+        		<div class="block-2 ftco-animate">
+	            <div class="flipper">
+                {% if expert.photo %}
+	              <div class="front" style="background-image: url('{{ expert.photo.url }}');">
+                {% endif %}
+	                <div class="box">
+	                  <h2>{{ expert.nom }}</h2>
+	                  <p>{{ expert.titre }}</p>
+	                </div>
+	              </div>
+	              <div class="back">
+	                <!-- back content -->
+	                <blockquote>
+	                  <p>&ldquo;{{ expert.description }} &rdquo;</p>
+	                </blockquote>
+	                <div class="author d-flex">
+	                  <div class="image align-self-center">
+	                    <img src="{{ expert.photo.url }}" alt="">
+	                  </div>
+	                  <div class="name align-self-center ml-3">{{ expert.nom }} <span class="position">{{ expert.titre }}</span></div>
+	                </div>
+	              </div>
+	            </div>
+	          </div>
+        	</div>
+          {% endfor %}
+        </div>
+    	</div>
+    </section>
+
+    {% comment %} <section class="ftco-section ftco-no-pt ftco-no-pb">
+      <div class="container">
+        <div class="row d-flex justify-content-end">
+        	<div class="col-md-8 py-4 px-md-4 bg-primary">
+        		<div class="row">
+		          <div class="col-md-6 ftco-animate d-flex align-items-center">
+		            <h2 class="mb-0" style="color:white; font-size: 24px;">Subcribe to our Newsletter</h2>
+		          </div>
+		          <div class="col-md-6 d-flex align-items-center">
+		            <form action="#" class="subscribe-form">
+		              <div class="form-group d-flex">
+		                <input type="text" class="form-control" placeholder="Enter email address">
+		                <input type="submit" value="Subscribe" class="submit px-3">
+		              </div>
+		            </form>
+		          </div>
+	          </div>
+          </div>
+        </div>
+      </div>
+    </section> {% endcomment %}
+
+
+
+   	
+   
+
+   
+
+{% endblock  %}

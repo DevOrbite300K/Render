@@ -1,0 +1,202 @@
+{% extends 'admin_base2.html' %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="card border-0 shadow-sm" style="background: white; border-radius: 12px;">
+        <div class="card-header border-bottom" style="background: linear-gradient(90deg, rgba(67, 160, 71, 0.1) 0%, rgba(30, 136, 229, 0.1) 100%);">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="mb-0" style="color: #1e88e5;">
+                    <i class="fas fa-folder mr-2"></i>Liste des Dossiers
+                </h2>
+                <a href="{% url 'dossiercreer' %}" class="btn btn-primary btn-rounded" style="background-color: #43a047; border-color: #43a047;">
+                    <i class="fas fa-plus mr-2"></i>Nouveau Dossier
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr style="background: rgba(245, 245, 245, 0.9);">
+                            <th style="color: #1e88e5;">Titre</th>
+                            <th style="color: #5f6368;">Date ouverture</th>
+                            <th style="color: #5f6368;">Date clôture</th>
+                            <th style="color: #5f6368;">Type d'affaire</th>
+                            <th class="text-center" style="color: #5f6368;">Statut</th>
+                            <th class="text-center" style="color: #5f6368;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for dossier in dossiers %}
+                        <tr style="border-bottom: 1px solid rgba(0, 0, 0, 0.05);">
+                            <td>
+                                <a href="{% url 'dossierdetail' dossier.pk %}" class="text-decoration-none" style="color: #212121; font-weight: 500;">
+                                    {{ dossier.titre }}
+                                </a>
+                            </td>
+                            <td style="color: #5f6368;">{{ dossier.date_ouverture|date:"d/m/Y" }}</td>
+                            <td>
+                                {% if dossier.date_cloture %}
+                                <span class="badge" style="background: rgba(229, 57, 53, 0.1); color: #e53935;">
+                                    {{ dossier.date_cloture|date:"d/m/Y" }}
+                                </span>
+                                {% else %}
+                                <span class="badge" style="background: rgba(67, 160, 71, 0.1); color: #43a047;">
+                                    En cours
+                                </span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="badge" style="background: rgba(255, 214, 0, 0.15); color: #ffb300; font-weight: 500;">
+                                    {{ dossier.type_affaire }}
+                                </span>
+                            </td>
+                            <td class="text-center">
+                                {% if dossier.date_cloture %}
+                                    {% if dossier.date_cloture <= today %}
+                                    <i class="fas fa-lock" style="color: #e53935;" title="Dossier clos"></i>
+                                    {% else %}
+                                    <i class="fas fa-lock-open" style="color: #43a047;" title="Dossier en cours"></i>
+                                    {% endif %}
+                                {% else %}
+                                    <i class="fas fa-exclamation-circle" style="color: #ffd600;" title="Date de clôture non définie"></i>
+                                {% endif %}
+                            </td>
+
+                            <td class="text-center">
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <a href="{% url 'dossierdetail' dossier.pk %}" class="btn btn-sm btn-outline-primary" style="border-color: #1e88e5; color: #1e88e5;" title="Voir">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{% url 'dossiermodifier' dossier.pk %}" class="btn btn-sm btn-outline-warning" style="border-color: #ffd600; color: #ffb300;" title="Modifier">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="{% url 'dossiersupprimer' dossier.pk %}" class="btn btn-sm btn-outline-danger" style="border-color: #e53935; color: #e53935;" title="Supprimer">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center py-4" style="color: #9e9e9e;">
+                                <i class="fas fa-folder-open fa-2x mb-2" style="color: #1e88e5;"></i><br>
+                                Aucun dossier disponible
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            {% if is_paginated %}
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center mt-4">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1" aria-label="First" style="color: #1e88e5;">
+                            <span aria-hidden="true">&laquo;&laquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous" style="color: #1e88e5;">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    {% endif %}
+                    
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                        <li class="page-item active">
+                            <a class="page-link" href="?page={{ num }}" style="background-color: #43a047; border-color: #43a047;">{{ num }}</a>
+                        </li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}" style="color: #1e88e5;">{{ num }}</a>
+                        </li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next" style="color: #1e88e5;">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="Last" style="color: #1e88e5;">
+                            <span aria-hidden="true">&raquo;&raquo;</span>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+    :root {
+        --primary-blue: #1e88e5;
+        --primary-green: #43a047;
+        --primary-red: #e53935;
+        --primary-black: #212121;
+        --primary-yellow: #ffd600;
+        --light-gray: #f8f9fa;
+    }
+    
+    body {
+        background-color: #f8f9fa;
+    }
+    
+    .card {
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        border: 1px solid rgba(0,0,0,0.03);
+    }
+    
+    .btn-rounded {
+        border-radius: 50px;
+        padding: 8px 20px;
+        transition: all 0.3s ease;
+        font-weight: 500;
+    }
+    
+    .table-hover tbody tr:hover {
+        background-color: rgba(30, 136, 229, 0.03);
+    }
+    
+    .badge {
+        padding: 5px 10px;
+        font-size: 0.85rem;
+        border-radius: 50px;
+    }
+    
+    .page-link {
+        border-color: rgba(0,0,0,0.1);
+        margin: 0 3px;
+        border-radius: 6px !important;
+    }
+    
+    .page-item.active .page-link {
+        color: white;
+    }
+    
+    .btn-outline-primary:hover {
+        background-color: #1e88e5;
+        color: white !important;
+    }
+    
+    .btn-outline-warning:hover {
+        background-color: #ffd600;
+        color: #212121 !important;
+    }
+    
+    .btn-outline-danger:hover {
+        background-color: #e53935;
+        color: white !important;
+    }
+</style>
+{% endblock %}

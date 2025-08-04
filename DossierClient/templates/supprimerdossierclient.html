@@ -1,0 +1,101 @@
+{% extends 'admin_base2.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card border-0" style="background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: 2px solid #1a1a2e;">
+        <div class="card-header border-bottom" style="background: #1a1a2e; border-color: #FFA500;">
+            <h2 class="mb-0 text-white">
+                <i class="fas fa-exclamation-triangle mr-2" style="color: #FFA500;"></i>Supprimer le Dossier Client
+            </h2>
+        </div>
+        <div class="card-body">
+            <div class="alert" style="background: rgba(255, 193, 7, 0.15); border: 2px solid #FFA500; border-radius: 8px;">
+                <h4 class="alert-heading" style="color: #FF0000;">
+                    <i class="fas fa-skull-crossbones mr-2"></i>Action Irréversible
+                </h4>
+                <p class="mb-0" style="color: #1a1a2e;">
+                    Vous êtes sur le point de supprimer définitivement l'association entre :
+                </p>
+                <ul class="mt-2 mb-0" style="color: #1a1a2e;">
+                    <li>Dossier: <strong style="color: #FF0000;">{{ object.dossier }}</strong></li>
+                    <li>Client: <strong style="color: #FF0000;">{{ object.client }}</strong></li>
+                </ul>
+                <hr style="border-color: #1a1a2e;">
+                <div class="d-flex align-items-center" style="color: #666;">
+                    <i class="fas fa-info-circle mr-2"></i>
+                    <small>Cette action ne peut pas être annulée.</small>
+                </div>
+            </div>
+
+            <div class="mt-4 p-3" style="background: rgba(255, 107, 107, 0.1); border: 2px solid #FF0000; border-radius: 8px;">
+                <h5 class="mb-3" style="color: #1a1a2e;"><i class="fas fa-user-tie mr-2" style="color: #008000;"></i>Détails de l'Association</h5>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between" style="background: transparent; border-color: #ddd;">
+                        <span class="font-weight-bold" style="color: #1a1a2e;">Rôle du client :</span>
+                        <span class="badge" style="background: rgba(255, 165, 0, 0.2); color: #1a1a2e;">
+                            {{ object.get_rôle_client_display }}
+                        </span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between" style="background: transparent; border-color: #ddd;">
+                        <span class="font-weight-bold" style="color: #1a1a2e;">Date de création :</span>
+                        <span style="color: #1a1a2e;">{{ object.date_creation|date:"d/m/Y" }}</span>
+                    </li>
+                </ul>
+            </div>
+
+            <form method="post" class="mt-4">
+                {% csrf_token %}
+                <div class="d-flex justify-content-between">
+                    <a href="{% url 'dossierclientliste' %}" class="btn" style="background: white; color: #1a1a2e; border: 2px solid #1a1a2e;">
+                        <i class="fas fa-arrow-left mr-2"></i>Annuler
+                    </a>
+                    <button type="submit" class="btn" style="background: #FF0000; color: white; font-weight: bold;">
+                        <i class="fas fa-trash-alt mr-2"></i>Confirmer la suppression
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+    
+    .card {
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    
+    .btn {
+        border-radius: 6px;
+        padding: 8px 20px;
+        transition: all 0.3s;
+    }
+    
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .btn[style*="FF0000"]:hover {
+        background: #cc0000 !important;
+    }
+    
+    .btn[style*="1a1a2e"]:hover {
+        background: #1a1a2e !important;
+        color: white !important;
+    }
+    
+    .badge {
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-weight: 500;
+    }
+    
+    hr {
+        margin: 1rem 0;
+    }
+</style>
+{% endblock %}

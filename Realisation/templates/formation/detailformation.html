@@ -1,0 +1,46 @@
+{% extends "admin_base2.html" %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2>Détails de la formation</h2>
+
+  <table class="table table-bordered">
+    <tr>
+      <th>Type</th>
+      <td>{{ formation.type }}</td>
+    </tr>
+    <tr>
+      <th>Thème</th>
+      <td>{{ formation.theme }}</td>
+    </tr>
+    <tr>
+      <th>Nombre de participants</th>
+      <td>{{ formation.nombre_participants }}</td>
+    </tr>
+    <tr>
+      <th>Date début</th>
+      <td>{{ formation.date_debut }}</td>
+    </tr>
+    <tr>
+      <th>Date fin</th>
+      <td>{{ formation.date_fin }}</td>
+    </tr>
+    <tr>
+      <th>Lieu</th>
+      <td>{{ formation.lieu }}</td>
+    </tr>
+    <tr>
+      <th>Document</th>
+      <td>
+        {% if formation.document %}
+          <a href="{{ formation.document.url }}" target="_blank">Télécharger</a>
+        {% else %}
+          Aucun document
+        {% endif %}
+      </td>
+    </tr>
+  </table>
+
+  <a href="{% url 'listeformation' %}" class="btn btn-secondary">Retour</a>
+</div>
+{% endblock %}

@@ -1,0 +1,217 @@
+{% extends "admin_base2.html" %}
+
+{% block content %}
+<div class="light-theme-container">
+  <div class="event-detail-header">
+    <div>
+      <h2 class="page-title">
+        <i class="fas fa-calendar-alt text-primary"></i> Détails de l'Évènement
+      </h2>
+      <p class="event-title">{{ evenement.titre }}</p>
+    </div>
+    <div class="event-actions">
+      <a href="{% url 'modifierevenement' evenement.pk %}" class="btn btn-warning">
+        <i class="fas fa-edit"></i> Modifier
+      </a>
+      <a href="{% url 'supprimerevenement' evenement.pk %}" class="btn btn-danger">
+        <i class="fas fa-trash-alt"></i> Supprimer
+      </a>
+      <a href="{% url 'evenementliste' %}" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left"></i> Retour
+      </a>
+    </div>
+  </div>
+
+  <div class="event-detail-card">
+    <div class="detail-grid">
+      <div class="detail-item">
+        <div class="detail-label">
+          <i class="fas fa-align-left text-primary"></i> Description
+        </div>
+        <div class="detail-value">{{ evenement.description|linebreaksbr }}</div>
+      </div>
+
+      <div class="detail-item">
+        <div class="detail-label">
+          <i class="fas fa-calendar-day text-primary"></i> Date
+        </div>
+        <div class="detail-value">{{ evenement.date_evenement|date:"d/m/Y H:i" }}</div>
+      </div>
+
+      <div class="detail-item">
+        <div class="detail-label">
+          <i class="fas fa-tag text-primary"></i> Type
+        </div>
+        <div class="detail-value">{{ evenement.get_type_evenement_display }}</div>
+      </div>
+
+      <div class="detail-item">
+        <div class="detail-label">
+          <i class="fas fa-folder text-primary"></i> Dossier
+        </div>
+        <div class="detail-value">{{ evenement.dossier }}</div>
+      </div>
+
+      <div class="detail-item">
+        <div class="detail-label">
+          <i class="fas fa-user text-primary"></i> Utilisateur
+        </div>
+        <div class="detail-value">{{ evenement.utilisateur }}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  :root {
+    --primary-blue: #007bff;
+    --primary-green: #28a745;
+    --primary-red: #dc3545;
+    --primary-yellow: #ffc107;
+    --primary-orange: #fd7e14;
+    --primary-black: #343a40;
+  }
+  
+  .light-theme-container {
+    background-color: #f8f9fa;
+    color: #495057;
+    padding: 2rem;
+    min-height: 100vh;
+  }
+
+  .event-detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+
+  .page-title {
+    color: var(--primary-black);
+    font-weight: 500;
+    margin: 0 0 0.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .text-primary {
+    color: var(--primary-blue);
+  }
+
+  .event-title {
+    color: var(--primary-blue);
+    font-size: 1.5rem;
+    margin: 0;
+    font-weight: 500;
+  }
+
+  .event-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .event-detail-card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e9ecef;
+  }
+
+  .detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .detail-label {
+    color: #6c757d;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .detail-value {
+    color: var(--primary-black);
+    font-size: 1.1rem;
+    padding-left: 1.5rem;
+    word-break: break-word;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 16px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: none;
+    gap: 8px;
+    white-space: nowrap;
+  }
+
+  .btn-warning {
+    background-color: var(--primary-yellow);
+    color: var(--primary-black);
+  }
+
+  .btn-warning:hover {
+    background-color: #e0a800;
+    box-shadow: 0 2px 4px rgba(255, 193, 7, 0.3);
+  }
+
+  .btn-danger {
+    background-color: var(--primary-red);
+    color: white;
+  }
+
+  .btn-danger:hover {
+    background-color: #c82333;
+    box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
+  }
+
+  .btn-outline-secondary {
+    background-color: transparent;
+    color: #6c757d;
+    border: 1px solid #6c757d;
+  }
+
+  .btn-outline-secondary:hover {
+    background-color: #6c757d;
+    color: white;
+  }
+
+  .btn:hover {
+    transform: translateY(-1px);
+  }
+
+  @media (max-width: 768px) {
+    .event-detail-header {
+      flex-direction: column;
+    }
+    
+    .event-actions {
+      width: 100%;
+    }
+    
+    .btn {
+      flex: 1;
+      justify-content: center;
+    }
+  }
+</style>
+{% endblock %}

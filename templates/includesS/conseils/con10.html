@@ -1,0 +1,159 @@
+{% extends 'baseS.html' %}
+{% load static %}
+
+
+{% block content %}
+    
+    <section class="hero-wrap hero-wrap-2" style="background-image: url('{% static "assetsS/images/img.png" %}');" data-stellar-background-ratio="0.5">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row no-gutters slider-text align-items-end justify-content-center">
+          <div class="col-md-9 ftco-animate pb-5 text-center">
+            <h1 class="mb-3 bread">CHAMPS D'EXPERTISE</h1>
+            <p class="breadcrumbs"><span class="mr-2"><a href="{% url 'index' %}">Accueil <i class="ion-ios-arrow-forward"></i></a></span> <span class="mr-2"><a href="{% url 'conseil' %}">Conseils & Assistance<i class="ion-ios-arrow-forward"></i></a></span> <span>CHAMPS D'EXPERTISE<i class="ion-ios-arrow-forward"></i></span></p>
+          </div>
+        </div>
+      </div>
+    </section>
+   	
+   	<section class="ftco-section ftco-degree-bg">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 ftco-animate">
+          	<p>
+              <img src="images/practice-1.jpg" alt="" class="img-fluid">
+            </p>
+            <h2 class="mb-3 mt-5">Marchés publics, PPP et contrats</h2>
+            <p>Nous mettons notre expertise à votre service pour vous conseiller sur 
+              la gestion des marchés publics, partenariats publics-privés, la rédaction 
+              des documents juridiques relatifs aux appels d’offres et la rédaction des contrats.
+            </p>
+            
+            <h2 class="mb-3 mt-5">Comment pouvons nous vous aider?</h2>
+            <p></p>
+            <p><a href="{% url 'contact' %}" class="btn btn-primary">contactez nous</a></p>
+
+            <div class="row mt-5 pt-5">
+		          <div class="col-md-12">
+		            <h2 class="mb-4 font-weight-bold">Nos experts</h2>
+		          </div>
+            	<div class="col-lg-6">
+		        		<div class="block-2 ftco-animate">
+			            <div class="flipper">
+			              <div class="front" style="background-image: url(/images/person_1.jpg);">
+			                <div class="box">
+			                  <h2>Richard Anderson</h2>
+			                  <p>Civil Lawyer</p>
+			                </div>
+			              </div>
+			              <div class="back">
+			                <!-- back content -->
+			                <blockquote>
+			                  <p>&ldquo;Even the all-powerful Pointing has no control about the blind texts it is an almost unorthographic life One day however a small line of blind text by the name of Lorem Ipsum decided to leave for the far World of Grammar.&rdquo;</p>
+			                </blockquote>
+			                <div class="author d-flex">
+			                  <div class="image mr-3 align-self-center">
+			                    <img src="images/person_1.jpg" alt="">
+			                  </div>
+			                  <div class="name align-self-center">Richard Anderson <span class="position">Civil Lawyer</span></div>
+			                </div>
+			              </div>
+			            </div>
+			          </div>
+		        	</div>
+		        	<div class="col-lg-6">
+		        		<div class="block-2 ftco-animate">
+			            <div class="flipper">
+			              <div class="front" style="background-image: url(/images/person_2.jpg);">
+			                <div class="box">
+			                  <h2>Jefford Maxillin</h2>
+			                  <p>Business Lawyer</p>
+			                </div>
+			              </div>
+			              <div class="back">
+			                <!-- back content -->
+			                <blockquote>
+			                  <p>&ldquo;Even the all-powerful Pointing has no control about the blind texts it is an almost unorthographic life One day however a small line of blind text by the name of Lorem Ipsum decided to leave for the far World of Grammar.&rdquo;</p>
+			                </blockquote>
+			                <div class="author d-flex">
+			                  <div class="image mr-3 align-self-center">
+			                    <img src="images/person_2.jpg" alt="">
+			                  </div>
+			                  <div class="name align-self-center">Jefford Maxillin<span class="position">Business Lawyer</span></div>
+			                </div>
+			              </div>
+			            </div>
+			          </div>
+		        	</div>
+            </div>
+						
+
+
+          </div> <!-- .col-md-8 -->
+          <div class="col-lg-4 sidebar pl-lg-5 ftco-animate">
+            <div class="sidebar-box ftco-animate">
+              <div class="categories">
+                <h3>NOS CHAMPS D'EXPERTISE</h3>
+                <li class="active"><a href="{% url 'conseil6' %}">Administration publique <span class="ion-ios-arrow-forward"></span></a></li>
+                <li><a href="{% url 'conseil7' %}">Secteur de la santé <span class="ion-ios-arrow-forward"></span></a></li>
+                <li><a href="{% url 'conseil8' %}">Secteur de l’environnement <span class="ion-ios-arrow-forward"></span></a></li>
+                <li><a href="{% url 'conseil9' %}">Monde des affaires <span class="ion-ios-arrow-forward"></span></a></li>
+              </div>
+            </div>
+
+            <div class="sidebar-box ftco-animate">
+              <h3>NOS REALISATIONS</h3>
+              <div class="block-21 mb-4 d-flex">
+                <a class="blog-img mr-4" style="background-image: url('{% static "assetsS/images/index14.jpeg" %}');"></a>
+                <div class="text">
+                  <h3 class="heading"><a href="#">Actualisation du Code de santé publique (République de Guinée) </a></h3>
+                  <div class="meta">
+                    <div><a href="#"><span class="icon-calendar"></span> Oct. 18, 2019</a></div>
+                    <div><a href="#"><span class="icon-person"></span> Admin</a></div>
+                    <div><a href="#"><span class="icon-chat"></span> 19</a></div>
+                  </div>
+                </div>
+              </div>
+              <div class="block-21 mb-4 d-flex">
+                <a class="blog-img mr-4" style="background-image: url('{% static "assetsS/images/index15.jpeg" %}');"></a>
+                <div class="text">
+                  <h3 class="heading"><a href="#">Élaboration de la Loi sur l'exercice des professions 
+                    de santé, du Code de déontologie des professions de santé et du Décret sur le statut 
+                    de l'Agence nationale de régulation pharmaceutique (République de Guinée)</h3>
+                  <div class="meta">
+                    <div><a href="#"><span class="icon-calendar"></span> Oct. 18, 2019</a></div>
+                    <div><a href="#"><span class="icon-person"></span> Admin</a></div>
+                    <div><a href="#"><span class="icon-chat"></span> 19</a></div>
+                  </div>
+                </div>
+              </div>
+              <div class="block-21 mb-4 d-flex">
+                <a class="blog-img mr-4" style="background-image: url('{% static "assetsS/images/index16.webp" %}');"></a>
+                <div class="text">
+                  <h3 class="heading"><a href="#">Assistance juridique pour le projet RHSP en Guinée, Togo et Bénin </a></h3>
+                  <div class="meta">
+                    <div><a href="#"><span class="icon-calendar"></span> Oct. 18, 2019</a></div>
+                    <div><a href="#"><span class="icon-person"></span> Admin</a></div>
+                    <div><a href="#"><span class="icon-chat"></span> 19</a></div>
+                  </div>
+                </div>
+              </div>
+              <a href="{% url 'conseil' %}#realisation"><h3>Voir toutes nos réalisations...</h3></a>
+            </div>
+
+            <div class="sidebar-box ftco-animate">
+              <h3>NOTRE VISION </h3>
+              <p>"Devenir le partenaire stratégique incontournable des entreprises, 
+                des institutions et des particuliers en Guinée et en Afrique, en offrant 
+                un conseil juridique et une expertise personnalisés, modernes et accessibles, 
+                pour contribuer à un développement économique et juridique durable."
+               </p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section> <!-- .section -->
+
+
+{% endblock %}

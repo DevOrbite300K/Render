@@ -1,0 +1,30 @@
+{% extends 'admin_base.html' %}
+
+{% block content %}
+<h2>🗂️ Historique des activités</h2>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Utilisateur</th>
+            <th>Action</th>
+            <th>Date</th>
+            <th>Dossier</th>
+            <th>Détails</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for journal in journaux %}
+        <tr>
+            <td>{{ journal.utilisateur.username }}</td>
+            <td>{{ journal.get_type_action_display }}</td>
+            <td>{{ journal.date_action }}</td>
+            <td>{{ journal.dossier.titre }}</td>
+            <td>{{ journal.détails }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5">Aucune activité enregistrée.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{% url 'journalcreer' %}" class="btn btn-primary">Ajouter une activité</a>
+{% endblock %}

@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reçu de Paiement #{{ paiement.id }} - MIPcabinet</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+        .letterhead {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e1e1e1;
+        }
+        .company-info {
+            text-align: left;
+        }
+        .company-name {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        .company-details {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.4;
+        }
+        .document-title {
+            text-align: center;
+            margin: 30px 0;
+        }
+        .document-title h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        .document-title .reference {
+            font-size: 16px;
+            color: #7f8c8d;
+        }
+        .info-box {
+            background-color: #f8f9fa;
+            border-left: 4px solid #3498db;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .info-box p {
+            margin: 5px 0;
+        }
+        .info-label {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        .details-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+        }
+        .details-table th {
+            background-color: #2c3e50;
+            color: white;
+            padding: 12px 15px;
+            text-align: left;
+        }
+        .details-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e1e1e1;
+        }
+        .total-row {
+            font-weight: bold;
+            background-color: #f8f9fa;
+        }
+        .signature-section {
+            margin-top: 50px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .signature-line {
+            border-top: 1px solid #333;
+            width: 250px;
+            margin-top: 40px;
+        }
+        .footer {
+            margin-top: 60px;
+            font-size: 12px;
+            color: #7f8c8d;
+            text-align: center;
+            border-top: 1px solid #e1e1e1;
+            padding-top: 20px;
+        }
+        .watermark {
+            position: fixed;
+            opacity: 0.1;
+            font-size: 120px;
+            color: #3498db;
+            transform: rotate(-30deg);
+            left: 10%;
+            top: 30%;
+            z-index: -1;
+            font-weight: bold;
+        }
+        @media print {
+            body {
+                padding: 10mm;
+            }
+            .no-print {
+                display: none;
+            }
+            .watermark {
+                opacity: 0.05;
+            }
+        }
+        .stamp {
+            float: right;
+            opacity: 0.8;
+            max-width: 120px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="watermark">MIPcabinet</div>
+
+    <div class="letterhead">
+        <div class="company-info">
+            <div class="company-name">MIPcabinet</div>
+            <div class="company-details">
+                Cabinet d'expertise comptable<br>
+                Adresse: [Votre adresse complète]<br>
+                Téléphone: [Votre numéro de téléphone]<br>
+                Email: contact@mipcabinet.com<br>
+                RCCM: [Votre numéro RCCM]<br>
+                NIU: [Votre numéro NIU]
+            </div>
+        </div>
+        <div>
+            <!-- Espace pour le logo si disponible -->
+            <!-- <img src="/static/images/logo.png" alt="Logo MIPcabinet" style="max-width: 120px;"> -->
+        </div>
+    </div>
+
+    <div class="document-title">
+        <h1>REÇU DE PAIEMENT</h1>
+        <div class="reference">Référence: PAY-{{ paiement.id|stringformat:"06d" }}</div>
+    </div>
+
+    <div class="info-box">
+        <p><span class="info-label">Date d'émission:</span> {% now "d/m/Y à H:i" %}</p>
+        <p><span class="info-label">Client:</span> {{ paiement.client.utilisateur.first_name }} {{ paiement.client.utilisateur.last_name }}</p>
+        <p><span class="info-label">Téléphone:</span> {{ paiement.client.telephone }}</p>
+        <p><span class="info-label">Dossier:</span> {{ paiement.dossier }}</p>
+    </div>
+
+    <table class="details-table">
+        <thead>
+            <tr>
+                <th>Description</th>
+                <th>Détails</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Date de paiement</td>
+                <td>{{ paiement.date_paiement|date:"d/m/Y à H:i" }}</td>
+            </tr>
+            <tr>
+                <td>Moyen de paiement</td>
+                <td>{{ paiement.get_moyen_paiement_display }}</td>
+            </tr>
+            <tr class="total-row">
+                <td>Montant payé</td>
+                <td>{{ paiement.montant }} GNF</td>
+            </tr>
+            <tr>
+                <td>Statut</td>
+                <td>Paiement validé</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="signature-section">
+        <div>
+            <p>Signature du client</p>
+            <div class="signature-line"></div>
+        </div>
+        <div>
+            <p>Pour MIPcabinet</p>
+            <div class="signature-line"></div>
+            <!-- Espace pour le cachet si disponible -->
+            <!-- <img src="/static/images/stamp.png" alt="Cachet MIPcabinet" class="stamp"> -->
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>MIPcabinet - Cabinet d'expertise comptable</p>
+        <p>Adresse: [Votre adresse complète] - Téléphone: [Votre numéro] - Email: contact@mipcabinet.com</p>
+        <p>Ce document fait foi de règlement et vaut reçu fiscal</p>
+    </div>
+
+    <div class="no-print" style="text-align: center; margin-top: 40px;">
+        <button onclick="window.print()" style="
+            padding: 12px 25px;
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        ">
+            <i class="fas fa-print"></i> Imprimer ce reçu
+        </button>
+    </div>
+
+    <script>
+        // Option: Auto-impression au chargement
+        // window.onload = function() { window.print(); };
+    </script>
+</body>
+</html>

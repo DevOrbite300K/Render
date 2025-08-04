@@ -1,0 +1,183 @@
+{% extends 'admin_base2.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card border-0 shadow-lg" style="background: linear-gradient(145deg, #f8f9fa, #e9ecef);">
+        <div class="card-header border-bottom" style="background: rgba(67, 160, 71, 0.1);">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="mb-0 text-dark">
+                    <i class="fas fa-file-{{ document.get_file_type_icon }} mr-2 text-primary"></i>Détails du Document
+                </h2>
+                <span class="badge" style="background: rgba(255, 214, 0, 0.2); color: #ffd600;">
+                    {{ document.get_file_type_display }}
+                </span>
+            </div>
+        </div>
+        
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="detail-card mb-4">
+                        <h5 class="text-primary mb-3"><i class="fas fa-info-circle mr-2"></i>Informations</h5>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span class="font-weight-bold text-muted">Titre du document :</span>
+                                <span class="text-dark">{{ document.nom_fichier }}</span>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="font-weight-bold text-muted mb-1">Créateur du document :</div>
+                                <div class="text-dark">{{ document.utilisateur.first_name|linebreaksbr|default:"Aucune description" }}</div>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span class="font-weight-bold text-muted">Date d'ajout :</span>
+                                <span class="text-dark">{{ document.date_ajout|date:"d/m/Y H:i" }}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span class="font-weight-bold text-muted">Taille :</span>
+                                <span class="text-dark">{{ document.fichier.size|filesizeformat }}</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="detail-card mb-4">
+                        <h5 class="text-primary mb-3"><i class="fas fa-paperclip mr-2"></i>Fichier</h5>
+                        <div class="text-center p-4" style="background: rgba(30, 136, 229, 0.05); border-radius: 8px;">
+                            <i class="fas fa-file-{{ document.get_file_type_icon }} fa-4x mb-3 text-primary"></i>
+                            <div class="mb-3">
+                                <a href="{{ document.file.url }}" class="btn btn-primary btn-rounded" download>
+                                    <i class="fas fa-download mr-2"></i>Télécharger
+                                </a>
+                            </div>
+                            <small class="text-muted">{{ document.file.name}}</small>
+                        </div>
+                    </div>
+                    
+                    {% if document.dossier %}
+                    <div class="detail-card">
+                        <h5 class="text-primary mb-3"><i class="fas fa-folder mr-2"></i>Dossier associé</h5>
+                        <div class="card" style="background: rgba(30, 136, 229, 0.05);">
+                            <div class="card-body">
+                                <h6 class="card-title text-dark">
+                                    <a href="{% url 'dossierdetail' document.dossier.pk %}" class="text-decoration-none">
+                                        <i class="fas fa-folder-open mr-2 text-primary"></i>
+                                        {{ document.dossier.titre }}
+                                    </a>
+                                </h6>
+                                <p class="card-text text-muted mb-1">
+                                    <small>Type: {{ document.dossier.type_affaire }}</small>
+                                </p>
+                                <p class="card-text text-muted mb-0">
+                                    <small>Ouvert le: {{ document.dossier.date_ouverture|date:"d/m/Y" }}</small>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="card-footer border-top" style="background: rgba(67, 160, 71, 0.05);">
+            <div class="d-flex justify-content-between">
+                <a href="{% url 'documentlist' %}" class="btn btn-outline-secondary btn-rounded">
+                    <i class="fas fa-arrow-left mr-2"></i>Retour à la liste
+                </a>
+                <div>
+                    <a href="{% url 'documentmodifier' document.pk %}" class="btn btn-warning btn-rounded mr-2">
+                        <i class="fas fa-edit mr-2"></i>Modifier
+                    </a>
+                    <a href="{% url 'documentsupprimer' document.pk %}" class="btn btn-danger btn-rounded">
+                        <i class="fas fa-trash-alt mr-2"></i>Supprimer
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    :root {
+        --primary-blue: #1e88e5;
+        --primary-green: #43a047;
+        --primary-red: #e53935;
+        --primary-black: #212121;
+        --primary-yellow: #ffd600;
+    }
+    
+    body {
+        background-color: #f8f9fa;
+    }
+    
+    .card {
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    
+    .detail-card {
+        background: white;
+        border-radius: 8px;
+        padding: 1.25rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    
+    .list-group-item {
+        border-color: rgba(0,0,0,0.05);
+    }
+    
+    .btn-rounded {
+        border-radius: 50px;
+        padding: 8px 20px;
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+    
+    .btn-primary {
+        background-color: var(--primary-green);
+        border-color: var(--primary-green);
+    }
+    
+    .btn-primary:hover {
+        background-color: #2e7d32;
+        border-color: #2e7d32;
+        box-shadow: 0 4px 12px rgba(67, 160, 71, 0.3);
+    }
+    
+    .btn-warning {
+        background-color: var(--primary-yellow);
+        border-color: var(--primary-yellow);
+        color: var(--primary-black);
+    }
+    
+    .btn-warning:hover {
+        background-color: #e6c200;
+        border-color: #e6c200;
+        box-shadow: 0 4px 12px rgba(255, 214, 0, 0.3);
+    }
+    
+    .btn-danger {
+        background-color: var(--primary-red);
+        border-color: var(--primary-red);
+    }
+    
+    .btn-danger:hover {
+        background-color: #d32f2f;
+        border-color: #d32f2f;
+        box-shadow: 0 4px 12px rgba(229, 57, 53, 0.3);
+    }
+    
+    .btn-outline-secondary {
+        border-color: #6c757d;
+        color: #6c757d;
+    }
+    
+    .btn-outline-secondary:hover {
+        background-color: #6c757d;
+        color: white;
+    }
+    
+    .text-primary {
+        color: var(--primary-blue) !important;
+    }
+</style>
+{% endblock %}
